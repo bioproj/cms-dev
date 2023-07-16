@@ -333,6 +333,11 @@ public class HtmlServiceImpl implements IHtmlService {
 //        TemplateUtil.saveFile(category.getPath()+CMSUtils.getArticleListJs(),category.getViewName(),json,"json");
 
 
+        String topHtmlPath = category.getPath()+ File.separator+"top";
+        if(!TemplateUtil.checkFileExist(topHtmlPath,category.getViewName())){
+            articleTopListByCategoryId(category.getId());
+        }
+
 
 
         map.put("view",categoryArticle);
