@@ -184,6 +184,8 @@ public class PreviewController {
 //        String html = TemplateUtil.convertHtmlAndPreview(articleListVo, template);
 //        String convertHtml = FileUtils.convertByString(html);
         model.addAttribute("view", articleListVo);
+        String url = category.getPath()+File.separator+category.getViewName()+"-2-ajaxPage";
+        model.addAttribute("url",url);
 //        modelAndView.setViewName(template.getTemplateValue());
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }

@@ -4,8 +4,10 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.common.pojo.BaseEntity;
@@ -188,6 +190,11 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Override
     public List<CategoryContentList> listCategoryContentByComponentsIdSize(int componentsId, Integer size) {
+        return null;
+    }
+
+    @Override
+    public CategoryContentListDao findCategoryContentBy(Category category, Template template, int page) {
         return null;
     }
 }

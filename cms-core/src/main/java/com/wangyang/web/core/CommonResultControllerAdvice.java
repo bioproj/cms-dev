@@ -69,6 +69,7 @@ public class CommonResultControllerAdvice implements ResponseBodyAdvice<Object> 
                     if(map.get("path").toString().endsWith("css")
                             || map.get("path").toString().endsWith("js")
                             || map.get("path").toString().endsWith(".map")
+                            || map.get("path").toString().endsWith("logo.png")
                             || map.get("path").toString().endsWith(".ico")){
                         log.info(map.get("path").toString()+"不存在！");
                     }else {

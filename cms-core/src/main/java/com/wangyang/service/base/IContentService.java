@@ -2,6 +2,7 @@ package com.wangyang.service.base;
 
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
@@ -30,6 +31,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId, Integer page);
 
     List<CategoryContentList> listCategoryContentByComponentsIdSize(int componentsId, Integer size);
+
+    CategoryContentListDao findCategoryContentBy(Category category, Template template, int page);
 
     CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page);
 

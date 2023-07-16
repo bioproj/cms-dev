@@ -39,4 +39,5 @@ public class CategoryContentListDao {
     int totalPages ;
     int size ;
     long totalElements ;
+    int page;
 }

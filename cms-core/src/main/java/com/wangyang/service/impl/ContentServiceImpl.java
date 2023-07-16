@@ -399,6 +399,11 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         return listCategoryContent(categories);
     }
     @Override
+    public CategoryContentListDao findCategoryContentBy(Category category, Template template, int page){
+        CategoryVO categoryVO = categoryService.covertToVo(category);
+        return findCategoryContentBy(categoryVO, template, page);
+    }
+    @Override
     public CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page){
         CategoryContentListDao articleListVo = new CategoryContentListDao();
 
@@ -479,6 +484,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         articleListVo.setCategory(category);
         articleListVo.setViewName(category.getViewName());
         articleListVo.setPath(category.getPath());
+        articleListVo.setPage(page);
         /**
          * 分页路径的格式生成
          */

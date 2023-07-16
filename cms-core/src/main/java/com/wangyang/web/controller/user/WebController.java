@@ -1,11 +1,15 @@
 package com.wangyang.web.controller.user;
 
 
+import com.google.common.base.Joiner;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
+import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
+import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -239,6 +243,28 @@ public class WebController {
 //        map.put("url",html);
 
         return html;
+
+    }
+
+    @GetMapping(value = "/html/{path}/{viewName}-{page}-ajaxPage",produces={"text/html;charset=UTF-8;","application/json;"})
+    @Anonymous
+    @ResponseBody
+    public String  contentCategoryPage(@PathVariable("viewName") String viewName,
+                                       @PathVariable("path") String path,
+                                       @PathVariable("page") Integer page){
+        if(page<=0){
+            return "Page is not exist!!";
+        }
+        path = "html/"+path;
+        String viewNameStr = viewName+"-"+page+"-page";
+        if(TemplateUtil.checkFileExist(path,viewNameStr)){
+            return TemplateUtil.openFile(path,viewNameStr);
+        }
+
+
+        Category category = categoryService.findByViewName(viewName);
+        return htmlService.convertArticleListBy(category,page);
+
 
     }
 

@@ -139,6 +139,7 @@ public interface IArticleService extends IContentService<Article,Article,Article
 
     ArticlePageCondition pagePublishBy(Integer componentsId, Set<String> sortStr, String order, Integer page, Integer size);
 
+
     ArticlePageCondition pagePublishBy(Set<Integer> ids, Set<String> sortStr, String order, Integer page, Integer size);
 
     //    Page<ArticleDto> pageHtmlDtoByCategory(Category category, int page);
