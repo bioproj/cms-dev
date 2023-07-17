@@ -22,7 +22,7 @@ public class CategoryDetailVO {
     private String path;
     private String cssClass;
     private Boolean recommend;
-
+    private Integer userId;
     private Boolean existNav;
     private String articleTemplateName;
     private String icon;

@@ -22,4 +22,12 @@ public class AuthorizationUtil {
         }
         return null;
     }
+
+    public static UserDetailDTO getUserNotNUll(HttpServletRequest request) {
+        Object obj = request.getAttribute("user");
+        if (obj != null) {
+            return ((UserDetailDTO) obj);
+        }
+        throw new AuthorizationException("用户不存在！");
+    }
 }

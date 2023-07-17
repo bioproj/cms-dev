@@ -4,7 +4,9 @@ import com.wangyang.common.BaseResponse;
 import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.pojo.authorize.Role;
 import com.wangyang.pojo.authorize.User;
+import com.wangyang.pojo.authorize.UserDetailDTO;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.vo.ArticleDetailVO;
@@ -95,15 +97,15 @@ public class CategoryController {
     @PostMapping("/save/{categoryId}")
     public Category save(@Valid @RequestBody CategoryParam categoryParam,@PathVariable("categoryId") Integer categoryId, HttpServletRequest request){
         Category category = categoryService.findById(categoryId);
-        int userId = AuthorizationUtil.getUserId(request);
+        UserDetailDTO userDetailDTO = AuthorizationUtil.getUserNotNUll(request);
 
         BeanUtils.copyProperties(categoryParam, category,CMSUtils.getNullPropertyNames(categoryParam));
         if(category.getUserId()==null){
-            category.setUserId(userId);
+            category.setUserId(userDetailDTO.getId());
         }else {
-            checkUser(userId,category);
+            checkUser(userDetailDTO,category);
         }
-        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userId);
+        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userDetailDTO.getId());
 
 //        //更新Category列表
 //        htmlService.generateCategoryListHtml();
@@ -115,7 +117,7 @@ public class CategoryController {
     }
     @PostMapping("/update/{categoryId}")
     public Category update(@Valid @RequestBody CategoryParam categoryParam, @PathVariable("categoryId") Integer categoryId, HttpServletRequest request){
-        int userId = AuthorizationUtil.getUserId(request);
+        UserDetailDTO userDetailDTO = AuthorizationUtil.getUserNotNUll(request);
 
 
         Category category = categoryService.findById(categoryId);
@@ -125,11 +127,11 @@ public class CategoryController {
 
         BeanUtils.copyProperties(categoryParam, category,CMSUtils.getNullPropertyNames(categoryParam));
         if(category.getUserId()==null){
-            category.setUserId(userId);
+            category.setUserId(userDetailDTO.getId());
         }else {
-            checkUser(userId,category);
+            checkUser(userDetailDTO,category);
         }
-        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userId);
+        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userDetailDTO.getId());
         if(categoryParam.getPath()!=null){
             if(!categoryParam.getPath().equals(oldPath) ||
                     (category.getArticleUseViewName() && !categoryParam.getPath().equals(oldPath) &&
@@ -332,8 +334,9 @@ public class CategoryController {
         Category category = categoryService.createCategoryLanguage(id, lang);
         return BaseResponse.ok(category.getName()+"成功创建"+lang.getSuffix());
     }
-    public void checkUser(int userId,Category category){
-        if(category.getUserId()!=userId){
+    public void checkUser(UserDetailDTO userDetailDTO,Category category){
+        Set<String> strings = ServiceUtil.fetchProperty(userDetailDTO.getRoles(), Role::getEnName);
+        if(category.getUserId()!=userDetailDTO.getId() && !strings.contains("ADMIN")){
             throw new ArticleException("您并非文章的发布者不能修改！");
         }
     }
