@@ -1,6 +1,7 @@
 package com.wangyang.pojo.vo;
 
 import com.wangyang.common.pojo.BaseVo;
+import com.wangyang.pojo.authorize.User;
 import lombok.Data;
 
 @Data
@@ -36,6 +37,8 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private String formatContent;
     private Boolean parse;
     private String cssClass;
+
+    private User user;
 
     private Boolean articleUseViewName;
 }

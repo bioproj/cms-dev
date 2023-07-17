@@ -30,13 +30,13 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
      * @param category
      * @return
      */
-    Category create(Category category,Set<Integer> tagIds);
+    Category create(Category category,Set<Integer> tagIds,Integer userId);
     /**
      * add category
      * @param category
      * @return
      */
-    Category update(Category category, Set<Integer> tagIds);
+    Category update(Category category, Set<Integer> tagIds,Integer userId);
 
 //    Page<CategoryDto> pageBy(String categoryEnName, int page, int size);
 

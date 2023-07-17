@@ -6,6 +6,7 @@ import com.wangyang.common.exception.OptionException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryChild;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.*;
@@ -19,6 +20,7 @@ import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.repository.ComponentsCategoryRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.service.*;
+import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.AbstractBaseCategoryServiceImpl;
 import com.wangyang.util.FormatUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +65,8 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
     @Autowired
     TagsRepository tagsRepository;
 
-
+    @Autowired
+    IUserService userService;
 
     @Autowired
     CategoryTagsRepository categoryTagsRepository;
@@ -130,21 +133,21 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 
 
     @Override
-    public Category create(Category categoryParam,Set<Integer> tagIds) {
+    public Category create(Category categoryParam,Set<Integer> tagIds,Integer userId) {
 
-        Category category = createOrUpdate(categoryParam,tagIds);
+        Category category = createOrUpdate(categoryParam,tagIds,userId);
         return category;
     }
 
     @Override
-    public Category update(Category categoryParam,Set<Integer> tagIds) {
+    public Category update(Category categoryParam,Set<Integer> tagIds,Integer userId) {
         categoryTagsRepository.deleteByCategoryId(categoryParam.getId());
 
-        Category category = createOrUpdate(categoryParam,tagIds);
+        Category category = createOrUpdate(categoryParam,tagIds,userId);
         return category;
     }
 
-    public Category createOrUpdate(Category category,Set<Integer> tagIds){
+    public Category createOrUpdate(Category category,Set<Integer> tagIds,Integer userId){
         if(category.getParentId()==null){
             category.setParentId(0);
         }
@@ -198,6 +201,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         }else {
             category.setFormatContent(category.getOriginalContent());
         }
+
 
 
         Category saveCategory = categoryRepository.save(category);
@@ -586,6 +590,12 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
     @Override
     public CategoryVO covertToVo(Category category){
         CategoryVO categoryVO = new CategoryVO();
+        if(category.getUserId()!=null){
+            Integer userId = category.getUserId();
+            User user = userService.findUserById(userId);
+            categoryVO.setUser(user);
+        }
+
         BeanUtils.copyProperties(category, categoryVO);
         categoryVO.setLinkPath(FormatUtil.categoryListFormat(category));
         categoryVO.setRecommendPath(category.getPath()+CMSUtils.getArticleRecommendPath()+ File.separator+category.getViewName());

@@ -1,8 +1,10 @@
 package com.wangyang.web.controller.api;
 
 import com.wangyang.common.BaseResponse;
+import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.vo.ArticleDetailVO;
@@ -18,6 +20,8 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.vo.CategoryVO;
+import com.wangyang.service.authorize.IUserService;
+import com.wangyang.util.AuthorizationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.util.List;
@@ -45,6 +50,8 @@ public class CategoryController {
     IHtmlService htmlService;
 
     @Autowired
+    IUserService userService;
+    @Autowired
     CategoryTagsRepository categoryTagsRepository;
 
     @GetMapping
@@ -53,11 +60,12 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category add(@Valid @RequestBody CategoryParam categoryParam){
+    public Category add(@Valid @RequestBody CategoryParam categoryParam, HttpServletRequest request){
         Category category = new Category();
-
+        int userId = AuthorizationUtil.getUserId(request);
         BeanUtils.copyProperties(categoryParam,category);
-        Category saveCategory = categoryService.create(category,categoryParam.getTagIds());
+        category.setUserId(userId);
+        Category saveCategory = categoryService.create(category,categoryParam.getTagIds(),userId);
 
 
         //生成category列表Html
@@ -85,12 +93,17 @@ public class CategoryController {
         return categoryService.pageBy(categoryEnName,pageable);
     }
     @PostMapping("/save/{categoryId}")
-    public Category save(@Valid @RequestBody CategoryParam categoryParam,@PathVariable("categoryId") Integer categoryId){
+    public Category save(@Valid @RequestBody CategoryParam categoryParam,@PathVariable("categoryId") Integer categoryId, HttpServletRequest request){
         Category category = categoryService.findById(categoryId);
-
+        int userId = AuthorizationUtil.getUserId(request);
 
         BeanUtils.copyProperties(categoryParam, category,CMSUtils.getNullPropertyNames(categoryParam));
-        Category updateCategory = categoryService.update(category,categoryParam.getTagIds());
+        if(category.getUserId()==null){
+            category.setUserId(userId);
+        }else {
+            checkUser(userId,category);
+        }
+        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userId);
 
 //        //更新Category列表
 //        htmlService.generateCategoryListHtml();
@@ -101,31 +114,41 @@ public class CategoryController {
         return updateCategory;
     }
     @PostMapping("/update/{categoryId}")
-    public Category update(@Valid @RequestBody CategoryParam categoryParam,@PathVariable("categoryId") Integer categoryId){
+    public Category update(@Valid @RequestBody CategoryParam categoryParam, @PathVariable("categoryId") Integer categoryId, HttpServletRequest request){
+        int userId = AuthorizationUtil.getUserId(request);
+
+
         Category category = categoryService.findById(categoryId);
         String oldViewName= category.getViewName();
         String oldPath= category.getPath();
 
 
         BeanUtils.copyProperties(categoryParam, category,CMSUtils.getNullPropertyNames(categoryParam));
-        Category updateCategory = categoryService.update(category,categoryParam.getTagIds());
-
-        if(!categoryParam.getPath().equals(oldPath) ||
-                (category.getArticleUseViewName() && !categoryParam.getPath().equals(oldPath) &&
-                        !categoryParam.getViewName().equals(oldViewName))){
-            List<Article> articles = articleService.listArticleBy(category.getId());
-            articles.forEach(article -> {
-                if(category.getArticleUseViewName()){
-                    article.setPath(category.getPath()+File.separator+category.getViewName());
-                }else {
-                    article.setPath(category.getPath());
-                }
-                articleService.save(article);
-                ArticleDetailVO articleDetailVO = articleService.convert(article);
-                htmlService.conventHtml(articleDetailVO);
-            });
-//            htmlService.convertArticleListBy(category);
+        if(category.getUserId()==null){
+            category.setUserId(userId);
+        }else {
+            checkUser(userId,category);
         }
+        Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userId);
+        if(categoryParam.getPath()!=null){
+            if(!categoryParam.getPath().equals(oldPath) ||
+                    (category.getArticleUseViewName() && !categoryParam.getPath().equals(oldPath) &&
+                            !categoryParam.getViewName().equals(oldViewName))){
+                List<Article> articles = articleService.listArticleBy(category.getId());
+                articles.forEach(article -> {
+                    if(category.getArticleUseViewName()){
+                        article.setPath(category.getPath()+File.separator+category.getViewName());
+                    }else {
+                        article.setPath(category.getPath());
+                    }
+                    articleService.save(article);
+                    ArticleDetailVO articleDetailVO = articleService.convert(article);
+                    htmlService.conventHtml(articleDetailVO);
+                });
+//            htmlService.convertArticleListBy(category);
+            }
+        }
+
         //更新Category列表
         htmlService.generateCategoryListHtml();
         if(updateCategory.getHaveHtml()){
@@ -180,6 +203,10 @@ public class CategoryController {
                 }
                 if(category.getPath()==null || category.getPath()==""){
                     category.setPath(CMSUtils.getCategoryPath());
+                }
+                if(category.getUserId()==null){
+                    User user = userService.findUserByUsername("admin");
+                    category.setUserId(user.getId());
                 }
                 categoryService.save(category);
             }
@@ -305,5 +332,9 @@ public class CategoryController {
         Category category = categoryService.createCategoryLanguage(id, lang);
         return BaseResponse.ok(category.getName()+"成功创建"+lang.getSuffix());
     }
-
+    public void checkUser(int userId,Category category){
+        if(category.getUserId()!=userId){
+            throw new ArticleException("您并非文章的发布者不能修改！");
+        }
+    }
 }
