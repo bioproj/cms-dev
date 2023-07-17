@@ -52,7 +52,7 @@ public abstract class AbstractServiceTest {
         categoryParam.setName("TestCategory");
         categoryParam.setParentId(0);
         categoryParam.setPath("111111111111");
-        return categoryService.create(categoryParam,null);
+        return categoryService.create(categoryParam,null,4);
     }
     public Category addCategory(){
 
@@ -75,7 +75,7 @@ public abstract class AbstractServiceTest {
         return user;
     }
     public Article addArticle(){
-        Category category = categoryService.create(addCategory(),null);
+        Category category = categoryService.create(addCategory(),null,4);
         User user = userService.add(addUser());
         Article articleParams = new Article();
         articleParams.setTitle("Title");
