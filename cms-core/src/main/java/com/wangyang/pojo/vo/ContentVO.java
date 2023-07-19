@@ -48,6 +48,10 @@ public class ContentVO extends BaseVo<ContentVO> {
     private String linkPath ;
     private Boolean top;
     private String cssClass;
+    private Boolean isDivision;
+    
+
+
 //    public String getLinkPath() {
 //        return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";
 //    }

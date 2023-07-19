@@ -50,7 +50,7 @@ public class Content extends BaseEntity {
     private String direction; //节点的方向
     private String cssClass;
 
-
+    private Boolean isDivision=false;
     private Integer articleInComponentOrder=0;
 }
 
