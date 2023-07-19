@@ -31,4 +31,9 @@ public class ArticleParams  implements InputConverter<Article> {
     private String picPath;
     private String cssClass; //节点的方向
 
+    private String bilibili;
+    private String youtube;
+    private String video;
+
+
 }

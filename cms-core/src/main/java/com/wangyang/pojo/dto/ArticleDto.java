@@ -44,6 +44,10 @@ public class ArticleDto  implements Serializable {
     // 路径格式
     private String linkPath ;
     private Boolean top;
+    private String bilibili;
+    private String youtube;
+    private String video;
+
 
 
 }

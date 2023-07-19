@@ -51,6 +51,10 @@ public class ArticleVO extends ContentVO {
 //    private Boolean top;
 //    private String formatContent;
     private Integer articleInComponentOrder;
+    private String bilibili;
+    private String youtube;
+    private String video;
+
 //    public String getLinkPath() {
 //      return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";
 //    }

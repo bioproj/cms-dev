@@ -29,6 +29,10 @@ public class ArticleDetailVO extends ArticleDto implements Serializable {
     private String cssClass;
     private String commentPath;
     private Boolean isPublisher=false;
+    private String bilibili;
+    private String youtube;
+    private String video;
+
 
 //    public String getCommentPath() {
 //        return this.getPath()+ CMSUtils.getCommentJSON()+ File.separator +this.getViewName();

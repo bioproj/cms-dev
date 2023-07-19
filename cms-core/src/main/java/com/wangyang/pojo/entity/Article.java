@@ -17,9 +17,9 @@ public class Article extends Content {
     private Integer commentNum=0;
 //    private Boolean haveHtml=true;
     private String summary;
-
-
-
+    private String bilibili;
+    private String youtube;
+    private String video;
 
 
 
