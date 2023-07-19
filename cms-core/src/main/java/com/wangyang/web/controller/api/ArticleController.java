@@ -586,6 +586,15 @@ public class ArticleController {
         return article;
     }
 
+
+    @GetMapping("/divisionOkOrCancel/{id}")
+    public Article divisionOkOrCancel(@PathVariable("id")int id){
+        Article article = articleService.divisionOkOrCancel(id);
+
+//        htmlService.articleTopListByCategoryId(article.getCategoryId());
+        return article;
+    }
+
     public void checkUser(int userId,Article article){
         if(article.getUserId()!=userId){
             throw new ArticleException("您并非文章的发布者不能修改！");

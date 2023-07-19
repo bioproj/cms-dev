@@ -32,6 +32,7 @@ public class ArticleDetailVO extends ArticleDto implements Serializable {
     private String bilibili;
     private String youtube;
     private String video;
+    private Boolean isDivision;
 
 
 //    public String getCommentPath() {

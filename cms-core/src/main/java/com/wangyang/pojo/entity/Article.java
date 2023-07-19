@@ -20,7 +20,7 @@ public class Article extends Content {
     private String bilibili;
     private String youtube;
     private String video;
-
+    private Boolean isDivision=false;
 
 
 }

@@ -1500,9 +1500,24 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         }else {
             article.setTop(true);
         }
-        return  article;
+        return  save(article);
     }
 
+    @Override
+    public Article divisionOkOrCancel(int id) {
+        Article article = findArticleById(id);
+        if(article.getIsDivision()!=null){
+            if(article.getIsDivision()){
+                article.setIsDivision(false);
+            }else {
+                article.setIsDivision(true);
+            }
+        }else {
+            article.setIsDivision(true);
+        }
+
+        return  save(article);
+    }
 
     @Override
     public List<ArticleVO> listVoTree(Integer categoryId) {

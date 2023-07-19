@@ -34,6 +34,6 @@ public class ArticleParams  implements InputConverter<Article> {
     private String bilibili;
     private String youtube;
     private String video;
-
+    private Boolean isDivision;
 
 }

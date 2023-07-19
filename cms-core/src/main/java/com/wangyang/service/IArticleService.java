@@ -216,6 +216,8 @@ public interface IArticleService extends IContentService<Article,Article,Article
 
     List<ArticleVO> listVoByCategoryViewName(String viewName);
 
+    Article divisionOkOrCancel(int id);
+
 //    void updateOrder(Integer id, List<ArticleVO> articleVOS);
 
 
