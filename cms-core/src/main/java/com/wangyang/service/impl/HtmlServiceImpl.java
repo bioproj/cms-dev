@@ -14,6 +14,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.config.ApplicationBean;
@@ -40,6 +41,8 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -83,6 +86,19 @@ public class HtmlServiceImpl implements IHtmlService {
     @Autowired
     IComponentsCategoryService componentsCategoryService;
 
+
+
+    public void flattenContentVOTreeToList(List<ContentVO> contentVOS,List<ContentVO> contentVOList) {
+        for (ContentVO content: contentVOS){
+            contentVOList.add(content);
+            if(content.getChildren().size()!=0){
+                flattenContentVOTreeToList(content.getChildren(),contentVOList);
+            }
+        }
+    }
+
+
+
     @Override
     @Async //异步执行
     public void conventHtml(ArticleDetailVO articleVO){
@@ -101,7 +117,35 @@ public class HtmlServiceImpl implements IHtmlService {
 //            deleteTempFileByCategory(category);
             //生成文章列表，文章列表依赖分类列表'
 
-            convertArticleListBy(categoryVO);
+//            if(articleVO.getCategory().getArticleTemplateName().)
+
+            Template template = templateService.findOptionalByEnName(articleVO.getCategory().getTemplateName());
+            CategoryContentListDao categoryContentListDao = convertArticleListBy(categoryVO,template);
+
+            if(template.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+                List<ContentVO> contents = categoryContentListDao.getContents();
+                List<ContentVO> contentVOList = new ArrayList<>();
+                flattenContentVOTreeToList(contents,contentVOList);
+                List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
+                int index = IntStream.range(0, contentVOS.size())
+                        .filter(i -> contentVOS.get(i).getId().equals(articleVO.getId()))
+                        .findFirst()
+                        .orElse(-1);
+                if(index!=-1){
+                    int size = contentVOS.size();
+                    if(index>0){
+                        ContentVO forwardContentVO = contentVOS.get(index - 1);
+                        articleVO.setForwardContentVO(forwardContentVO);
+                    }
+                    if(index<(size-1)){
+                        ContentVO nextcontentVO = contentVOS.get(index + 1);
+                        articleVO.setNextcontentVO(nextcontentVO);
+                    }
+                }
+                System.out.println();
+            }
+
+
             //判断评论文件是否存在
             if(!TemplateUtil.componentsExist(articleVO.getViewName())){
                 generateCommentHtmlByArticleId(articleVO.getId());
@@ -282,18 +326,22 @@ public class HtmlServiceImpl implements IHtmlService {
     public CategoryContentListDao convertArticleListBy(Category category) {
         return convertArticleListBy(categoryService.covertToVo(category));
     }
-
+    @Override
+    public CategoryContentListDao convertArticleListBy(CategoryVO category) {
+        Template template = templateService.findOptionalByEnName(category.getTemplateName());
+        return convertArticleListBy(category,template);
+    }
     /**
      * 生成该栏目下文章列表, 只展示文章列表
      * @param category
      */
-    @Override
-    public CategoryContentListDao convertArticleListBy(CategoryVO category) {
+
+    public CategoryContentListDao convertArticleListBy(CategoryVO category,Template template) {
 //        //生成分类列表,用于首页文章列表右侧展示
 //        if(!TemplateUtil.componentsExist(category.getTemplateName())){
 //                generateCategoryListHtml();
 //        }
-        Template template = templateService.findOptionalByEnName(category.getTemplateName());
+
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, 0);
         categoryArticle.setPage(0);
 //        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
@@ -375,6 +423,7 @@ public class HtmlServiceImpl implements IHtmlService {
            convertArticleListBy(categoryService.covertToVo(parentCategory));
 
        }
+
         return categoryArticle;
     }
 

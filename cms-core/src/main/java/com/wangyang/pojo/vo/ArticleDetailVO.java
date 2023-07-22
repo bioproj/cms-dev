@@ -33,6 +33,8 @@ public class ArticleDetailVO extends ArticleDto implements Serializable {
     private String youtube;
     private String video;
     private Boolean isDivision;
+    private ContentVO forwardContentVO;
+    private  ContentVO nextcontentVO;
 
 
 //    public String getCommentPath() {
