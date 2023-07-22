@@ -8,6 +8,7 @@ import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.service.*;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/preview")
@@ -108,7 +111,34 @@ public class PreviewController {
         articleService.addParentCategory(categoryVOS,articleDetailVo.getCategory().getParentId());
 
         articleDetailVo.setParentCategory(categoryVOS);
-        List<Category> partnerCategory = categoryService.findByParentId(articleDetailVo.getCategory().getParentId());
+
+
+        Template categoryTemplate = templateService.findOptionalByEnName(category.getTemplateName());
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,categoryTemplate, 0);
+
+        if(categoryTemplate.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+            List<ContentVO> contents = categoryArticle.getContents();
+            List<ContentVO> contentVOList = new ArrayList<>();
+            CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
+            List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
+            int index = IntStream.range(0, contentVOS.size())
+                    .filter(i -> contentVOS.get(i).getId().equals(articleId))
+                    .findFirst()
+                    .orElse(-1);
+            if(index!=-1){
+                int size = contentVOS.size();
+                if(index>0){
+                    ContentVO forwardContentVO = contentVOS.get(index - 1);
+                    articleDetailVo.setForwardContentVO(forwardContentVO);
+                }
+                if(index<(size-1)){
+                    ContentVO nextcontentVO = contentVOS.get(index + 1);
+                    articleDetailVo.setNextcontentVO(nextcontentVO);
+                }
+            }
+        }
+
+//        List<Category> partnerCategory = categoryService.findByParentId(articleDetailVo.getCategory().getParentId());
 //        articleDetailVo.setPartnerCategory(categoryService.convertToListVo(partnerCategory));
 
 

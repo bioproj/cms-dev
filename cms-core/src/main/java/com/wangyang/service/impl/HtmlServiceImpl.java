@@ -8,7 +8,6 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.*;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.ArticlePageCondition;
-import com.wangyang.pojo.dto.CategoryArticleListDao;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
@@ -88,15 +87,6 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
 
-    public void flattenContentVOTreeToList(List<ContentVO> contentVOS,List<ContentVO> contentVOList) {
-        for (ContentVO content: contentVOS){
-            contentVOList.add(content);
-            if(content.getChildren().size()!=0){
-                flattenContentVOTreeToList(content.getChildren(),contentVOList);
-            }
-        }
-    }
-
 
 
     @Override
@@ -125,7 +115,7 @@ public class HtmlServiceImpl implements IHtmlService {
             if(template.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
                 List<ContentVO> contents = categoryContentListDao.getContents();
                 List<ContentVO> contentVOList = new ArrayList<>();
-                flattenContentVOTreeToList(contents,contentVOList);
+                CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
                 List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
                 int index = IntStream.range(0, contentVOS.size())
                         .filter(i -> contentVOS.get(i).getId().equals(articleVO.getId()))
@@ -142,7 +132,6 @@ public class HtmlServiceImpl implements IHtmlService {
                         articleVO.setNextcontentVO(nextcontentVO);
                     }
                 }
-                System.out.println();
             }
 
 
@@ -336,7 +325,8 @@ public class HtmlServiceImpl implements IHtmlService {
      * @param category
      */
 
-    public CategoryContentListDao convertArticleListBy(CategoryVO category,Template template) {
+
+    public CategoryContentListDao convertArticleListBy(CategoryVO category, Template template) {
 //        //生成分类列表,用于首页文章列表右侧展示
 //        if(!TemplateUtil.componentsExist(category.getTemplateName())){
 //                generateCategoryListHtml();

@@ -1,6 +1,7 @@
 package com.wangyang.common.utils;
 
 import com.wangyang.common.CmsConst;
+import com.wangyang.pojo.vo.ContentVO;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CMSUtils {
@@ -160,4 +162,14 @@ public class CMSUtils {
             }
         }
     }
+    public static void flattenContentVOTreeToList(List<ContentVO> contentVOS, List<ContentVO> contentVOList) {
+        for (ContentVO content: contentVOS){
+            contentVOList.add(content);
+            if(content.getChildren().size()!=0){
+                flattenContentVOTreeToList(content.getChildren(),contentVOList);
+            }
+        }
+    }
+
+
 }

@@ -3,10 +3,7 @@ package com.wangyang.service;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryArticleListDao;
 import com.wangyang.pojo.dto.CategoryContentListDao;
-import com.wangyang.pojo.entity.Article;
-import com.wangyang.pojo.entity.Category;
-import com.wangyang.pojo.entity.Components;
-import com.wangyang.pojo.entity.Sheet;
+import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
 import org.springframework.data.domain.Page;
@@ -83,6 +80,7 @@ public interface IHtmlService {
     void commonTemplate(String option);
 
     CategoryContentListDao convertArticleListBy(CategoryVO category);
+
 
     String convertArticleListBy(Category category, int page);
 
