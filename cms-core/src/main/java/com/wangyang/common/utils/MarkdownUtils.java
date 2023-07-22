@@ -14,7 +14,7 @@ import com.vladsch.flexmark.ext.emoji.EmojiShortcutType;
 import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
 import com.vladsch.flexmark.ext.macros.MacrosExtension;
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
+
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -27,6 +27,7 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.wangyang.common.flexmark.footnotes.FootnoteExtension;
 import com.wangyang.common.flexmark.gitlab.GitLabExtension;
 //import com.wangyang.common.flexmark.imgattr.AttributeExtension;
+import com.wangyang.common.flexmark.table.TablesExtension;
 import com.wangyang.pojo.entity.base.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
