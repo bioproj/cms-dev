@@ -536,7 +536,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             Category category = categoryService.findById(saveArticle.getCategoryId());
             articleDetailVO.setCategory(categoryService.covertToVo(category));
         }
-
+        articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
         return articleDetailVO;
     }
 
@@ -558,7 +558,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         //添加用户
         User user = userService.findById(article.getUserId());
         articleDetailVo.setUser(user);
-
+        articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
         return articleDetailVo;
     }
 
