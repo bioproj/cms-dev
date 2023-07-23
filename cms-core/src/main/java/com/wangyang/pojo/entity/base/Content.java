@@ -32,6 +32,11 @@ public class Content extends BaseEntity {
     @Column(name = "js_", columnDefinition = "longtext")
     private String js;
     private String templateName;
+    private String categoryPath;
+    private String categoryViewName;
+    private Boolean isArticleDocLink;
+
+
     private String commentTemplateName;
     //是否开启评论
     @Column(columnDefinition = "bit(1) default false")

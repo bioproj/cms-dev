@@ -151,7 +151,7 @@ public interface IArticleService extends IContentService<Article,Article,Article
      * @param articleQuery
      * @return
      */
-    Page<Article>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery);
+//    Page<Article>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery);
     /**
      * 包含DRAFT,RECYCLE
      * @param pageable

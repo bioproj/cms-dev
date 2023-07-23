@@ -123,6 +123,9 @@ public class CategoryController {
         Category category = categoryService.findById(categoryId);
         String oldViewName= category.getViewName();
         String oldPath= category.getPath();
+        Boolean oldArticleUseViewName = category.getArticleUseViewName();
+        Boolean oldIsArticleDocLink = category.getIsArticleDocLink();
+
 
 
         BeanUtils.copyProperties(categoryParam, category,CMSUtils.getNullPropertyNames(categoryParam));
@@ -132,10 +135,15 @@ public class CategoryController {
             checkUser(userDetailDTO,category);
         }
         Category updateCategory = categoryService.update(category,categoryParam.getTagIds(),userDetailDTO.getId());
+
+
         if(categoryParam.getPath()!=null){
-            if(!categoryParam.getPath().equals(oldPath) ||
-                    (category.getArticleUseViewName() && !categoryParam.getPath().equals(oldPath) &&
-                            !categoryParam.getViewName().equals(oldViewName))){
+            if(!categoryParam.getPath().equals(oldPath)
+                    ||   !categoryParam.getViewName().equals(oldViewName)
+                    || !categoryParam.getArticleUseViewName().equals(oldArticleUseViewName)
+                    || !categoryParam.getIsArticleDocLink().equals(oldIsArticleDocLink)
+
+            ){
                 List<Article> articles = articleService.listArticleBy(category.getId());
                 articles.forEach(article -> {
                     if(category.getArticleUseViewName()){
@@ -143,6 +151,9 @@ public class CategoryController {
                     }else {
                         article.setPath(category.getPath());
                     }
+                    article.setCategoryPath(category.getPath());
+                    article.setCategoryViewName(category.getViewName());
+                    article.setIsArticleDocLink(category.getIsArticleDocLink());
                     articleService.save(article);
                     ArticleDetailVO articleDetailVO = articleService.convert(article);
                     htmlService.conventHtml(articleDetailVO);

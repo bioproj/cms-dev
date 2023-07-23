@@ -58,6 +58,14 @@ public class FormatUtil {
         return File.separator+article.getPath().replace(File.separator,"_")+"_"+article.getViewName();
     }
     public static String articleListFormat(Article article) {
+        if(article!=null && (article.getIsArticleDocLink()!=null && article.getIsArticleDocLink())){
+            String path = article.getCategoryPath();
+            if(path.startsWith("html")){
+                path =  path.replace("html/","");
+            }
+
+            return File.separator+path+File.separator+article.getCategoryViewName()+".html#/"+article.getViewName()+".html";
+        }
         if(article.getPath().startsWith("html")){
             return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName()+".html";
         }
@@ -71,14 +79,14 @@ public class FormatUtil {
     }
 
 
-    public static String articleListFormat(Content content, CategoryDto category) {
-        if(category!=null && (category.getIsArticleDocLink()!=null && category.getIsArticleDocLink())){
-            String path = category.getPath();
+    public static String articleListFormat(Content content) {
+        if(content!=null && (content.getIsArticleDocLink()!=null && content.getIsArticleDocLink())){
+            String path = content.getCategoryPath();
             if(path.startsWith("html")){
                 path =  path.replace("html/","");
             }
 
-            return File.separator+path+File.separator+category.getViewName()+".html#/"+content.getViewName()+".html";
+            return File.separator+path+File.separator+content.getCategoryViewName()+".html#/"+content.getViewName()+".html";
         }
         if(content.getPath().startsWith("html")){
             return File.separator+content.getPath().replace("html/","")+File.separator+content.getViewName()+".html";

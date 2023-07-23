@@ -4,15 +4,14 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
-import com.wangyang.pojo.entity.Category;
-import com.wangyang.pojo.entity.ComponentsArticle;
-import com.wangyang.pojo.entity.Template;
+import com.wangyang.pojo.entity.*;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
@@ -23,14 +22,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -159,7 +157,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         return domains.stream().map(domain -> {
             ARTICLEVO domainvo = getVOInstance();
             BeanUtils.copyProperties(domain,domainvo);
-            domainvo.setLinkPath(FormatUtil.articleListFormat(domain,null));
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
             return domainvo;
 
         }).collect(Collectors.toList());
@@ -196,5 +194,75 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     @Override
     public CategoryContentListDao findCategoryContentBy(Category category, Template template, int page) {
         return null;
+    }
+
+    public  List<Predicate> listPredicate(ArticleQuery articleQuery, Root<ARTICLE> root, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query){
+        List<Predicate> predicates = new LinkedList<>();
+
+
+
+        if (articleQuery.getCategoryId()!=null) {
+            predicates.add(criteriaBuilder.equal(root.get("categoryId"),articleQuery.getCategoryId()));
+        }
+
+        if (articleQuery.getKeyword() != null) {
+            // Format like condition
+            String likeCondition = String.format("%%%s%%",articleQuery.getKeyword());
+
+            // Build like predicate
+            Predicate titleLike = criteriaBuilder.like(root.get("title"), likeCondition);
+            Predicate originalContentLike = criteriaBuilder.like(root.get("originalContent"), likeCondition);
+
+            predicates.add(criteriaBuilder.or(titleLike, originalContentLike));
+        }
+//            if(articleQuery.getHaveHtml()!=null){
+//                predicates.add(criteriaBuilder.equal(root.get("haveHtml"),articleQuery.getHaveHtml()));
+//            }
+        if(articleQuery.getUserId()!=null){
+            predicates.add(criteriaBuilder.equal(root.get("userId"), articleQuery.getUserId()));
+        }
+        if(articleQuery.getStatus()!=null){
+            predicates.add(criteriaBuilder.equal(root.get("status"),articleQuery.getStatus()));
+        }
+        if(articleQuery.getTagsId()!=null){
+
+            Subquery<Article> subquery = query.subquery(Article.class);
+            Root<ArticleTags> subRoot = subquery.from(ArticleTags.class);
+            subquery = subquery.select(subRoot.get("articleId")).where(criteriaBuilder.equal(subRoot.get("tagsId"),articleQuery.getTagsId()));
+            predicates.add(criteriaBuilder.in(root.get("id")).value(subquery));
+        }
+        if(articleQuery.getTop()!=null){
+            if(articleQuery.getTop()){
+                predicates.add(criteriaBuilder.isTrue(root.get("top")));
+            }else {
+                predicates.add(criteriaBuilder.isFalse(root.get("top")));
+            }
+
+        }
+        return predicates;
+    }
+    public Specification<ARTICLE> buildPublishByQuery(ArticleQuery articleQuery) {
+        return (Specification<ARTICLE>) (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = listPredicate(articleQuery, root, criteriaBuilder, query);
+            predicates.add(criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                    criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
+
+            query.where(predicates.toArray(new Predicate[0]));
+            if(articleQuery.getDesc()!=null){
+                if(articleQuery.getDesc()){
+                    query.orderBy(criteriaBuilder.desc(root.get("order")),criteriaBuilder.desc(root.get("id")));
+                }else {
+                    query.orderBy(criteriaBuilder.asc(root.get("order")),criteriaBuilder.desc(root.get("id")));
+
+                }
+            }
+
+            return query.getRestriction();
+        };
+    }
+
+    @Override
+    public Page<ARTICLE>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery){
+        return  contentRepository.findAll(buildPublishByQuery(articleQuery),pageable);
     }
 }

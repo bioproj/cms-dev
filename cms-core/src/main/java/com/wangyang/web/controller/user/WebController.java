@@ -17,6 +17,7 @@ import com.wangyang.service.IHtmlService;
 import com.wangyang.service.ITemplateService;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Template;
+import com.wangyang.service.base.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,10 @@ public class WebController {
     ITemplateService templateService;
     @Autowired
     CrudHandlers crudHandlers;
+
+
+//    @Autowired
+//    IContentService contentService;
     @Autowired
     ICategoryService categoryService;
     @Autowired

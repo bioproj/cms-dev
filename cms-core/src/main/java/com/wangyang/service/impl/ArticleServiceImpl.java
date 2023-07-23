@@ -87,71 +87,9 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         super(articleRepository);
         this.articleRepository = articleRepository;
     }
-    private  List<Predicate> listPredicate(ArticleQuery articleQuery, Root<Article> root, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query){
-        List<Predicate> predicates = new LinkedList<>();
 
 
 
-        if (articleQuery.getCategoryId()!=null) {
-            predicates.add(criteriaBuilder.equal(root.get("categoryId"),articleQuery.getCategoryId()));
-        }
-
-        if (articleQuery.getKeyword() != null) {
-            // Format like condition
-            String likeCondition = String.format("%%%s%%",articleQuery.getKeyword());
-
-            // Build like predicate
-            Predicate titleLike = criteriaBuilder.like(root.get("title"), likeCondition);
-            Predicate originalContentLike = criteriaBuilder.like(root.get("originalContent"), likeCondition);
-
-            predicates.add(criteriaBuilder.or(titleLike, originalContentLike));
-        }
-//            if(articleQuery.getHaveHtml()!=null){
-//                predicates.add(criteriaBuilder.equal(root.get("haveHtml"),articleQuery.getHaveHtml()));
-//            }
-        if(articleQuery.getUserId()!=null){
-            predicates.add(criteriaBuilder.equal(root.get("userId"), articleQuery.getUserId()));
-        }
-        if(articleQuery.getStatus()!=null){
-            predicates.add(criteriaBuilder.equal(root.get("status"),articleQuery.getStatus()));
-        }
-        if(articleQuery.getTagsId()!=null){
-
-            Subquery<Article> subquery = query.subquery(Article.class);
-            Root<ArticleTags> subRoot = subquery.from(ArticleTags.class);
-            subquery = subquery.select(subRoot.get("articleId")).where(criteriaBuilder.equal(subRoot.get("tagsId"),articleQuery.getTagsId()));
-            predicates.add(criteriaBuilder.in(root.get("id")).value(subquery));
-        }
-        if(articleQuery.getTop()!=null){
-            if(articleQuery.getTop()){
-                predicates.add(criteriaBuilder.isTrue(root.get("top")));
-            }else {
-                predicates.add(criteriaBuilder.isFalse(root.get("top")));
-            }
-
-        }
-        return predicates;
-    }
-
-    private Specification<Article> buildPublishByQuery(ArticleQuery articleQuery) {
-        return (Specification<Article>) (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = listPredicate(articleQuery, root, criteriaBuilder, query);
-            predicates.add(criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
-                    criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
-
-            query.where(predicates.toArray(new Predicate[0]));
-            if(articleQuery.getDesc()!=null){
-                if(articleQuery.getDesc()){
-                    query.orderBy(criteriaBuilder.desc(root.get("order")),criteriaBuilder.desc(root.get("id")));
-                }else {
-                    query.orderBy(criteriaBuilder.asc(root.get("order")),criteriaBuilder.desc(root.get("id")));
-
-                }
-            }
-
-            return query.getRestriction();
-        };
-    }
     private Specification<Article> buildAllByQuery(ArticleQuery articleQuery) {
         return (Specification<Article>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = listPredicate(articleQuery, root, criteriaBuilder, query);
@@ -512,6 +450,9 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         Category category = categoryService.findById(article.getCategoryId());
 
 
+        article.setCategoryPath(category.getPath());
+        article.setCategoryViewName(category.getViewName());
+        article.setIsArticleDocLink(category.getIsArticleDocLink());
 
 //        if(article.getTemplateName()==null){
 //            //由分类管理文章的模板，这样设置可以让文章去维护自己的模板
@@ -528,6 +469,10 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         }else {
             article.setPath(category.getPath());
         }
+
+
+
+
 
 //        if(article.getPath()==null || article.getPath().equals("")){
 //            article.setPath(CMSUtils.getArticlePath());
@@ -1231,10 +1176,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         return  pageAllBy(pageable,articleQuery);
     }
 
-    @Override
-    public Page<Article>  pagePublishBy(Pageable pageable,ArticleQuery articleQuery){
-        return  articleRepository.findAll(buildPublishByQuery(articleQuery),pageable);
-    }
+
     @Override
     public ArticlePageCondition pagePublishBy(Integer componentsId, Set<String> sortStr, String order, Integer page, Integer size){
         List<ComponentsCategory> componentsCategories = componentsCategoryRepository.findByComponentId(componentsId);

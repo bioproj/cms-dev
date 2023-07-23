@@ -372,7 +372,9 @@ public class ArticleController {
                 }
 //                article.setPath(CMSUtils.getArticlePath());
                 article.setTemplateName(category.getArticleTemplateName());
-
+                article.setCategoryPath(category.getPath());
+                article.setCategoryViewName(category.getViewName());
+                article.setIsArticleDocLink(category.getIsArticleDocLink());
                 articleService.save(article);
                 log.info("更新["+article.getTitle()+"]内容!!!");
             }

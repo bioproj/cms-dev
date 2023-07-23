@@ -170,7 +170,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                     })
                     .collect(Collectors.toList()));
 //            articleVO.setTags(tagsListMap.get(article.getId()));
-            contentVO.setLinkPath(FormatUtil.articleListFormat(content,null));
+            contentVO.setLinkPath(FormatUtil.articleListFormat(content));
 
             return contentVO;
         }).collect(Collectors.toList());
@@ -217,10 +217,8 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
             contentVO.setUser(userMap.get(content.getUserId()));
             if(categoryMap.containsKey(content.getCategoryId())){
                 contentVO.setCategory( categoryMap.get(content.getCategoryId()));
-                contentVO.setLinkPath(FormatUtil.articleListFormat(content,categoryMap.get(content.getCategoryId())));
-            }else {
-                contentVO.setLinkPath(FormatUtil.articleListFormat(content,null ));
             }
+            contentVO.setLinkPath(FormatUtil.articleListFormat(content ));
 //            articleVO.setLinkPath(FormatUtil.articleListFormat(article));
             contentVO.setTags(Optional.ofNullable(tagsListMap.get(content.getId()))
                     .orElseGet(LinkedList::new)

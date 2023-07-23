@@ -6,9 +6,11 @@ import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -45,6 +47,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     List<ARTICLEVO> listArticleVOBy(String viewName);
 
     ContentDetailVO updateCategory(ARTICLE content, Integer baseCategoryId);
+
+    Page<ARTICLE>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery);
 
 //    ARTICLE previewSave(ARTICLE article);
 }
