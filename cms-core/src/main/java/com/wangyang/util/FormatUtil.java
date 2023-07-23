@@ -1,5 +1,7 @@
 package com.wangyang.util;
 
+import com.wangyang.common.CmsConst;
+import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Sheet;
@@ -69,11 +71,20 @@ public class FormatUtil {
     }
 
 
-    public static String articleListFormat(Content content) {
+    public static String articleListFormat(Content content, CategoryDto category) {
+        if(category!=null && (category.getIsArticleDocLink()!=null && category.getIsArticleDocLink())){
+            String path = category.getPath();
+            if(path.startsWith("html")){
+                path =  path.replace("html/","");
+            }
+
+            return File.separator+path+File.separator+category.getViewName()+".html#/"+content.getViewName()+".html";
+        }
         if(content.getPath().startsWith("html")){
             return File.separator+content.getPath().replace("html/","")+File.separator+content.getViewName()+".html";
         }
         return File.separator+content.getPath().replace(File.separator,"_")+"_"+content.getViewName()+".html";
+
     }
 
     public static String articleFormat(ArticleDetailVO articleDetailVO) {

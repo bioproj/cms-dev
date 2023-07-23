@@ -29,7 +29,11 @@ public class SystemTemplates {
 
 
                 new Template("默认的分类模板",CmsConst.DEFAULT_CATEGORY_TEMPLATE,"@category", TemplateType.CATEGORY,4),
+
                 new Template("分类文档模板",CmsConst.DEFAULT_CATEGORY_DOC_TEMPLATE,"@categoryDoc", TemplateType.CATEGORY,4),
+                new Template("文章文档模板",CmsConst.DEFAULT_ARTICLE_DOC_TEMPLATE, "@articleDoc", TemplateType.ARTICLE,3),
+
+
 
                 new Template("列表显示文章",CmsConst.CATEGORY_ARTICLE,"@categoryArticle", TemplateType.CATEGORY,4),
                 new Template("分类模显示子分类",CmsConst.DEFAULT_CATEGORY_CHILD,"@categoryChild", TemplateType.CATEGORY,4),

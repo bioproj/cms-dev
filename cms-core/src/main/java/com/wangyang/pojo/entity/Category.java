@@ -58,6 +58,9 @@ public class Category extends BaseCategory{
     private Integer categoryInComponentOrder=0;
     @Column(name = "parse_")
     private Boolean parse=true;
+
+    private Boolean isArticleDocLink=false;
+
     public Boolean getDesc() {
         return isDesc;
     }

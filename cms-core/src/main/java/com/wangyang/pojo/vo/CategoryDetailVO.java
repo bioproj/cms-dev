@@ -34,4 +34,5 @@ public class CategoryDetailVO {
     private String recommendTemplateName;
     private Boolean parse;
     private Boolean articleUseViewName;
+    private Boolean isArticleDocLink;
 }

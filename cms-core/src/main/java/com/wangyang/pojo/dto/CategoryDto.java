@@ -15,5 +15,6 @@ public class CategoryDto {
     private Integer order;
     private String resource;
     private String icon;
-
+//    private String articleTemplateName;
+    private Boolean isArticleDocLink;
 }

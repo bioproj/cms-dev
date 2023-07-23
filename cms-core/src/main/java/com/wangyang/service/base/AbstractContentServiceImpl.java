@@ -159,7 +159,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         return domains.stream().map(domain -> {
             ARTICLEVO domainvo = getVOInstance();
             BeanUtils.copyProperties(domain,domainvo);
-            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain,null));
             return domainvo;
 
         }).collect(Collectors.toList());
