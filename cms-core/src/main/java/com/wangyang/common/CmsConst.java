@@ -86,6 +86,7 @@ public class CmsConst {
     public final static String DEFAULT_CHANNEL_TEMPLATE = "DEFAULT_CHANNEL";//分类下的文章列表
     public final static String DEFAULT_PICTURE_TEMPLATE = "DEFAULT_PICTURE";
     public final static String DEFAULT_CATEGORY_TEMPLATE = "DEFAULT_CATEGORY";
+    public final static String DEFAULT_CATEGORY_DOC_TEMPLATE = "DEFAULT_CATEGORY_DOC_TEMPLATE";
     public final static String CATEGORY_ARTICLE = "CATEGORY_ARTICLE";
     public final static String DEFAULT_CATEGORY_CHILD = "DEFAULT_CATEGORY_CHILD";
     public final static String CATEGORY_TITLE = "CATEGORY_TITLE";

@@ -142,7 +142,7 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
 
 
 
-        List<Template> findTemplates = templateRepository.findAll();
+         List<Template> findTemplates = templateRepository.findAll();
         Set<String> findTemplateName = ServiceUtil.fetchProperty(findTemplates, Template::getEnName);
 
         Set<String> templateNames = ServiceUtil.fetchProperty(templates, Template::getEnName);
