@@ -558,7 +558,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         //添加用户
         User user = userService.findById(article.getUserId());
         articleDetailVo.setUser(user);
-        articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
+        articleDetailVo.setLinkPath( FormatUtil.articleFormat(articleDetailVo));
         return articleDetailVo;
     }
 

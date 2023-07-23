@@ -96,6 +96,14 @@ public class FormatUtil {
     }
 
     public static String articleFormat(ArticleDetailVO articleDetailVO) {
+        if(articleDetailVO!=null && (articleDetailVO.getIsArticleDocLink()!=null && articleDetailVO.getIsArticleDocLink())){
+            String path = articleDetailVO.getCategoryPath();
+            if(path.startsWith("html")){
+                path =  path.replace("html/","");
+            }
+
+            return File.separator+path+File.separator+articleDetailVO.getCategoryViewName()+".html#/"+articleDetailVO.getViewName()+".html";
+        }
         if(articleDetailVO.getPath().startsWith("html")){
             return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
         }

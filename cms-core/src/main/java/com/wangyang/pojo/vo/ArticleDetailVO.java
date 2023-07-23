@@ -35,6 +35,10 @@ public class ArticleDetailVO extends ArticleDto implements Serializable {
     private Boolean isDivision;
     private ContentVO forwardContentVO;
     private  ContentVO nextcontentVO;
+
+    private String categoryPath;
+    private String categoryViewName;
+    private Boolean isArticleDocLink;
 //    private String linkPath ;
 
 //    public String getCommentPath() {
