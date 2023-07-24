@@ -130,7 +130,7 @@ public class ControllerExceptionHandler {
     private <T> BaseResponse<T> handleBaseException(Throwable t) {
         Assert.notNull(t, "Throwable must not be null");
 
-        log.error("Captured an exception", t);
+//        log.error("Captured an exception", t);
 
         BaseResponse<T> baseResponse = new BaseResponse<>();
         baseResponse.setMessage(t.getMessage());
@@ -143,8 +143,9 @@ public class ControllerExceptionHandler {
 
     private  ModelAndView mvException(Throwable t,HttpServletRequest request,int status) {
         Assert.notNull(t, "Throwable must not be null");
-
+        log.error("request.getRequestURL:{}",request.getRequestURL().toString());
         log.error("Captured an exception", t);
+
         ModelAndView modelAndView;
         if(!isAjaxRequest(request)){
             modelAndView= new ModelAndView("error");
