@@ -46,6 +46,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
 
     void updateOrder(Integer id, List<ARTICLEVO> contentVOS);
 
+    void updateOrder(Category category, List<ARTICLEVO> contentVOS);
+
     List<ARTICLEVO> listArticleVOBy(String viewName);
 
     ContentDetailVO updateCategory(ARTICLE content, Integer baseCategoryId);

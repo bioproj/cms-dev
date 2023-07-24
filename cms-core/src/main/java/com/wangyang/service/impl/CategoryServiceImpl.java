@@ -728,6 +728,23 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         Category save = save(newCategory);
         return save;
     }
+
+    @Override
+    public void addChild(List<CategoryVO> domainvos, Integer id){
+        List<Category> domains = findByParentId(id);
+        if(domains.size()==0){
+            return;
+        }
+        domains = domains.stream().filter(item-> (item.getIsRecursive()!=null && item.getIsRecursive())).collect(Collectors.toList());
+        domainvos.addAll(convertToListVo(domains));
+        if(domains.size()!=0){
+            for (Category domain:domains){
+                addChild(domainvos,domain.getId());
+            }
+        }
+
+    }
+
     @Override
     public boolean supportType(CrudType type) {
         return false;

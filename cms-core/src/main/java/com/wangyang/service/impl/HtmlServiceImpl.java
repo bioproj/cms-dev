@@ -415,15 +415,17 @@ public class HtmlServiceImpl implements IHtmlService {
 //        List<ContentVO> articleVOS = categoryArticle.getContents();
 //        TemplateUtil.convertHtmlAndSave(CMSUtils.getFirstArticleTitleList(),categoryArticle.getViewName(),articleVOS, templateTitleList);
 
+        if(category.getIsRecursive()!=null && category.getIsRecursive()){
+            /**
+             * 生成父类的文章列表
+             * **/
+            if(category.getParentId()!=0){
+                Category parentCategory = categoryService.findById(category.getParentId());
+                convertArticleListBy(categoryService.covertToVo(parentCategory));
 
-       /**
-        * 生成父类的文章列表
-        * **/
-       if(category.getParentId()!=0){
-           Category parentCategory = categoryService.findById(category.getParentId());
-           convertArticleListBy(categoryService.covertToVo(parentCategory));
+            }
+        }
 
-       }
 
         return categoryArticle;
     }

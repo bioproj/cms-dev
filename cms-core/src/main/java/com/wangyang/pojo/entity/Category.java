@@ -61,6 +61,10 @@ public class Category extends BaseCategory{
 
     private Boolean isArticleDocLink=false;
 
+
+    private Boolean isRecursive=false;
+    private Boolean isDivision=false;
+
     public Boolean getDesc() {
         return isDesc;
     }

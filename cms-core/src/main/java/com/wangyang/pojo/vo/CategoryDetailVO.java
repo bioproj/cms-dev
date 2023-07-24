@@ -35,4 +35,6 @@ public class CategoryDetailVO {
     private Boolean parse;
     private Boolean articleUseViewName;
     private Boolean isArticleDocLink;
+    private Boolean isRecursive;
+    private Boolean isDivision;
 }

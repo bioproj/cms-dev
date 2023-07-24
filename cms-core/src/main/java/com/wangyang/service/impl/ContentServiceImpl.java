@@ -493,19 +493,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     }
 
 
-    public void addChildAllIds( List<Category> categoryVOS, Integer id){
-        List<Category> categories = categoryService.findByParentId(id);
-        if(categories.size()==0){
-            return;
-        }
-        categoryVOS.addAll(categories);
-        if(categories.size()!=0){
-            for (Category category:categories){
-                addChildAllIds(categoryVOS,category.getId());
-            }
-        }
 
-    }
     @Override
     public List<ContentVO> listVoTree(Integer categoryId) {
         Category category = categoryService.findById(categoryId);
@@ -555,22 +543,6 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         return contentVOTree;
     }
 
-    @Override
-    public void updateOrder(Integer id, List<ContentVO> contentVOS) {
-        Category category = categoryService.findById(id);
-        Set<Integer> ids= new HashSet<>();
-        ids.add(category.getId());
-
-        List<Category> categories = new ArrayList<>();
-        addChildAllIds(categories,category.getId());
-        ids.addAll(ServiceUtil.fetchProperty(categories, Category::getId));
-
-
-        List<Content> contents = listContentByCategoryIds(ids, true);
-
-//        List<Article> articles = listArticleByCategoryIds(category.getId());
-        super.updateOrder(contents,contentVOS);
-    }
 
 
     @Override

@@ -17,6 +17,7 @@ import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.ComponentsArticleRepository;
 import com.wangyang.repository.base.ContentRepository;
+import com.wangyang.service.ICategoryService;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //@Component
@@ -41,6 +39,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 //    IOptionService optionService;
     @Autowired
     ComponentsArticleRepository componentsArticleRepository;
+
+    @Autowired
+    ICategoryService categoryService;
 //    @Autowired
 //    ArticleRepository articleRepository;
     private ContentRepository<ARTICLE> contentRepository;
@@ -116,8 +117,51 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Override
     public void updateOrder(Integer id, List<ARTICLEVO> contentVOS) {
+        Category category = categoryService.findById(id);
+        updateOrder(category,contentVOS);
+//        Set<Integer> ids= new HashSet<>();
+//        ids.add(category.getId());
+//
+//        List<Category> categories = new ArrayList<>();
+//        addChildAllIds(categories,category.getId());
+//        ids.addAll(ServiceUtil.fetchProperty(categories, Category::getId));
+//
+//
+//        List<Content> contents = listContentByCategoryIds(ids, true);
+//
+////        List<Article> articles = listArticleByCategoryIds(category.getId());
+//        super.updateOrder(contents,contentVOS);
+    }
+
+    public void addChildAllIds( List<Category> categoryVOS, Integer id){
+        List<Category> categories = categoryService.findByParentId(id);
+        if(categories.size()==0){
+            return;
+        }
+        categoryVOS.addAll(categories);
+        if(categories.size()!=0){
+            for (Category category:categories){
+                addChildAllIds(categoryVOS,category.getId());
+            }
+        }
 
     }
+    @Override
+    public void updateOrder(Category category, List<ARTICLEVO> contentVOS) {
+        Set<Integer> ids= new HashSet<>();
+        ids.add(category.getId());
+
+        List<Category> categories = new ArrayList<>();
+        addChildAllIds(categories,category.getId());
+        ids.addAll(ServiceUtil.fetchProperty(categories, Category::getId));
+
+
+        List<ARTICLE> contents = listContentByCategoryIds(ids, true);
+
+//        List<Article> articles = listArticleByCategoryIds(category.getId());
+        super.updateOrder(contents,contentVOS);
+    }
+
 
     @Override
     public List<ARTICLEVO> listArticleVOBy(String viewName) {

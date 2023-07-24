@@ -1,15 +1,21 @@
 package com.wangyang.web.controller.api;
 
 import com.wangyang.common.BaseResponse;
+import com.wangyang.common.CmsConst;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
+import com.wangyang.service.ITemplateService;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.util.AuthorizationUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +38,11 @@ public class ContentController {
     @Autowired
     ICategoryService categoryService;
     @Autowired
+    IArticleService articleService;
+    @Autowired
     IHtmlService htmlService;
+    @Autowired
+    ITemplateService templateService;
     @GetMapping("/listVoTree/{categoryId}")
     public List<ContentVO> listDtoTree(@PathVariable("categoryId") Integer categoryId){
         List<ContentVO> listVoTree = contentService.listVoTree(categoryId);
@@ -41,7 +51,17 @@ public class ContentController {
 
     @PostMapping("/updatePos/{id}")
     public BaseResponse addPos(@PathVariable("id") Integer id, @RequestBody List<ContentVO> contentVOS){
-        contentService.updateOrder(id,contentVOS);
+        Category category = categoryService.findById(id);
+        contentService.updateOrder(category,contentVOS);
+
+        if(category.getArticleTemplateName().equals(CmsConst.DEFAULT_COURSE_TEMPLATE)){
+            List<Article> contents = articleService.listContentByCategoryId(category.getId());
+            contents.forEach(item->{
+                htmlService.conventHtml(articleService.convert(item),false);
+            });
+        }
+
+
         //重新生成分类的列表
 //        htmlService.generateCategoryListHtml();
         return BaseResponse.ok("success");

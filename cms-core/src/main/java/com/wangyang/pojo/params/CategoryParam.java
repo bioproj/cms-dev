@@ -36,4 +36,6 @@ public class CategoryParam implements InputConverter<Category> {
     private String cssClass; //节点的方向
     private Boolean articleUseViewName=false;
     private Boolean isArticleDocLink;
+    private Boolean isRecursive;
+    private Boolean isDivision;
 }

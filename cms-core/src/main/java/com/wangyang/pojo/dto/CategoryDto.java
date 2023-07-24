@@ -17,4 +17,6 @@ public class CategoryDto {
     private String icon;
 //    private String articleTemplateName;
     private Boolean isArticleDocLink;
+    private Boolean isRecursive;
+    private Boolean isDivision;
 }

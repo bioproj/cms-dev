@@ -39,6 +39,7 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private String cssClass;
 
     private User user;
-
+    private Boolean isRecursive;
+    private Boolean isDivision;
     private Boolean articleUseViewName;
 }
