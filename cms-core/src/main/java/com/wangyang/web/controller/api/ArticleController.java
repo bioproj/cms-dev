@@ -113,7 +113,7 @@ public class ArticleController {
         Category category = categoryService.findById(id);
         List<Article> contents = articleService.listContentByCategoryId(category.getId());
         contents.forEach(item->{
-            htmlService.conventHtmlNoCategoryList(articleService.convert(item));
+            htmlService.conventHtml(articleService.convert(item),false);
         });
 
 

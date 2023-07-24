@@ -87,11 +87,15 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
 
-
-
     @Override
     @Async //异步执行
     public void conventHtml(ArticleDetailVO articleVO){
+        conventHtml(articleVO, true);
+    }
+
+    @Override
+    @Async //异步执行
+    public void conventHtml(ArticleDetailVO articleVO,Boolean isCategory){
         if(articleVO.getStatus().equals(ArticleStatus.PUBLISHED)||articleVO.getStatus().equals(ArticleStatus.MODIFY)){
             CategoryVO categoryVO = articleVO.getCategory();
 
@@ -110,7 +114,14 @@ public class HtmlServiceImpl implements IHtmlService {
 //            if(articleVO.getCategory().getArticleTemplateName().)
 
             Template template = templateService.findOptionalByEnName(articleVO.getCategory().getTemplateName());
-            CategoryContentListDao categoryContentListDao = convertArticleListBy(categoryVO,template);
+            CategoryContentListDao categoryContentListDao;
+            if(isCategory){
+                categoryContentListDao = convertArticleListBy(categoryVO,template);
+            }else {
+                categoryContentListDao = contentService.findCategoryContentBy(categoryVO,template, 0);
+            }
+
+
 
             if(template.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
                 List<ContentVO> contents = categoryContentListDao.getContents();

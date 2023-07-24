@@ -49,6 +49,9 @@ public interface IHtmlService {
 
 //    void deleteTempFileByCategory(Category category);
 
+    @Async //异步执行
+    void conventHtml(ArticleDetailVO articleVO, Boolean isCategory);
+
     @Async
     void generateRecommendArticle(List<Category> categories);
 
