@@ -67,6 +67,7 @@ public class CategoryController {
         int userId = AuthorizationUtil.getUserId(request);
         BeanUtils.copyProperties(categoryParam,category);
         category.setUserId(userId);
+        category.setIsArticleDocLink(false);
         Category saveCategory = categoryService.create(category,categoryParam.getTagIds(),userId);
 
 
@@ -142,8 +143,8 @@ public class CategoryController {
             if(!categoryParam.getPath().equals(oldPath)
                     ||   !categoryParam.getViewName().equals(oldViewName)
                     || !categoryParam.getArticleUseViewName().equals(oldArticleUseViewName)
-                    || !categoryParam.getIsArticleDocLink().equals(oldIsArticleDocLink)
-                    || !categoryParam.getArticleTemplateName().equals(oldArticleTemplate)
+                    || (categoryParam.getIsArticleDocLink()!=null && !categoryParam.getIsArticleDocLink().equals(oldIsArticleDocLink))
+                    || (categoryParam.getArticleTemplateName()!=null && !categoryParam.getArticleTemplateName().equals(oldArticleTemplate))
 
             ){
                 List<Article> articles = articleService.listArticleBy(category.getId());
