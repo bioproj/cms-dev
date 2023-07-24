@@ -118,4 +118,6 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
     Category createCategoryLanguage(Integer id, Lang lang);
 
     Category createCategoryLanguage(Category category, Lang lang);
+
+    void addChildFilterRecursive(List<CategoryVO> domainvos, Integer id);
 }

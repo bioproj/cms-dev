@@ -413,7 +413,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         Set<Integer> ids =new HashSet<>();
         List<CategoryVO> categoryVOS = new ArrayList<>();
         ids.add(category.getId());
-        categoryService.addChild(categoryVOS,category.getId());
+        categoryService.addChildFilterRecursive(categoryVOS,category.getId());
 
 
 //        List<Category> categoryPartner = categoryService.findByParentId(category.getParentId());

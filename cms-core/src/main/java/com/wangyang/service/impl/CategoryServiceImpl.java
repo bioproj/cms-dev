@@ -730,7 +730,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
     }
 
     @Override
-    public void addChild(List<CategoryVO> domainvos, Integer id){
+    public void addChildFilterRecursive(List<CategoryVO> domainvos, Integer id){
         List<Category> domains = findByParentId(id);
         if(domains.size()==0){
             return;
