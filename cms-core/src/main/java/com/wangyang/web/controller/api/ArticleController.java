@@ -7,6 +7,7 @@ import com.wangyang.common.utils.*;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.interfaces.ITemplateInit;
 import com.wangyang.pojo.entity.Template;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -107,7 +108,19 @@ public class ArticleController {
         htmlService.conventHtml(articleDetailVO);
         return articleDetailVO;
     }
+    @GetMapping("/generateArticlesByCategoryId/{id}")
+    public BaseResponse generateArticlesByCategoryId(@PathVariable("id") Integer id){
+        Category category = categoryService.findById(id);
+        List<Article> contents = articleService.listContentByCategoryId(category.getId());
+        contents.forEach(item->{
+            htmlService.conventHtmlNoCategoryList(articleService.convert(item));
+        });
 
+
+        //重新生成分类的列表
+//        htmlService.generateCategoryListHtml();
+        return BaseResponse.ok("success");
+    }
 
 /******************************************/
     /**

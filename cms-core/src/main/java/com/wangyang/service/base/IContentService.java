@@ -24,6 +24,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     ARTICLE findByViewName(String viewName, Lang lang);
     List<ARTICLE> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc);
 
+    List<ARTICLE> listContentByCategoryId(Integer categoryId);
+
     Page<ARTICLEVO> convertToPageVo(Page<ARTICLE> contentPage);
 
     void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);

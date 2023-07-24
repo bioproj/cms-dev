@@ -79,6 +79,15 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     public List<ARTICLE> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc) {
         return null;
     }
+    @Override
+    public List<ARTICLE> listContentByCategoryId(Integer categoryId) {
+        return contentRepository.findAll(new Specification<ARTICLE>() {
+            @Override
+            public Predicate toPredicate(Root<ARTICLE> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return query.where(criteriaBuilder.equal(root.get("categoryId"),categoryId)).getRestriction();
+            }
+        });
+    }
 
     @Override
     public Page<ARTICLEVO> convertToPageVo(Page<ARTICLE> contentPage) {
