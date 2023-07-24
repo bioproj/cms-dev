@@ -125,6 +125,7 @@ public class CategoryController {
         String oldPath= category.getPath();
         Boolean oldArticleUseViewName = category.getArticleUseViewName();
         Boolean oldIsArticleDocLink = category.getIsArticleDocLink();
+        String  oldArticleTemplate = category.getArticleTemplateName();
 
 
 
@@ -142,6 +143,7 @@ public class CategoryController {
                     ||   !categoryParam.getViewName().equals(oldViewName)
                     || !categoryParam.getArticleUseViewName().equals(oldArticleUseViewName)
                     || !categoryParam.getIsArticleDocLink().equals(oldIsArticleDocLink)
+                    || !categoryParam.getArticleTemplateName().equals(oldArticleTemplate)
 
             ){
                 List<Article> articles = articleService.listArticleBy(category.getId());
@@ -154,6 +156,7 @@ public class CategoryController {
                     article.setCategoryPath(category.getPath());
                     article.setCategoryViewName(category.getViewName());
                     article.setIsArticleDocLink(category.getIsArticleDocLink());
+                    article.setTemplateName(category.getArticleTemplateName());
                     articleService.save(article);
                     ArticleDetailVO articleDetailVO = articleService.convert(article);
                     htmlService.conventHtml(articleDetailVO);
