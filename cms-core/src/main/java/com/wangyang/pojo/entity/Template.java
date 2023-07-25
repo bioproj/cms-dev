@@ -20,6 +20,7 @@ public class Template extends BaseTemplate implements Serializable {
 //    @Column(name = "template_type", columnDefinition = "int")
     private TemplateType templateType;
     private TemplateData templateData;
+    private Integer parentOrder=-2;
 
     public Template(){}
 

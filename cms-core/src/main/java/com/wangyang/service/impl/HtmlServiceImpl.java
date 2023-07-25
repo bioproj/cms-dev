@@ -355,10 +355,11 @@ public class HtmlServiceImpl implements IHtmlService {
         Map<String,Object> map = new HashMap<>();
         List<Template> templates = templateService.findByChild(template.getId());
         for (Template templateChild : templates){
+            CategoryContentListDao newCategoryArticle = categoryArticle;
             if(templateChild.getTemplateType().equals(TemplateType.ARTICLE_LIST)  && templateChild.getArticleSize()!=null && templateChild.getArticleSize()!=0){
                 List<ContentVO> contents = categoryArticle.getContents();
                 int size= templateChild.getArticleSize();
-                CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
+//                CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
                 BeanUtils.copyProperties(categoryArticle, newCategoryArticle);
                 if(contents.size()>size){
                     List<ContentVO> newContents = new ArrayList<>();
@@ -368,9 +369,23 @@ public class HtmlServiceImpl implements IHtmlService {
 
                     newCategoryArticle.setContents(newContents);
                 }
-                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
+            }
+//            else {
+
+
+//                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
+//            }
+            if(templateChild.getParentOrder()!=null && templateChild.getParentOrder() > 0){
+                List<CategoryVO> parentCategories = categoryArticle.getParentCategories();
+                CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
+
+
+                TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
+            }else if (templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
+                Category parentCategory = categoryArticle.getParent();
+                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
             }else {
-                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
+                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
             }
 
             map.put(templateChild.getEnName(),category.getPath()+File.separator+templateChild.getEnName()+File.separator+categoryArticle.getViewName());
