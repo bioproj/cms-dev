@@ -17,7 +17,7 @@ public class CategoryContentListDao {
     private CategoryVO parentCategory;
     private List<CategoryVO> parentCategories;
     private List<CategoryVO> children;
-//    private List<CategoryVO> partner;
+    private List<CategoryVO> partner;
     private Category parent;
     /**
      * 第一个category文章列表的路径,
