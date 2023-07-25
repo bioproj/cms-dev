@@ -355,18 +355,17 @@ public class HtmlServiceImpl implements IHtmlService {
         Map<String,Object> map = new HashMap<>();
         List<Template> templates = templateService.findByChild(template.getId());
         for (Template templateChild : templates){
-            CategoryContentListDao newCategoryArticle = categoryArticle;
+            CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
+            BeanUtils.copyProperties(categoryArticle, newCategoryArticle);
             if(templateChild.getTemplateType().equals(TemplateType.ARTICLE_LIST)  && templateChild.getArticleSize()!=null && templateChild.getArticleSize()!=0){
                 List<ContentVO> contents = categoryArticle.getContents();
                 int size= templateChild.getArticleSize();
 //                CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
-                BeanUtils.copyProperties(categoryArticle, newCategoryArticle);
                 if(contents.size()>size){
                     List<ContentVO> newContents = new ArrayList<>();
                     for (int i = 0;i<size;i++){
                         newContents.add(contents.get(i));
                     }
-
                     newCategoryArticle.setContents(newContents);
                 }
             }
@@ -376,13 +375,13 @@ public class HtmlServiceImpl implements IHtmlService {
 //                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
 //            }
             if(templateChild.getParentOrder()!=null && templateChild.getParentOrder() > 0){
-                List<CategoryVO> parentCategories = categoryArticle.getParentCategories();
+                List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
                 CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
 
 
                 TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
             }else if (templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
-                Category parentCategory = categoryArticle.getParent();
+                CategoryVO parentCategory = newCategoryArticle.getParentCategory();
                 TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
             }else {
                 TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
