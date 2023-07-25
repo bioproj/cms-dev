@@ -127,6 +127,35 @@ public class TemplateUtil {
         saveFile(path,viewName,html);
         return html;
     }
+    public static String convertHtmlAndSave(String path, String templatePath, Context context){
+
+        String html = getHtml(templatePath,context);
+        savePathFile(path,html,"html");
+        return html;
+    }
+
+    public static String savePathFile(String path,String html,String suffix) {
+        // 路径 + 视图名称
+        path = workDir+File.separator+path;
+
+        Path savePath = Paths.get(path).getParent();
+        if (Files.notExists(savePath)){
+            try {
+                Files.createDirectories(savePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try(FileWriter write = new FileWriter(path+"."+suffix)) {
+            write.write(html);
+            log.info("### Write file["+path+".html] success!!");
+        } catch (IOException e) {
+            throw new FileOperationException("Write html error!!");
+        }
+        return path+".html";
+    }
+
 
     public static String convertHtmlAndPreview(Object object, BaseTemplate template){
         Assert.notNull(template,"template can't null");
@@ -300,38 +329,45 @@ public class TemplateUtil {
 
     public  static String   errorProcess(String viewName, IContext ctx, String viewNamePath){
 
-        Set<String> systemViewName = ServiceUtil.fetchProperty(SystemTemplates.components(), Components::getTemplateValue);
-        systemViewName.addAll(ServiceUtil.fetchProperty(SystemTemplates.templates(), Template::getTemplateValue));
-        if(systemViewName.contains(viewName) ){
-            String jarViewName = CmsConst.SYSTEM_INTERNAL_TEMPLATE_PATH+File.separator+viewName;
-            Path classPathTemplatePath = FileUtils.getJarResources(jarViewName+".html");
-            if(classPathTemplatePath!=null){
-                log.info("使用jar内部模板："+jarViewName);
-                viewNamePath = jarViewName;
-            }else {
-                if(ctx instanceof WebContext){
-                    ((WebContext)ctx).setVariable("message","路径["+jarViewName+"]不存在！");
-                }else if (ctx instanceof Context){
-                    ((Context)ctx).setVariable("message","路径["+jarViewName+"]不存在！");
-                }
-
-                viewNamePath = errorPath();
-            }
-
+//        Set<String> systemViewName = ServiceUtil.fetchProperty(SystemTemplates.components(), Components::getTemplateValue);
+//        systemViewName.addAll(ServiceUtil.fetchProperty(SystemTemplates.templates(), Template::getTemplateValue));
+//        if(systemViewName.contains(viewName) ){
+//
+//
+//        }else {
+//
+//
+//        }
+        String jarViewName = CmsConst.SYSTEM_INTERNAL_TEMPLATE_PATH+File.separator+viewName;
+        Path classPathTemplatePath = FileUtils.getJarResources(jarViewName+".html");
+        if(classPathTemplatePath!=null){
+            log.info("使用jar内部模板："+jarViewName);
+            viewNamePath = jarViewName;
         }else {
-            if(!viewName.equals("error")){
-                String message = "路径["+viewName+"]不存在！";
-                if(ctx.getVariable("message")!=null){
-                    message = ctx.getVariable("message")+message;
-                }
-                if(ctx instanceof WebContext){
-                    ((WebContext)ctx).setVariable("message",message);
-                }else if (ctx instanceof Context){
-                    ((Context)ctx).setVariable("message",message);
-                }
+            if(ctx instanceof WebContext){
+                ((WebContext)ctx).setVariable("message","路径["+jarViewName+"]不存在！");
+            }else if (ctx instanceof Context){
+                ((Context)ctx).setVariable("message","路径["+jarViewName+"]不存在！");
             }
+
             viewNamePath = errorPath();
         }
+
+
+//        if(!viewName.equals("error")){
+//            String message = "路径["+viewName+"]不存在！";
+//            if(ctx.getVariable("message")!=null){
+//                message = ctx.getVariable("message")+message;
+//            }
+//            if(ctx instanceof WebContext){
+//                ((WebContext)ctx).setVariable("message",message);
+//            }else if (ctx instanceof Context){
+//                ((Context)ctx).setVariable("message",message);
+//            }
+//            viewNamePath = errorPath();
+//        }else {
+//
+//        }
         return viewNamePath;
     }
     public static void getHtml(String viewName, WebContext ctx, HttpServletRequest request, HttpServletResponse response) {

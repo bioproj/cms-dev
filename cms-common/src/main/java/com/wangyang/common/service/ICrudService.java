@@ -42,6 +42,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     Page<DOMAIN> pageBy(Pageable pageable);
     Page<DOMAIN> pageBy(Pageable pageable,String keywords,Set<String> sets);
 
+    Page<DOMAIN> pageBy(Pageable pageable, DOMAIN baseFileQuery, String keywords, Set<String> sets);
+
     void deleteAll(Iterable<DOMAIN> domains);
 
 //    void createTSVFile(HttpServletResponse response);

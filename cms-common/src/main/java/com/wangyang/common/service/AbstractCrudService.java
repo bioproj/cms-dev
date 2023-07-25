@@ -216,15 +216,18 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         repository.delete(t);
     }
 
-
+    @Override
+    public Page<DOMAIN> pageBy(Pageable pageable,String keywords,Set<String> sets) {
+        return repository.findAll(buildSpecByQuery(keywords,sets),pageable);
+    }
 
     @Override
     public Page<DOMAIN> pageBy(Pageable pageable){
         return repository.findAll(pageable);
     }
     @Override
-    public Page<DOMAIN> pageBy(Pageable pageable, String keywords,Set<String> sets) {
-        return repository.findAll(buildSpecByQuery(keywords,sets),pageable);
+    public Page<DOMAIN> pageBy(Pageable pageable,DOMAIN baseFileQuery, String keywords,Set<String> sets) {
+        return repository.findAll(buildSpecByQuery(baseFileQuery,keywords,sets),pageable);
     }
     @Override
     public void deleteAll(Iterable<DOMAIN> domains){
