@@ -3,7 +3,7 @@ package com.wangyang.service;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Menu;
 import com.wangyang.pojo.vo.MenuVo;
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 
 import java.util.List;
 

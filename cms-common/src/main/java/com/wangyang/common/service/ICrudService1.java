@@ -1,4 +1,5 @@
-package com.wangyang.service.base;
+package com.wangyang.common.service;
+
 
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.enums.Lang;
@@ -8,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import javax.servlet.http.HttpServletResponse;
+//import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Set;
  * @author wangyang
  * @date 2021/6/27
  */
-public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
+public interface ICrudService1<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     List<DOMAIN> listAll();
     DOMAIN add(@NonNull DOMAIN domain);
     DOMAIN save(@NonNull DOMAIN domain);
@@ -27,6 +28,9 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
 
     @Transactional
     void truncateTable();
+
+    @Transactional
+    void importData(List<DOMAIN> entities,int batchSize );
 
     DOMAIN findById(@NonNull ID id);
 
@@ -37,6 +41,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
 
     Page<DOMAIN> pageBy(Pageable pageable);
     Page<DOMAIN> pageBy(Pageable pageable,String keywords,Set<String> sets);
+
+    Page<DOMAIN> pageBy(Pageable pageable, DOMAIN baseFileQuery, String keywords, Set<String> sets);
 
     void deleteAll(Iterable<DOMAIN> domains);
 

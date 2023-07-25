@@ -6,7 +6,7 @@ import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;

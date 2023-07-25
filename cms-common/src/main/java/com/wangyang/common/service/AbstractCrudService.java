@@ -134,7 +134,7 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
                     field.setAccessible(true);
                     String fieldName = field.getName();
                     Object value = field.get(domain);
-                    if(value!=null){
+                    if(value!=null && !value.equals("")){
                         predicates.add(criteriaBuilder.equal(root.get(fieldName),value));
                     }
                 }

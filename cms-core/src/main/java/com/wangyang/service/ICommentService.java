@@ -4,7 +4,7 @@ import com.wangyang.pojo.dto.CommentDto;
 import com.wangyang.pojo.entity.Comment;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.vo.CommentVo;
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

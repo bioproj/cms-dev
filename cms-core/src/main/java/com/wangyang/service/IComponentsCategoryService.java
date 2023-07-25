@@ -2,7 +2,7 @@ package com.wangyang.service;
 
 import com.wangyang.pojo.entity.ComponentsCategory;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 
 import java.util.List;
 import java.util.Set;

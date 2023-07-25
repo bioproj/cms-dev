@@ -1,5 +1,6 @@
 package com.wangyang.service.base;
 
+import com.wangyang.common.service.ICrudService;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.Category;
@@ -15,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Set;
 
-public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  extends ICrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer>{
+public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  extends ICrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer> {
     ARTICLE createOrUpdate(ARTICLE article);
     List<ARTICLEVO> listByComponentsId(int componentsId);
 

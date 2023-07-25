@@ -4,7 +4,7 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.common.enums.CrudType;
 
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

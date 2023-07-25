@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,10 +74,11 @@ public class TemplateController {
 
 
     @GetMapping
-    public Page<Template> list(@PageableDefault(sort = {"enName"},direction = DESC)Pageable pageable,@RequestParam(required = false) Lang lang){
-        Page<Template> templatePage = templateService.list(pageable,lang);
+    public Page<Template> list(@PageableDefault(sort = {"id"},direction = DESC)Pageable pageable,Template template){
+//        Page<Template> templatePage = templateService.list(pageable,lang);
+        Page<Template> templates = templateService.pageBy(pageable, template, "", new HashSet<>());
 
-        return templatePage;
+        return templates;
     }
 
     @GetMapping("/tree/{id}")

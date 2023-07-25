@@ -1,6 +1,5 @@
 package com.wangyang.common.service;
 
-
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.enums.Lang;
 import org.springframework.data.domain.Page;
@@ -9,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-//import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.util.List;
@@ -30,7 +28,7 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     void truncateTable();
 
     @Transactional
-    void importData(List<DOMAIN> entities,int batchSize );
+    void importData(List<DOMAIN> entities, int batchSize);
 
     DOMAIN findById(@NonNull ID id);
 

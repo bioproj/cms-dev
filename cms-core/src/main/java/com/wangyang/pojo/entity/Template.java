@@ -1,5 +1,6 @@
 package com.wangyang.pojo.entity;
 
+import com.wangyang.common.annotation.QueryField;
 import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
@@ -18,7 +19,9 @@ public class Template extends BaseTemplate implements Serializable {
 
 
 //    @Column(name = "template_type", columnDefinition = "int")
+    @QueryField
     private TemplateType templateType;
+    @QueryField
     private TemplateData templateData;
     private Integer parentOrder=-2;
 

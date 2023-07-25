@@ -2,7 +2,7 @@ package com.wangyang.service.authorize;
 
 import com.wangyang.pojo.entity.ArticleAttachment;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.service.base.ICrudService;
+import com.wangyang.common.service.ICrudService;
 
 import java.util.List;
 
