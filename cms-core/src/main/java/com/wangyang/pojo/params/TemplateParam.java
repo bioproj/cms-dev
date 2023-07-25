@@ -18,5 +18,6 @@ public class TemplateParam {
     private String templateContent;
     private TemplateData templateData;
     private Integer articleSize;
+    private Integer parentOrder;
 
 }
