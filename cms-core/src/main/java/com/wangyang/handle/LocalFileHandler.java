@@ -170,8 +170,10 @@ public class LocalFileHandler implements FileHandler{
 
             // Build upload result
             UploadResult uploadResult = new UploadResult();
+            String originalBasename = FilenameUtils.getBasename(Objects.requireNonNull(file.getOriginalFilename()));
+
             //Screenshot from 2020-02-28 15-43-32
-            uploadResult.setFilename(path);
+            uploadResult.setFilename(originalBasename);
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
 //            if(uploadPrefix!=null){
 //                uploadResult.setFilePath(uploadPrefix+subFilePath); //

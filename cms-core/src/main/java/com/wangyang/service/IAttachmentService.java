@@ -18,9 +18,19 @@ public interface IAttachmentService {
 
     Attachment upload(MultipartFile file, String path, FileWriteType fileWriteType, AttachmentType attachmentType);
 
+    Attachment upload(MultipartFile file,
+                      String path,
+                      FileWriteType fileWriteType,
+                      Attachment attachmentInput
+    );
+
     Attachment uploadStrContent(AttachmentParam attachmentParam);
 
     Attachment uploadStrContent(int attachmentId, AttachmentParam attachmentParam);
+
+    List<Attachment> findByObjId(Integer objId);
+
+    List<Attachment> findByObjId(Integer objId, String mediaType);
 
     Page<Attachment> list(Pageable pageable);
 

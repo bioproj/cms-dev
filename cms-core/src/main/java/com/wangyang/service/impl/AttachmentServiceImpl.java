@@ -2,6 +2,7 @@ package com.wangyang.service.impl;
 
 import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.common.exception.ObjectException;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.entity.Attachment;
 import com.wangyang.pojo.enums.AttachmentType;
 import com.wangyang.pojo.enums.FileWriteType;
@@ -12,6 +13,7 @@ import com.wangyang.handle.FileHandlers;
 import com.wangyang.repository.AttachmentRepository;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.service.IOptionService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -71,28 +73,43 @@ public class AttachmentServiceImpl implements IAttachmentService {
         attachment.setType(  getAttachmentType());
         return attachmentRepository.save(attachment);
     }
-
     @Override
     public Attachment upload(MultipartFile file,
                              String path,
                              FileWriteType fileWriteType,
                              AttachmentType attachmentType) {
+        Attachment attachment = new Attachment();
+        attachment.setType(attachmentType);
+        return upload(file,path,fileWriteType,attachment);
+    }
+    @Override
+    public Attachment upload(MultipartFile file,
+                             String path,
+                             FileWriteType fileWriteType,
+                             Attachment attachmentInput
+    ) {
+        if(attachmentInput.getType()==null){
+            throw new ObjectException("文件上传的type不能为空：ALIOSS、LOCAL");
+        }
         Attachment attachment = this.findByPath(path);
-        if(attachment!=null){
-            if(fileWriteType.equals(FileWriteType.COVER)){
-                File fileAtt = new File(workDir+File.separator+path);
-                if(fileAtt.exists()){
-                    fileAtt.delete();
-                }
-            }else if(fileWriteType.equals(FileWriteType.SKIP)){
-                return attachment;
-            }else {
-                throw new FileOperationException("文件存在，并且STRICT");
+        if(attachment==null){
+            attachment = new Attachment();
+        }
+        if(fileWriteType.equals(FileWriteType.COVER)){
+            File fileAtt = new File(workDir+File.separator+path);
+            if(fileAtt.exists()){
+                fileAtt.delete();
             }
+        }else if(fileWriteType.equals(FileWriteType.SKIP)){
+            if(attachment!=null){
+                return attachment;
+            }
+        }else {
+            throw new FileOperationException("文件存在，并且STRICT");
         }
         //TODO AttachmentType.LOCAL from databases
-        UploadResult uploadResult = fileHandlers.upload(file,attachmentType,path);
-        attachment = new Attachment();
+        UploadResult uploadResult = fileHandlers.upload(file,attachmentInput.getType(),path);
+        attachment.setName(uploadResult.getFilename());
         ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
         attachment.setPath(uploadResult.getFilePath());
         ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
@@ -106,7 +123,8 @@ public class AttachmentServiceImpl implements IAttachmentService {
         attachment.setWidth(uploadResult.getWidth());
         attachment.setHeight(uploadResult.getHeight());
         attachment.setSize(uploadResult.getSize());
-        attachment.setType( attachmentType);
+//        attachment.setType( attachmentType);
+        BeanUtils.copyProperties(attachmentInput,attachment, CMSUtils.getNullPropertyNames(attachmentInput));
         return attachmentRepository.save(attachment);
     }
 
@@ -145,8 +163,27 @@ public class AttachmentServiceImpl implements IAttachmentService {
         return attachmentRepository.save(attachment);
     }
 
+    @Override
+    public List<Attachment> findByObjId(Integer objId){
+        return attachmentRepository.findAll(new Specification<Attachment>() {
+            @Override
+            public Predicate toPredicate(Root<Attachment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return query.where(criteriaBuilder.equal(root.get("objId"),objId)).getRestriction();
+            }
+        });
+    }
 
-
+    @Override
+    public List<Attachment> findByObjId(Integer objId,String mediaType){
+        return attachmentRepository.findAll(new Specification<Attachment>() {
+            @Override
+            public Predicate toPredicate(Root<Attachment> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return query.where(criteriaBuilder.equal(root.get("objId"),objId),
+                        criteriaBuilder.equal(root.get("mediaType"),mediaType)
+                        ).getRestriction();
+            }
+        });
+    }
     @Override
     public Page<Attachment> list(Pageable pageable){
         return attachmentRepository.findAll(pageable);

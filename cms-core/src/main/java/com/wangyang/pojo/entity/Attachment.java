@@ -27,4 +27,5 @@ public class Attachment extends BaseEntity {
     @Column( columnDefinition = "longtext")
     private String originContent;
     private String renderType;
+    private Integer objId;
 }
