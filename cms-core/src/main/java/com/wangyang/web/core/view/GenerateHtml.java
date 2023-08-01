@@ -66,7 +66,7 @@ public class GenerateHtml {
         Map<String,Object> map = new HashMap<>();
         map.put("mind",mindFormat);
         map.put("category",category);
-        String htmlAndSave = TemplateUtil.convertHtmlAndSave(CMSUtils.getCategoryPath(), category.getViewName()+"-mind", map, template);
+        String htmlAndSave = TemplateUtil.convertHtmlAndSave(category.getPath(), category.getViewName()+"-mind", map, template);
         return htmlAndSave;
     }
 

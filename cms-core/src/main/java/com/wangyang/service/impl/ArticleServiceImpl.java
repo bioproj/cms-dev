@@ -12,6 +12,7 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.params.ArticleQuery;
@@ -34,6 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.OrderBy;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -1157,7 +1159,9 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
     @Override
     public List<Article> listArticleBy(int categoryId){
-        return  articleRepository.findAll(articleSpecification(categoryId, ArticleList.ALL_PUBLISH_MODIFY_ARTICLE));
+//        Specification<Content> specification =  articleSpecification(ids,isDesc, ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP);
+
+        return  articleRepository.findAll(articleSpecification(categoryId, ArticleList.NO_INCLUDE_TOP), Sort.by(Sort.Direction.ASC,"order"));
     }
 
 

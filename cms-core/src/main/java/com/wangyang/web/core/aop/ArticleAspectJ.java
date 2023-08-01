@@ -214,15 +214,16 @@ public class ArticleAspectJ {
 
 
 
-        log.info(">>>>>>>>>>>>>>>>>####删除分类分页文件-"+title);
+
         File dir = new File(CmsConst.WORK_DIR+File.separator+ path);
         File[] files = dir.listFiles();
         for(File file : files){
             String name = file.getName();
-            Pattern pattern = Pattern.compile(viewName+"-(.*)-page.html");
+            Pattern pattern = Pattern.compile(viewName+"-(.*).html");
             Matcher matcher = pattern.matcher(name);
             if(matcher.find()){
                 file.delete();
+                log.info("删除分类[{}]文件[{}]",title,file.getAbsolutePath());
             }
         }
         if(parentId!=0){

@@ -492,52 +492,52 @@ public class ArticleController {
             ,@RequestBody  List<MindJs> mindJss
             ,HttpServletRequest request) {
         int userId = AuthorizationUtil.getUserId(request);
-        List<Article> articles = articleService.listArticleBy(categoryId);
+//        List<Article> articles = articleService.listArticleBy(categoryId);
 
         mindJss.remove(0);
         for (int i=0;i<mindJss.size();i++){
-            mindJss.get(i).setOrder(mindJss.size()-i);
+            mindJss.get(i).setOrder(i);
         }
-        Map<String, MindJs> mindJsMap = ServiceUtil.convertToMap(mindJss, MindJs::getId);
-        Map<String, Article> articleMap = ServiceUtil.convertToMap(articles, a -> String.valueOf(a.getId()));
-        Map<String, MindJs> copyMindJsMap = new HashMap<>(mindJsMap);
-
-        mindJsMap.keySet().removeAll(articleMap.keySet());
-        articleMap.keySet().removeAll(copyMindJsMap.keySet());
-
-
+//        Map<String, MindJs> mindJsMap = ServiceUtil.convertToMap(mindJss, MindJs::getId);
+//        Map<String, Article> articleMap = ServiceUtil.convertToMap(articles, a -> String.valueOf(a.getId()));
+//        Map<String, MindJs> copyMindJsMap = new HashMap<>(mindJsMap);
+//
+//        mindJsMap.keySet().removeAll(articleMap.keySet());
+//        articleMap.keySet().removeAll(copyMindJsMap.keySet());
 
 
-        if(articleMap.size()!=0){
-            //删除的节点
-            articleMap.forEach((k,v)->{
-//                v.setHaveHtml(false);
-                v.setStatus(ArticleStatus.DRAFT);
-                articleService.save(v);
-                articles.removeIf(article -> article.getId()==v.getId());
-            });
 
-        }
-        if(mindJsMap.size()!=0){
-            mindJsMap.forEach((k,v)->{
-                //新增节点
 
-                Article article = new Article();
-                article.setTitle(v.getTopic());
-                article.setParentId(v.getParentid());
-                article.setExpanded(v.getExpanded());
-                article.setDirection(v.getDirection());
-                article.setOrder(v.getOrder());
-                article.setCategoryId(categoryId);
-                article.setUserId(userId);
-                article.setOriginalContent("开始创作文章["+v.getTopic()+"]...");
-                ArticleDetailVO articleDetailVo = articleService.createArticleDetailVo(article, null);
-                htmlService.conventHtmlNoCategoryList(articleDetailVo);
-                BeanUtils.copyProperties(articleDetailVo,article);
-                articles.add(mindJss.size()-articleDetailVo.getOrder(),article);
-            });
-
-        }
+//        if(articleMap.size()!=0){
+//            //删除的节点
+//            articleMap.forEach((k,v)->{
+////                v.setHaveHtml(false);
+//                v.setStatus(ArticleStatus.DRAFT);
+//                articleService.save(v);
+//                articles.removeIf(article -> article.getId()==v.getId());
+//            });
+//
+//        }
+//        if(mindJsMap.size()!=0){
+//            mindJsMap.forEach((k,v)->{
+//                //新增节点
+//
+//                Article article = new Article();
+//                article.setTitle(v.getTopic());
+//                article.setParentId(v.getParentid());
+//                article.setExpanded(v.getExpanded());
+//                article.setDirection(v.getDirection());
+//                article.setOrder(v.getOrder());
+//                article.setCategoryId(categoryId);
+//                article.setUserId(userId);
+//                article.setOriginalContent("开始创作文章["+v.getTopic()+"]...");
+//                ArticleDetailVO articleDetailVo = articleService.createArticleDetailVo(article, null);
+//                htmlService.conventHtmlNoCategoryList(articleDetailVo);
+//                BeanUtils.copyProperties(articleDetailVo,article);
+//                articles.add(mindJss.size()-articleDetailVo.getOrder(),article);
+//            });
+//
+//        }
 //        if(mindJsMap.size()!=0||articleMap.size()!=0){
 //            articles.add();
 //        }
@@ -545,33 +545,42 @@ public class ArticleController {
         //整合顺序
         for(int i =0;i<mindJss.size();i++){
             MindJs mindJs = mindJss.get(i);
-            Article article = articles.get(i);
-            if(mindJsMap.containsKey(mindJs.getId())){
-                continue;
-            }
-            int id = Integer.parseInt(mindJs.getId());;
-            int dbId = article.getId();
+            int id = Integer.parseInt(mindJs.getId());
+//            Article article = articles.get(i);
+            Article updateArticle = articleService.findArticleById(id);
+            updateArticle.setOrder(mindJs.getOrder());
+            updateArticle.setParentId(mindJs.getParentid());
+            updateArticle.setTitle(mindJs.getTopic());
+            updateArticle.setExpanded(mindJs.getExpanded());
+            updateArticle.setDirection(mindJs.getDirection());
+            articleService.save(updateArticle);
 
-            if(dbId==id){
-                if(isChange(mindJs,article)||article.getOrder()!=mindJss.size()-i){
-                    article.setOrder(mindJss.size()-i);
-                    article.setParentId(mindJs.getParentid());
-                    article.setTitle(mindJs.getTopic());
-                    article.setExpanded(mindJs.getExpanded());
-                    article.setDirection(mindJs.getDirection());
-
-                    articleService.save(article);
-                }
-
-            }else {
-                Article updateArticle = articleService.findArticleById(id);
-                updateArticle.setOrder(mindJss.size()-i);
-                updateArticle.setParentId(mindJs.getParentid());
-                updateArticle.setTitle(mindJs.getTopic());
-                updateArticle.setExpanded(mindJs.getExpanded());
-                updateArticle.setDirection(mindJs.getDirection());
-                articleService.save(updateArticle);
-            }
+//            if(mindJsMap.containsKey(mindJs.getId())){
+//                continue;
+//            }
+//            int id = Integer.parseInt(mindJs.getId());;
+//            int dbId = article.getId();
+//
+//            if(dbId==id){
+//                if(isChange(mindJs,article)||article.getOrder()!=mindJs.getOrder()){
+//                    article.setOrder(mindJs.getOrder());
+//                    article.setParentId(mindJs.getParentid());
+//                    article.setTitle(mindJs.getTopic());
+//                    article.setExpanded(mindJs.getExpanded());
+//                    article.setDirection(mindJs.getDirection());
+//
+//                    articleService.save(article);
+//                }
+//
+//            }else {
+//                Article updateArticle = articleService.findArticleById(id);
+//                updateArticle.setOrder(mindJs.getOrder());
+//                updateArticle.setParentId(mindJs.getParentid());
+//                updateArticle.setTitle(mindJs.getTopic());
+//                updateArticle.setExpanded(mindJs.getExpanded());
+//                updateArticle.setDirection(mindJs.getDirection());
+//                articleService.save(updateArticle);
+//            }
         }
 
         Category category = categoryService.findById(categoryId);
