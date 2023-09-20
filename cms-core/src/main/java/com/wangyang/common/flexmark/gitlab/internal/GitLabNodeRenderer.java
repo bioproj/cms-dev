@@ -1,9 +1,6 @@
 package com.wangyang.common.flexmark.gitlab.internal;
 
-import com.vladsch.flexmark.ast.FencedCodeBlock;
-import com.vladsch.flexmark.ast.Image;
-import com.vladsch.flexmark.ast.ImageRef;
-import com.vladsch.flexmark.ast.Reference;
+import com.vladsch.flexmark.ast.*;
 import com.vladsch.flexmark.ast.util.ReferenceRepository;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html.HtmlRendererOptions;
@@ -15,6 +12,7 @@ import com.vladsch.flexmark.util.ast.TextCollectingVisitor;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.html.Attribute;
 import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.misc.CharPredicate;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.wangyang.common.flexmark.gitlab.GitLabBlockQuote;
 import com.wangyang.common.flexmark.gitlab.GitLabDel;
@@ -54,6 +52,8 @@ public class GitLabNodeRenderer implements NodeRenderer
         set.add(new NodeRenderingHandler<>(GitLabDel.class, GitLabNodeRenderer.this::render));
         set.add(new NodeRenderingHandler<>(GitLabInlineMath.class, GitLabNodeRenderer.this::render));
         set.add(new NodeRenderingHandler<>(GitLabBlockQuote.class, GitLabNodeRenderer.this::render));// ,// zzzoptionszzz(CUSTOM_NODE)
+        set.add(new NodeRenderingHandler<>(Link.class, GitLabNodeRenderer.this::render));// ,// zzzoptionszzz(CUSTOM_NODE)
+//        set.add(new NodeRenderingHandler<>(Link.class, CoreNodeRenderer.this::render));// ,// zzzoptionszzz(CUSTOM_NODE)
         if (options.renderBlockMath || options.renderBlockMermaid) {
             set.add(new NodeRenderingHandler<>(FencedCodeBlock.class, GitLabNodeRenderer.this::render));// ,// zzzoptionszzz(CUSTOM_NODE)
         }
@@ -64,6 +64,32 @@ public class GitLabNodeRenderer implements NodeRenderer
 
         // @formatter:on
         return set;
+    }
+
+
+    private void render(@NotNull Link node, @NotNull NodeRendererContext context, @NotNull HtmlWriter html) {
+        if (!context.isDoNotRenderLinks() && !CoreNodeRenderer.isSuppressedLinkPrefix(node.getUrl(), context)) {
+            ResolvedLink resolvedLink = context.resolveLink(LinkType.LINK, node.getUrl().unescape(), (Attributes)null, (Boolean)null);
+            String url = resolvedLink.getUrl();
+            if(url.startsWith("zotero://select/library/items")){
+                html.attr("href", url.replace("zotero://select/library/items","/library"));
+            } else if (url.startsWith("zotero://open-pdf/library/items")) {
+                html.attr("href", url.replace("zotero://open-pdf/library/items","/library/items"));
+            } else {
+                html.attr("href", url);
+            }
+
+//            html.attr("href", resolvedLink.getUrl());
+            if (node.getTitle().isNotNull()) {
+                resolvedLink = resolvedLink.withTitle(node.getTitle().unescape());
+            }
+
+            html.attr(resolvedLink.getNonNullAttributes());
+            html.srcPos(node.getChars()).withAttr(resolvedLink).tag("a").text(node.getText());
+            html.tag("/a");
+        } else {
+            context.renderChildren(node);
+        }
     }
 
     private void render(GitLabIns node, NodeRendererContext context, HtmlWriter html) {

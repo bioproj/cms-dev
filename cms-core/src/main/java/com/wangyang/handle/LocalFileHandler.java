@@ -2,6 +2,7 @@ package com.wangyang.handle;
 
 import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.FilenameUtils;
 import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.pojo.enums.AttachmentType;
@@ -233,7 +234,32 @@ public class LocalFileHandler implements FileHandler{
 
     @Override
     public UploadResult uploadStrContent(String content, String strName) {
-        return null;
+        try {
+            // Get current time
+            // Get month and day of month
+            Calendar date = Calendar.getInstance();
+            int year = date.get(Calendar.YEAR);
+            int month =date.get(Calendar.MONTH);
+
+            // Build directory /upload/2020/2/
+            String subDir = UPLOAD_SUB_DIR + year + File.separator + month + File.separator;
+            if(strName==null){
+                strName = CMSUtils.randomViewName();
+            }
+            String filePath = subDir+strName+".svg";
+            Path uploadPath = Paths.get(workDir, filePath);
+
+            Files.createDirectories(uploadPath.getParent());
+
+            FileUtils.saveFile(uploadPath.toFile(),content);
+            UploadResult uploadResult = new UploadResult();
+            uploadResult.setFilePath(filePath);
+            uploadResult.setMediaType(MediaType.IMAGE_PNG);
+            uploadResult.setKey(strName);
+            return uploadResult;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

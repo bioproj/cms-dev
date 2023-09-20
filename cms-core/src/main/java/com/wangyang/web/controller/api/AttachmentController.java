@@ -122,6 +122,13 @@ public class AttachmentController {
 //    public Attachment testUpload2( String name,MultipartFile file2){
 //        return new Attachment();
 //    }
+
+
+    @RequestMapping(value = "/find/{id}")
+    public Attachment findById(@PathVariable("id") Integer id){
+        return  attachmentService.findById(id);
+    }
+
     /**
      * 上传文字内容到文件 SVG
      * @param attachmentParam
@@ -130,11 +137,6 @@ public class AttachmentController {
     @RequestMapping(value = "/uploadStrContent")
     public Attachment uploadStrContent(@RequestBody AttachmentParam attachmentParam){
         return  attachmentService.uploadStrContent(attachmentParam);
-    }
-
-    @RequestMapping(value = "/find/{id}")
-    public Attachment findById(@PathVariable("id") Integer id){
-       return  attachmentService.findById(id);
     }
 
     /**

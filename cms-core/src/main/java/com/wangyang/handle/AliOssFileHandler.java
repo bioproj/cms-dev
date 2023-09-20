@@ -239,6 +239,7 @@ public class AliOssFileHandler implements FileHandler {
             uploadResult.setFilename(basename);
             uploadResult.setFilePath(filePath);
             uploadResult.setKey(upFilePath.toString());
+            uploadResult.setMediaType(MediaType.IMAGE_PNG);
 //            uploadResult.setMediaType(MediaType.valueOf(Objects.requireNonNull(file.getContentType())));
             uploadResult.setSuffix(extension);
             uploadResult.setSize(Long.valueOf((content.getBytes().length)));

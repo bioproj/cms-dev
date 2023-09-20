@@ -374,6 +374,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
 //                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
 //            }
+            // 如果分类有多级别则指定大于0的数字
             if(templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
                 List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
                 CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());

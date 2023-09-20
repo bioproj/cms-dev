@@ -13,6 +13,7 @@ import com.wangyang.handle.FileHandlers;
 import com.wangyang.repository.AttachmentRepository;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.service.IOptionService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -130,10 +132,12 @@ public class AttachmentServiceImpl implements IAttachmentService {
 
 
     @Override
-    public Attachment uploadStrContent(AttachmentParam attachmentParam){
-        UploadResult uploadResult = fileHandlers.uploadStrContent(attachmentParam.getFormatContent(),null, getAttachmentType());
+    public Attachment uploadStrContent(@RequestBody  AttachmentParam attachmentParam){
+        UploadResult uploadResult = fileHandlers.uploadStrContent(attachmentParam.getOriginContent(),null, getAttachmentType());
         Attachment attachment = new Attachment();
+
         attachment.setOriginContent(attachmentParam.getOriginContent());
+        attachment.setFormatContent(attachmentParam.getOriginContent());
         ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
         attachment.setPath(uploadResult.getFilePath());
         ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
@@ -142,11 +146,13 @@ public class AttachmentServiceImpl implements IAttachmentService {
 //        attachment.setMediaType(uploadResult.getMediaType().toString());
         //png
         attachment.setRenderType(attachmentParam.getRenderType());
-
+        attachment.setMediaType(uploadResult.getMediaType().toString());
         attachment.setSuffix(uploadResult.getSuffix());
         attachment.setName(uploadResult.getFilename());
         attachment.setSize(uploadResult.getSize());
         attachment.setType( getAttachmentType());
+
+        attachment.setThumbPath(uploadResult.getFilePath());
         return attachmentRepository.save(attachment);
     }
 
@@ -154,8 +160,8 @@ public class AttachmentServiceImpl implements IAttachmentService {
     public Attachment uploadStrContent(int attachmentId,AttachmentParam attachmentParam){
         Attachment attachment = findById(attachmentId);
 
-        UploadResult uploadResult = fileHandlers.uploadStrContent(attachmentParam.getFormatContent(),attachment.getName(), getAttachmentType());
-
+        UploadResult uploadResult = fileHandlers.uploadStrContent(attachmentParam.getOriginContent(),attachment.getName(), getAttachmentType());
+        attachment.setFormatContent(attachmentParam.getOriginContent());
         attachment.setOriginContent(attachmentParam.getOriginContent());
         attachment.setRenderType(attachmentParam.getRenderType());
         attachment.setSize(uploadResult.getSize());

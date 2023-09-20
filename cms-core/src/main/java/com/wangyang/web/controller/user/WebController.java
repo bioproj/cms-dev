@@ -277,4 +277,6 @@ public class WebController {
     public String index(){
         return "redirect:admin/index.html";
     }
+
+
 }

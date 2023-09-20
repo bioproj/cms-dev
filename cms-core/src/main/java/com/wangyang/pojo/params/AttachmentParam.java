@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class AttachmentParam {
 
-    private String formatContent;
+//    private String formatContent;
     private String originContent;
+    private String name;
     private String renderType;
 }
