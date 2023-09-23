@@ -46,13 +46,15 @@ public class MyCustomView implements View {
 
     private Boolean isDebug;
     private String viewName;
+    private TemplateUtil templateUtil;
     IAuthRedirectService authRedirectService;
-    public  MyCustomView(String viewName, Boolean isDebug, ApplicationContext applicationContext, ConversionService mvcConversionService, IHtmlService htmlService, IAuthRedirectService authRedirectService){
+    public  MyCustomView(String viewName, Boolean isDebug, ApplicationContext applicationContext, ConversionService mvcConversionService, TemplateUtil templateUtil, IAuthRedirectService authRedirectService){
         this.viewName = viewName;
         this.applicationContext =applicationContext;
         this.mvcConversionService =mvcConversionService;
         this.isDebug =isDebug;
         this.authRedirectService = authRedirectService;
+        this.templateUtil = templateUtil;
     }
     @Override
     public void render(Map<String, ?> mapInput, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -128,7 +130,7 @@ public class MyCustomView implements View {
 //            ctx.setVariable("message","模板不存在："+path);
 //        }
 //        templateEngine.process(viewNamePath,ctx,response.getWriter());
-        TemplateUtil.getHtml(viewName,ctx,request,response);
+        templateUtil.getHtml(viewName,ctx,request,response);
     }
 
 

@@ -1,20 +1,17 @@
 package com.wangyang.service.impl;
 
-import com.google.common.base.Joiner;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.exception.TemplateException;
 import com.wangyang.common.utils.*;
+import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.dto.ArticleDto;
-import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.config.ApplicationBean;
-import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.vo.ComponentsVO;
 import com.wangyang.pojo.vo.ContentVO;
@@ -30,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -68,10 +67,34 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
     ComponentsRepository componentsRepository;
     @Autowired
     ArticleTagsRepository articleTagsRepository;
-    public ComponentsServiceImpl(  ComponentsRepository componentsRepository) {
+
+    @Autowired
+    ApplicationContext applicationContext;
+    private final Map<String, IComponentsData> componentsDataMap = new HashMap<>();
+
+    @PostConstruct
+    public void init() {
+        String[] beanNamesForType = applicationContext.getBeanNamesForType(IComponentsData.class);
+        for (String beanName : beanNamesForType){
+            IComponentsData componentsData = (IComponentsData)applicationContext.getBean(beanName);
+            this.componentsDataMap.put(componentsData.getDataName(),componentsData);
+        }
+    }
+
+    @Override
+    public Map<String, IComponentsData> getComponentsDataMap() {
+        return componentsDataMap;
+    }
+
+
+    public ComponentsServiceImpl( ComponentsRepository componentsRepository) {
         super(componentsRepository);
         this.componentsRepository=componentsRepository;
+
     }
+
+
+
 
 
     @Override
@@ -226,63 +249,18 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
         componentsRepository.deleteAll();
     }
 
-    @Override
-    public boolean supportType(CrudType type) {
-        return false;
-    }
-
-    @Override
-    public Map<String ,Object> getModelPageSize(Components components, Integer page, Integer size,String order) {
-        TemplateUtil.deleteFile("html/components/"+components.getId());
-        Map<String,Object> map = new HashMap<>();
-        String args = components.getDataName().substring(CmsConst.ARTICLE_DATA_SORT_SIZE.length());
-        if(args==null||"".equals(args)){
-            throw new ObjectException("数据参数不能为空！！");
-        }
-        String[] argsArray = args.split(",");
-        List<String> argLists = Arrays.asList(argsArray);
-//        int size=5;
-        Set<String> sortStr = new HashSet<>();
-        for (String arg : argLists){
-            if(arg.startsWith("size_")){
-                size = Integer.parseInt(arg.replace("size_", ""));
-            }else  if(arg.startsWith("order_")){
-                order = arg.replace("order_", "");
-
-            }else if(arg.startsWith("sort_")){
-                String sort_ = arg.replace("sort_", "");
-                sortStr.add(sort_);
-            }
-        }
-//        String orderSort = sortStr.stream()
-//                .collect(Collectors.joining(","))+","+direction.name();
 
 
-
-        ArticlePageCondition articlePageCondition= articleService.pagePublishBy(components.getId(),sortStr,order,page, size);
-        Page<Article> articles =articlePageCondition.getArticles();
-        Page<ArticleVO> articleVOS = articleService.convertToPageVo(articles);
-//                Map<String,Object> map = new HashMap<>();
-        map.put("view",articleVOS);
-        map.put("info",articlePageCondition);
-//        map.put("showUrl","/articleList?sort="+orderSort); //likes,DESC
-        map.put("name",components.getName());
-        map.put("componentIds",components.getId());
-        map.put("url","component_"+components.getId()+",category_"+
-                Joiner.on(",").join(articlePageCondition.getIds())+
-                ",sort_"+Joiner.on(",").join(articlePageCondition.getSortStr())+
-                ",order_"+articlePageCondition.getOrder()+
-                ",page_"+(articlePageCondition.getPage()+ 1)+
-                ",size_"+articlePageCondition.getSize());
-
-        return map;
-    }
     @Override
     public Map<String ,Object> getModel(Components components) {
         Map<String,Object> map = new HashMap<>();
         map.put("component",components);
         try {
-            if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
+            if(componentsDataMap.containsKey(components.getDataName())){
+                IComponentsData componentsData = componentsDataMap.get(components.getDataName());
+                map.putAll( componentsData.getData(components));
+                return map;
+            } else if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
 
                 map.put("view",contentService.listByComponentsId(components.getId()));
                 return  map;
@@ -390,10 +368,12 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
                     map.put("name",components.getName());
                     return map;
                 }
-            }else if(components.getDataName().startsWith(CmsConst.ARTICLE_DATA_SORT_SIZE)){
-                map = getModelPageSize(components,0,5,"DESC");
-                return map;
-            } else if (components.getDataName().startsWith(CmsConst.TAG_DATA)) {
+            }
+//            else if(components.getDataName().startsWith(CmsConst.ARTICLE_DATA_SORT_SIZE)){
+//                map = getModelPageSize(components,0,5,"DESC");
+//                return map;
+//            }
+            else if (components.getDataName().startsWith(CmsConst.TAG_DATA)) {
                 List<Tags> tags = tagsService.listAll();
                 Map<Tags,Integer> mapTags =  new HashMap<>();
                 for (Tags tag : tags){
@@ -423,15 +403,11 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
             } else {
 
             }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        throw new ObjectException("组件数据不存在！");
 
-        return null;
     }
 
 

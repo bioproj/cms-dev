@@ -1,5 +1,6 @@
 package com.wangyang.service;
 
+import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.params.ComponentsParam;
@@ -13,7 +14,10 @@ import java.util.Map;
 
 public interface IComponentsService  extends ICrudService<Components, Components, BaseVo,Integer> {
 
-    Page<Components> list(Pageable pageable,Lang lang);
+
+    Map<String, IComponentsData> getComponentsDataMap();
+
+    Page<Components> list(Pageable pageable, Lang lang);
 
     List<Components> listNeedArticle();
 
@@ -39,7 +43,7 @@ public interface IComponentsService  extends ICrudService<Components, Components
     void deleteAll();
 
 
-    Map<String ,Object> getModelPageSize(Components components, Integer page, Integer size,String order);
+//    Map<String ,Object> getModelPageSize(Components components, Integer page, Integer size,String order);
 
     Map<String ,Object> getModel(Components components);
 

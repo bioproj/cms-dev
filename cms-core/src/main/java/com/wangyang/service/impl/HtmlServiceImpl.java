@@ -423,7 +423,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
         map.put("view",categoryArticle);
 //        为了与按钮分页匹配 CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, page-1);
-        String url = category.getPath()+File.separator+category.getViewName()+"-2-ajaxPage";
+        String url = category.getPath()+File.separator+category.getViewName()+"-2-page.html";
         map.put("url",url);
 
 
@@ -478,7 +478,9 @@ public class HtmlServiceImpl implements IHtmlService {
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, page-1);
 //        Page<ArticleVO> articlePage = categoryArticle.getContents();
         if(page>categoryArticle.getTotalPages()){
-            return "Page is not exist!!";
+//            return "Page is not exist!!";
+            throw new ObjectException("Page is not exist!!");
+
         }
         log.debug("生成"+category.getName()+"分类下的第["+page+"]个页面缓存!");
         String viewName =   category.getViewName()+"-"+String.valueOf(page)+"-page";
@@ -486,7 +488,7 @@ public class HtmlServiceImpl implements IHtmlService {
 //        return TemplateUtil.convertHtmlAndSave(category.getPath(),viewName,categoryArticle,template);
         Map<String,Object> map = new HashMap<>();
         map.put("view",categoryArticle);
-        String url = category.getPath()+File.separator+category.getViewName()+"-"+(categoryArticle.getPage()+2)+"-ajaxPage";
+        String url = category.getPath()+File.separator+category.getViewName()+"-"+(categoryArticle.getPage()+2)+"-page.html";
         map.put("url",url);
         String html = TemplateUtil.convertHtmlAndSave(category.getPath(),viewName,map, template);
         return  html;

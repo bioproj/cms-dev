@@ -108,7 +108,11 @@ public class WebController {
     public String showArticle3(@PathVariable("path") String path,@PathVariable("path2") String path2, @PathVariable("viewName") String viewName) {
         return "html" + File.separator+path+File.separator+path2+File.separator+viewName;
     }
-
+    @GetMapping("components/{id}/{args}")
+    @Anonymous
+    public String components1(@PathVariable("id") Integer id, @PathVariable("args") String args) {
+        return "html/components" + File.separator+id+File.separator+args;
+    }
     @GetMapping("{path}/{viewName}.html")
     @Anonymous
     public String showArticle2(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {
@@ -222,56 +226,29 @@ public class WebController {
     }
 
 
-    @GetMapping(value = "/component_{id},category_{ids},sort_{sort},order_{order},page_{page},size_{size}",produces={"text/html;charset=UTF-8;","application/json;"})
-    @Anonymous
-    @ResponseBody
-    public String articlePageCondition(@PathVariable("id") Integer componentId,
-                                    @PathVariable("ids") String categoryIds,
-                                    @PathVariable("sort") String sort,
-                                    @PathVariable("order") String order,
-                                    @PathVariable("page") Integer page,
-                                    @PathVariable("size") Integer size){
-//        response.setContentType("");
-        Set<Integer> ids= new HashSet<>();
-        String[] idsSplit = categoryIds.split(",");
-        for(String i : idsSplit){
-            ids.add(Integer.parseInt(i));
-        }
-        String[] sortSplit = sort.split(",");
-        Set<String>  sortStr= new HashSet<>();
-        sortStr.addAll(Arrays.asList(sortSplit));
-
-        String html = htmlService.articlePageCondition(componentId, ids, sortStr, order, page, size);
-//        TemplateUtil.saveFile(path,viewName,html);
-//        Map<String,String> map = new HashMap<>();
-//        map.put("html",html);
-//        map.put("url",html);
-
-        return html;
-
-    }
-
-    @GetMapping(value = "/html/{path}/{viewName}-{page}-ajaxPage",produces={"text/html;charset=UTF-8;","application/json;"})
-    @Anonymous
-    @ResponseBody
-    public String  contentCategoryPage(@PathVariable("viewName") String viewName,
-                                       @PathVariable("path") String path,
-                                       @PathVariable("page") Integer page){
-        if(page<=0){
-            return "Page is not exist!!";
-        }
-        path = "html/"+path;
-        String viewNameStr = viewName+"-"+page+"-page";
-        if(TemplateUtil.checkFileExist(path,viewNameStr)){
-            return TemplateUtil.openFile(path,viewNameStr);
-        }
 
 
-        Category category = categoryService.findByViewName(viewName);
-        return htmlService.convertArticleListBy(category,page);
-
-
-    }
+//    @GetMapping(value = "/html/{path}/{viewName}-{page}-ajaxPage",produces={"text/html;charset=UTF-8;","application/json;"})
+//    @Anonymous
+//    @ResponseBody
+//    public String  contentCategoryPage(@PathVariable("viewName") String viewName,
+//                                       @PathVariable("path") String path,
+//                                       @PathVariable("page") Integer page){
+//        if(page<=0){
+//            return "Page is not exist!!";
+//        }
+//        path = "html/"+path;
+//        String viewNameStr = viewName+"-"+page+"-page";
+//        if(TemplateUtil.checkFileExist(path,viewNameStr)){
+//            return TemplateUtil.openFile(path,viewNameStr);
+//        }
+//
+//
+//        Category category = categoryService.findByViewName(viewName);
+//        return htmlService.convertArticleListBy(category,page);
+//
+//
+//    }
 
     @RequestMapping("/admin")
     public String index(){

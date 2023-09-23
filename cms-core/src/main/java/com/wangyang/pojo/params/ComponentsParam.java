@@ -11,6 +11,7 @@ public class ComponentsParam {
     private String viewName;
     private String enName;
     private String dataName;
+    private String dataArgs;
     private String path;
     private String originalContent;
 

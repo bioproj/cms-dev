@@ -14,6 +14,7 @@ public class Components extends BaseTemplate {
 
     private String viewName;
     private String dataName;
+    private String dataArgs;
 
     @Column(name = "template_event")
     private String event;

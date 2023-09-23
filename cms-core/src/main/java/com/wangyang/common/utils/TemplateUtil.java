@@ -6,14 +6,14 @@ import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.exception.TemplateException;
 import com.wangyang.config.CmsConfig;
-import com.wangyang.listener.SystemTemplates;
+import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.BaseTemplate;
+import com.wangyang.service.IComponentsService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.web.core.view.GenerateHtml;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -26,10 +26,7 @@ import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.context.IContext;
-import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.model.IProcessableElementTag;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.spring5.expression.ThymeleafEvaluationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +39,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Component
 @Slf4j
@@ -51,6 +47,8 @@ public class TemplateUtil {
     private static ApplicationContext applicationContext;
 
     private static ConversionService mvcConversionService;
+    @Autowired
+    private  IComponentsService componentsService;
 
 
     private static IHtmlService htmlService;
@@ -62,6 +60,8 @@ public class TemplateUtil {
     public  void setMvcConversionService(ConversionService mvcConversionService) {
         TemplateUtil.mvcConversionService = mvcConversionService;
     }
+
+
     @Autowired
     public static void setHtmlService(IHtmlService htmlService) {
         TemplateUtil.htmlService = htmlService;
@@ -370,7 +370,7 @@ public class TemplateUtil {
 //        }
         return viewNamePath;
     }
-    public static void getHtml(String viewName, WebContext ctx, HttpServletRequest request, HttpServletResponse response) {
+    public  void getHtml(String viewName, WebContext ctx, HttpServletRequest request, HttpServletResponse response) {
 //        PrintWriter writer=null; // = response.getWriter();
         try(PrintWriter writer = response.getWriter()) {
             try {
@@ -396,13 +396,13 @@ public class TemplateUtil {
 //        }
 
 
-                viewNamePath = viewNamePath.replace("_", File.separator);
+//                viewNamePath = viewNamePath.replace("_", File.separator);
                 if(viewNamePath.equals("error")){
                     viewNamePath =CMSUtils.getTemplates()+"error";
                 }
-                String[] pathArgs = viewNamePath.split("_");
+//                String[] pathArgs = viewNamePath.split("_");
                 Path path = Paths.get(CmsConst.WORK_DIR+ File.separator+viewNamePath+".html");
-                if(!Files.exists(path) && !invokeGenerateHtml(pathArgs,viewName)){
+                if(!Files.exists(path) && !invokeGenerateHtml(viewName)){
 
                     viewNamePath = errorProcess(viewName, ctx,  viewNamePath);
 
@@ -484,7 +484,7 @@ public class TemplateUtil {
      * @param pathArgs
      */
 
-    public static boolean invokeGenerateHtml(String[] pathArgs,String viewName) throws InvocationTargetException, IllegalAccessException {
+    public  boolean invokeGenerateHtml(String viewName) throws InvocationTargetException, IllegalAccessException {
 //        if(pathArgs.length==1 && pathArgs[0].contains("index")){
 //            htmlService.generateHome();
 //            htmlService.generateHtmlByViewName();
@@ -513,23 +513,28 @@ public class TemplateUtil {
 ////            }
 //        }
         if(viewName.contains("/")){
-            int pos = viewName.lastIndexOf("/");
-            String args1 = viewName.substring(0,pos);
-            String args2 = viewName.substring(pos+1);
-            pathArgs = new String[]{args1,args2};
+            String[] pathArgs = viewName.split("/");
             if(pathArgs.length<2){
                 return false;
             }
-            pathArgs = pathArgs[1].split("-");
-
-            GenerateHtml generateHtml = CmsConfig.getBean(GenerateHtml.class);
-            Method[] methods = generateHtml.getClass().getDeclaredMethods();
-            for (Method method: methods){
-                if(method.getName().equals(pathArgs[pathArgs.length-1])){
-                    method.invoke(generateHtml,new Object[]{pathArgs});
-                    return true;
+            pathArgs = pathArgs[pathArgs.length-1].split("-");
+            Map<String, IComponentsData> componentsDataMap = componentsService.getComponentsDataMap();
+            if(componentsDataMap.containsKey(pathArgs[pathArgs.length-1])){
+                IComponentsData componentsData = componentsDataMap.get(pathArgs[pathArgs.length - 1]);
+                //生成html
+                return componentsData.cacheDate(pathArgs[0]);
+            }else {
+                GenerateHtml generateHtml = CmsConfig.getBean(GenerateHtml.class);
+                Method[] methods = generateHtml.getClass().getDeclaredMethods();
+                for (Method method: methods){
+                    if(method.getName().equals(pathArgs[pathArgs.length-1])){
+                        method.invoke(generateHtml,new Object[]{pathArgs});
+                        return true;
+                    }
                 }
             }
+
+
 
         }
 
