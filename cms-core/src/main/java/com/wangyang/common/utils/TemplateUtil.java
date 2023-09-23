@@ -604,6 +604,7 @@ public class TemplateUtil {
     }
     public static void deleteFile(String path) {
         path = workDir+File.separator+path;
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>删除文件:"+path);
         FileUtils.remove(path);
     }
     public static String saveFile(String path,String viewName,String html,String suffix) {
