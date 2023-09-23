@@ -11,6 +11,7 @@ import com.gimranov.libzotero.model.Tag;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.ArticleTagsDto;
 import com.wangyang.pojo.entity.Collection;
@@ -43,6 +44,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.FutureTask;
+import java.util.stream.Collectors;
 
 @Service
 public class ZoteroServiceImpl implements IZoteroService {
@@ -50,8 +52,8 @@ public class ZoteroServiceImpl implements IZoteroService {
     @Autowired
     ILiteratureService literatureService;
 
-    @Autowired
-    ICollectionService collectionService;
+//    @Autowired
+//    ICollectionService collectionService;
 
     @Autowired
     ITaskService taskService;
@@ -139,10 +141,10 @@ public class ZoteroServiceImpl implements IZoteroService {
     @Async
     @Override
     public void importLiterature(Integer userId, Task task)  {
-        List<Collection> collections = collectionService.listAll();
-        if(collections.size()==0){
-            throw new ObjectException("请先导入分类！！！");
-        }
+//        List<Collection> collections = collectionService.listAll();
+//        if(collections.size()==0){
+//            throw new ObjectException("请先导入分类！！！");
+//        }
         try {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new Interceptor() {
@@ -195,7 +197,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                 allItem.addAll(itemList);
             }
 
-            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
+//            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
 
             Set<String> findTags = new HashSet<>();
             List<ArticleTagsDto> articleTagsDtos = new ArrayList<>();
@@ -236,13 +238,15 @@ public class ZoteroServiceImpl implements IZoteroService {
                             articleTagsDtos.add(new ArticleTagsDto(tag.getTag(),literature.getKey()));
                         }
 
-                        if(collectionMap.containsKey(name)){
-                            Collection collection = collectionMap.get(name);
-                            literature.setCategoryId(collection.getId());
-
-                        }else {
-                            literature.setCategoryId(-1);
-                        }
+//                        if(collectionMap.containsKey(name)){
+//                            Collection collection = collectionMap.get(name);
+//                            literature.setCategoryId(collection.getId());
+//
+//                        }else {
+//                            literature.setCategoryId(-1);
+//                        }
+                        literature.setPath("html/literature");
+                        literature.setViewName(CMSUtils.randomViewName());
                         literatureList.add(literature);
                     }
                 }else {
@@ -254,6 +258,8 @@ public class ZoteroServiceImpl implements IZoteroService {
                     literature.setUserId(userId);
                     literature.setOriginalContent(item.getData().getAbstractNote());
                     literature.setCategoryId(-1);
+                    literature.setPath("html/literature");
+                    literature.setViewName(CMSUtils.randomViewName());
                     literatureList.add(literature);
                 }
 
@@ -263,9 +269,15 @@ public class ZoteroServiceImpl implements IZoteroService {
 
 
 
-            literatureService.deleteAll();
+//            literatureService.deleteAll();
+            List<Literature> literature = literatureService.listAll();
+            Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
+            Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
 
-            List<Literature> literatures = literatureService.saveAll(literatureList);
+            findLiterature.removeAll(dbLiterature);
+
+            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
+            List<Literature> literatures = literatureService.saveAll(needSave);
 //
 
         } catch (IOException e) {
@@ -329,17 +341,17 @@ public class ZoteroServiceImpl implements IZoteroService {
                 collections.add(collection);
 
             }
-            List<Collection> saveCollections = collectionService.saveAll(collections);
+//            List<Collection> saveCollections = collectionService.saveAll(collections);
 
-            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(saveCollections, Collection::getKey);
-            for (Collection collection : collections){
-                if(collectionMap.containsKey(collection.getParentKey())){
-                    Integer id = collectionMap.get(collection.getParentKey()).getId();
-                    collection.setParentId(id);
-                }
-            }
-            collectionService.deleteAll();
-           collectionService.saveAll(collections);
+//            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(saveCollections, Collection::getKey);
+//            for (Collection collection : collections){
+//                if(collectionMap.containsKey(collection.getParentKey())){
+//                    Integer id = collectionMap.get(collection.getParentKey()).getId();
+//                    collection.setParentId(id);
+//                }
+//            }
+//            collectionService.deleteAll();
+//           collectionService.saveAll(collections);
 
 
 

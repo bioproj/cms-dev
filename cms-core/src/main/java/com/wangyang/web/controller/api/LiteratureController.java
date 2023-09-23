@@ -60,6 +60,9 @@ public class LiteratureController {
     @Autowired
     IZoteroService zoteroService;
 
+    @Autowired
+    IHtmlService htmlService;
+
     @PostMapping
     public Literature add(@RequestBody Literature literature){
         Literature saveLiterature = literatureService.add(literature);
@@ -70,12 +73,32 @@ public class LiteratureController {
     public Page<Literature> list(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable){
         return literatureService.pageBy(pageable);
     }
+    @PostMapping("/save/{id}")
+    public Literature save(@RequestBody  Literature literatureParam,@PathVariable("id") Integer id){
+        Literature literature = literatureService.findById(id);
+        BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
+        Literature saveLiterature = literatureService.update(id, literature);
+//        Literature saveLiterature = literatureService.save(literature);
+        // 需要判断文章模板路径
+//        literatureService.checkContentTemplatePath(saveLiterature);
 
+//        ArticleDetailVO articleDetailVO = contentService.convert(content);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        return saveLiterature;
+    }
     @PostMapping("/update/{id}")
     public Literature update(@RequestBody  Literature literatureParam,@PathVariable("id") Integer id){
         Literature literature = literatureService.findById(id);
-        BeanUtils.copyProperties(literatureParam,literature,"id");
-        return literatureService.save(literature);
+        BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
+        Literature saveLiterature = literatureService.update(id, literature);
+//        Literature saveLiterature = literatureService.save(literature);
+        // 需要判断文章模板路径
+        literatureService.checkContentTemplatePath(saveLiterature);
+
+//        ArticleDetailVO articleDetailVO = contentService.convert(content);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        htmlService.conventHtml(saveLiterature);
+        return saveLiterature;
     }
 
     @GetMapping("/find/{id}")

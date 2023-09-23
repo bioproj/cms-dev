@@ -16,7 +16,7 @@ public class Literature extends Content {
     private String author;
     @Column(name = "url_")
     private String url;
-    private Integer categoryId;
+//    private Integer categoryId;
     @Column(name = "publish_data")
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;

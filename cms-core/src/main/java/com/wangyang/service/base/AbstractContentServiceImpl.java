@@ -18,6 +18,7 @@ import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.ComponentsArticleRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
+import com.wangyang.service.IHtmlService;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Autowired
     ICategoryService categoryService;
+
 //    @Autowired
 //    ArticleRepository articleRepository;
     private ContentRepository<ARTICLE> contentRepository;
@@ -317,5 +319,24 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     @Override
     public Page<ARTICLE>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery){
         return  contentRepository.findAll(buildPublishByQuery(articleQuery),pageable);
+    }
+
+    @Override
+    public void checkContentTemplatePath(ARTICLE content){
+        if(content.getCategoryId()!=null){
+            Category category = categoryService.findById(content.getCategoryId());
+            if(!category.getArticleTemplateName().equals(content.getTemplateName()) || !category.getPath().equals(content.getPath())){
+                content.setTemplateName(category.getArticleTemplateName());
+                content.setPath(category.getPath());
+                save(content);
+            }
+        }
+    }
+
+
+    @Override
+    public ARTICLE update(Integer integer, ARTICLE updateDomain) {
+        updateDomain = createOrUpdate(updateDomain);
+        return super.update(integer, updateDomain);
     }
 }

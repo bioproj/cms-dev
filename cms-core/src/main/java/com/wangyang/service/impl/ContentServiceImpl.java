@@ -566,8 +566,11 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         contentDetailVO.setContent(content);
         content.setParentId(0);
         if(category.isPresent()){
+            content.setPath(category.get().getPath());
             content.setCategoryId(category.get().getId());
             contentDetailVO.setCategory(category.get());
+            content.setTemplateName(category.get().getArticleTemplateName());
+
         }else {
             content.setCategoryId(0);
         }

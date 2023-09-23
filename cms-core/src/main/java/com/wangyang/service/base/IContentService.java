@@ -55,5 +55,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
 
     Page<ARTICLE>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery);
 
+    void checkContentTemplatePath(ARTICLE content);
+
+
 //    ARTICLE previewSave(ARTICLE article);
 }

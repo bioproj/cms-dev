@@ -6,7 +6,9 @@ import com.wangyang.common.utils.FileUtils;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.annotation.CommentRole;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.CategoryVO;
+import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.*;
 import com.wangyang.service.authorize.ICustomerService;
 import com.wangyang.service.authorize.ISubscribeService;
@@ -16,11 +18,13 @@ import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.dto.UserDto;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.ArticleDetailVO;
+import com.wangyang.service.base.IContentService;
 import com.wangyang.util.FormatUtil;
 import com.wangyang.util.AuthorizationUtil;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -70,6 +74,10 @@ public class UserArticleController {
     @Autowired
     ISubscribeService subscribeService;
 
+    @Autowired
+    @Qualifier("contentServiceImpl")
+    IContentService<Content,Content, ContentVO> contentService;
+
     @GetMapping("/write")
     public String writeArticle(){
 //        int userId = AuthorizationUtil.getUserId(request);
@@ -108,6 +116,16 @@ public class UserArticleController {
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         model.addAttribute("view",articleDetailVO);
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
+    }
+    @GetMapping("/editContent/{id}")
+    public String editContent(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+        int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
+        Content content = contentService.findById(id);
+
+//        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        model.addAttribute("view",content);
+        return CmsConst.TEMPLATE_FILE_PREFIX+"user/editContent";
     }
     @GetMapping("/editComponents/{id}")
     public String editComponents(HttpServletRequest request,Model model,@PathVariable("id") Integer id){

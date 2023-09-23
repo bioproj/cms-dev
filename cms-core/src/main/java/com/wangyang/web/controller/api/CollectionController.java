@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/collection")
+@Deprecated
 public class CollectionController {
 
     @Autowired

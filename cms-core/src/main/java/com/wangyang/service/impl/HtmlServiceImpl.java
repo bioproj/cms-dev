@@ -93,6 +93,19 @@ public class HtmlServiceImpl implements IHtmlService {
         conventHtml(articleVO, true);
     }
 
+
+
+    @Override
+    public void conventHtml(Content content) {
+//        Category category = categoryService.findById(content.getCategoryId());
+        Template template = templateService.findOptionalByEnName(content.getTemplateName());
+        Map<String,Object> map = new HashMap<>();
+        map.put("view",content);
+        map.put("template",template);
+        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
+//        return html;
+    }
+
     @Override
     @Async //异步执行
     public void conventHtml(ArticleDetailVO articleVO,Boolean isCategory){

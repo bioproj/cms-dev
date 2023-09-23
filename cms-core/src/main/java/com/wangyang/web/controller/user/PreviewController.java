@@ -79,7 +79,33 @@ public class PreviewController {
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 
+    @GetMapping("/content/{articleId}")
+    public String previewContent(@PathVariable("articleId")Integer articleId, Model model){
+        Content content = contentService.findById(articleId);
 
+        Category category = categoryService.findById(content.getCategoryId());
+        Template template = templateService.findByEnName(category.getArticleTemplateName());
+//        htmlService.addParentCategory(articleDetailVo);
+
+
+//        List<Category> partnerCategory = categoryService.findByParentId(articleDetailVo.getCategory().getParentId());
+//        articleDetailVo.setPartnerCategory(categoryService.convertToListVo(partnerCategory));
+
+
+//        Template categoryTemplate = templateService.findOptionalByEnName(category.getTemplateName());
+//        List<Template> templates = templateService.findByChild(categoryTemplate.getId());
+//        for (Template templateChild : templates){
+//            model.addAttribute(templateChild.getEnName(),CMSUtils.getCategoryPath()+File.separator+templateChild.getEnName()+File.separator+category.getViewName());
+//        }
+
+
+//        ModelAndView modelAndView = new ModelAndView();
+        model.addAttribute("view",content);
+//        modelAndView.setViewName(template.getTemplateValue());
+//        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
+//        String convertHtml = FileUtils.convertByString(html);
+        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
+    }
 //    @ResponseBody
     /**
      * 使用自定义的公共头部引用语句

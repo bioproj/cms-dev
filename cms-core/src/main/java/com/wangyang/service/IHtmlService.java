@@ -4,6 +4,7 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryArticleListDao;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,7 @@ import java.util.Set;
 
 public interface IHtmlService {
 
-
+    void conventHtml(Content content);
     /**
      * 生成文章的html
      * @param articleVO

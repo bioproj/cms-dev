@@ -519,6 +519,8 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         return repository.save(domain);
     }
 
+
+
     @Override
     public boolean supportType(CrudType type) {
         return false;

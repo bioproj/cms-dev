@@ -9,8 +9,10 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.authorize.UserDetailDTO;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryDetailVO;
+import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -23,10 +25,12 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.service.authorize.IUserService;
+import com.wangyang.service.base.IContentService;
 import com.wangyang.util.AuthorizationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -55,6 +59,10 @@ public class CategoryController {
     IUserService userService;
     @Autowired
     CategoryTagsRepository categoryTagsRepository;
+
+    @Autowired
+    @Qualifier("contentServiceImpl")
+    IContentService<Content,Content, ContentVO> contentService;
 
     @GetMapping
     public List<CategoryDto> list(){
@@ -147,7 +155,7 @@ public class CategoryController {
                     || (categoryParam.getArticleTemplateName()!=null && !categoryParam.getArticleTemplateName().equals(oldArticleTemplate))
 
             ){
-                List<Article> articles = articleService.listArticleBy(category.getId());
+                List<Content> articles = contentService.listContentByCategoryId(category.getId());
                 articles.forEach(article -> {
                     if(category.getArticleUseViewName()){
                         article.setPath(category.getPath()+File.separator+category.getViewName());
@@ -158,9 +166,13 @@ public class CategoryController {
                     article.setCategoryViewName(category.getViewName());
                     article.setIsArticleDocLink(category.getIsArticleDocLink());
                     article.setTemplateName(category.getArticleTemplateName());
-                    articleService.save(article);
-                    ArticleDetailVO articleDetailVO = articleService.convert(article);
-                    htmlService.conventHtml(articleDetailVO);
+                    contentService.save(article);
+                    if(article instanceof Article){
+
+                        ArticleDetailVO articleDetailVO = articleService.convert((Article) article);
+                        htmlService.conventHtml(articleDetailVO);
+                    }
+
                 });
 //            htmlService.convertArticleListBy(category);
             }
