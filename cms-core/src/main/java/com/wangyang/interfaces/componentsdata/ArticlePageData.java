@@ -71,7 +71,7 @@ public class ArticlePageData implements IComponentsData {
                 componentId = Integer.parseInt(arg.replace("component_", ""));
             }else if(arg.startsWith("category_")){
                 String categoryIds = arg.replace("category_", "");
-                String[] idsSplit = categoryIds.split(",");
+                String[] idsSplit = categoryIds.split("\\|");
                 for(String i : idsSplit){
                     ids.add(Integer.parseInt(i));
                 }
@@ -87,7 +87,7 @@ public class ArticlePageData implements IComponentsData {
 
 
         String url = "components/"+componentId+"/component_"+componentId+",category_"+
-                Joiner.on(",").join(ids)+
+                Joiner.on("|").join(ids)+
                 ",sort_"+Joiner.on(",").join(sortStr)+
                 ",order_"+order+
                 ",page_"+(page+ 1)+
@@ -117,7 +117,7 @@ public class ArticlePageData implements IComponentsData {
         String html = TemplateUtil.getHtml(components.getTemplateValue(),context);
         String path = "html/components/"+componentId;
         String viewName = "component_"+componentId+",category_"+
-                Joiner.on(",").join(ids)+
+                Joiner.on("|").join(ids)+
                 ",sort_"+Joiner.on(",").join(sortStr)+
                 ",order_"+order+
                 ",page_"+(page)+
@@ -202,7 +202,7 @@ public class ArticlePageData implements IComponentsData {
         map.put("name",components.getName());
         map.put("componentIds",components.getId());
         map.put("url","components/"+components.getId()+"/component_"+components.getId()+",category_"+
-                Joiner.on(",").join(articlePageCondition.getIds())+
+                Joiner.on("|").join(articlePageCondition.getIds())+
                 ",sort_"+Joiner.on(",").join(articlePageCondition.getSortStr())+
                 ",order_"+articlePageCondition.getOrder()+
                 ",page_"+(articlePageCondition.getPage()+ 1)+
