@@ -12,5 +12,7 @@ public interface ILiteratureService  extends IContentService<Literature,Literatu
 
     List<Literature> listByCollectionId(Integer collectionId);
 
-    void generateHtml(int userId);
+    void generateHtml(List<Literature> literatures);
+
+    void generateListHtml(int userId);
 }

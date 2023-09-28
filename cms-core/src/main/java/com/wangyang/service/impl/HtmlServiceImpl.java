@@ -5,11 +5,13 @@ import com.google.common.base.Joiner;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
+import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.*;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
@@ -22,6 +24,7 @@ import com.wangyang.repository.ArticleTagsRepository;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.repository.ComponentsRepository;
 import com.wangyang.service.*;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +87,42 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Autowired
     IComponentsCategoryService componentsCategoryService;
+    @Autowired
+    @Qualifier("baseCategoryServiceImpl")
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
+
+
+    @Override
+    public void conventHtml(Content content) {
+        Template template = templateService.findOptionalByEnName(content.getTemplateName());
+        Map<String,Object> map = new HashMap<>();
+        map.put("view",content);
+        map.put("template",template);
+        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
+        if(content.getCategoryId()!=null){
+            BaseCategory baseCategory = baseCategoryService.findOptionalById(content.getCategoryId()).orElse(null);
+            if(baseCategory!=null){
+                conventHtml(baseCategory);
+            }
+
+        }
+
+    }
+
+    @Override
+    public void conventHtml(BaseCategory baseCategory ) {
+        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
+        Template categoryTemplate = templateService.findByEnName(baseCategory.getTemplateName());
+
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("contents",contents);
+        map2.put("category",baseCategory);
+        map2.put("template",categoryTemplate);
+        TemplateUtil.convertHtmlAndSave(baseCategory.getPath(),baseCategory.getViewName(),map2, categoryTemplate);
+
+    }
+
+
 
 
 
@@ -91,19 +130,6 @@ public class HtmlServiceImpl implements IHtmlService {
     @Async //异步执行
     public void conventHtml(ArticleDetailVO articleVO){
         conventHtml(articleVO, true);
-    }
-
-
-
-    @Override
-    public void conventHtml(Content content) {
-//        Category category = categoryService.findById(content.getCategoryId());
-        Template template = templateService.findOptionalByEnName(content.getTemplateName());
-        Map<String,Object> map = new HashMap<>();
-        map.put("view",content);
-        map.put("template",template);
-        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
-//        return html;
     }
 
     @Override

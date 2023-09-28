@@ -1,12 +1,14 @@
 package com.wangyang.web.controller.user;
 
 import com.wangyang.common.CmsConst;
+import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.TemplateParam;
@@ -15,6 +17,7 @@ import com.wangyang.service.*;
 import com.wangyang.pojo.dto.CategoryArticleListDao;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,9 @@ public class PreviewController {
     @Qualifier("contentServiceImpl")
     IContentService<Content,Content, ContentVO> contentService;
 
+    @Autowired
+    @Qualifier("baseCategoryServiceImpl")
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
 
     @PostMapping("/templates/update/{id}")
     public String update(@PathVariable("id") Integer id,TemplateParam templateParam){
@@ -71,11 +77,14 @@ public class PreviewController {
         return CmsConst.TEMPLATE_FILE_PREFIX+inputTemplate.getTemplateValue();
     }
 
-    @GetMapping("/literatureList/{collectionId}")
-    public String previewLiterature(@PathVariable("collectionId")Integer collectionId, Model model){
-        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
-        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
-        model.addAttribute("view",literatures);
+    @GetMapping("/baseCategory/{categoryId}")
+    public String previewLiterature(@PathVariable("categoryId")Integer categoryId, Model model){
+        BaseCategory baseCategory = baseCategoryService.findById(categoryId);
+        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
+//        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
+
+        Template template = templateService.findByEnName(baseCategory.getTemplateName());
+        model.addAttribute("contents",contents);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 
@@ -83,28 +92,19 @@ public class PreviewController {
     public String previewContent(@PathVariable("articleId")Integer articleId, Model model){
         Content content = contentService.findById(articleId);
 
-        Category category = categoryService.findById(content.getCategoryId());
-        Template template = templateService.findByEnName(category.getArticleTemplateName());
-//        htmlService.addParentCategory(articleDetailVo);
+        BaseCategory baseCategory = baseCategoryService.findById(content.getCategoryId());
+        if(baseCategory instanceof  Category){
+            Template template = templateService.findByEnName(((Category)baseCategory).getArticleTemplateName());
+            model.addAttribute("view",content);
 
+            return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
+        }else {
+            Template template = templateService.findByEnName(content.getTemplateName());
+            model.addAttribute("view",content);
 
-//        List<Category> partnerCategory = categoryService.findByParentId(articleDetailVo.getCategory().getParentId());
-//        articleDetailVo.setPartnerCategory(categoryService.convertToListVo(partnerCategory));
+            return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
+        }
 
-
-//        Template categoryTemplate = templateService.findOptionalByEnName(category.getTemplateName());
-//        List<Template> templates = templateService.findByChild(categoryTemplate.getId());
-//        for (Template templateChild : templates){
-//            model.addAttribute(templateChild.getEnName(),CMSUtils.getCategoryPath()+File.separator+templateChild.getEnName()+File.separator+category.getViewName());
-//        }
-
-
-//        ModelAndView modelAndView = new ModelAndView();
-        model.addAttribute("view",content);
-//        modelAndView.setViewName(template.getTemplateValue());
-//        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
-//        String convertHtml = FileUtils.convertByString(html);
-        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 //    @ResponseBody
     /**

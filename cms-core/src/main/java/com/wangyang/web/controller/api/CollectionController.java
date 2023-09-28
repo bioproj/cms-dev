@@ -1,5 +1,7 @@
 package com.wangyang.web.controller.api;
 
+import com.wangyang.common.BaseResponse;
+import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.entity.Task;
 import com.wangyang.pojo.vo.CollectionVO;
 import com.wangyang.service.ICollectionService;
@@ -16,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/collection")
-@Deprecated
 public class CollectionController {
 
     @Autowired
@@ -26,10 +27,20 @@ public class CollectionController {
     IZoteroService zoteroService;
 
     @GetMapping
-    public List<CollectionVO> list(){
+    public List<CollectionVO> listTree(){
       return collectionService.listTree();
     }
 
+
+    @GetMapping("/list")
+    public List<Collection> list(){
+        return collectionService.listAll();
+    }
+    @GetMapping("/delAll")
+    public BaseResponse delAll(){
+        collectionService.deleteAll();
+        return BaseResponse.ok("success");
+    }
 
     @GetMapping("/import")
     public Task importData(HttpServletRequest request)  {

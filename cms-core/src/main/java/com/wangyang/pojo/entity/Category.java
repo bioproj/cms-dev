@@ -25,7 +25,7 @@ public class Category extends BaseCategory{
     @Column(columnDefinition = "int default 0")
     private Integer articleNumber;
 //    private Integer templateId;
-    private String templateName;
+
     @Column(columnDefinition = "bit(1) default true")
     private Boolean haveHtml=true;
 
@@ -39,7 +39,7 @@ public class Category extends BaseCategory{
 //    private Boolean status=true;
     private String picPath;
     private String picThumbPath;
-    private String path;
+
 //    @Column(name = "category_order",columnDefinition = "int default 1")
 //    private Integer order;
     @Column(columnDefinition = "bit(1) default false")

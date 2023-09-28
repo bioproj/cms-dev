@@ -4,6 +4,7 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryArticleListDao;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
@@ -17,6 +18,9 @@ import java.util.Set;
 public interface IHtmlService {
 
     void conventHtml(Content content);
+
+    void conventHtml(BaseCategory baseCategory);
+
     /**
      * 生成文章的html
      * @param articleVO

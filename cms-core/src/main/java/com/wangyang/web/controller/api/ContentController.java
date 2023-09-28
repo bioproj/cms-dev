@@ -129,7 +129,7 @@ public class ContentController {
 //        TestStatic.test();
         Content content = contentService.findById(id);
         // 需要判断文章模板路径
-        contentService.checkContentTemplatePath(content);
+//        contentService.checkContentTemplatePath(content);
 
 //        ArticleDetailVO articleDetailVO = contentService.convert(content);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);

@@ -27,6 +27,7 @@ public class SystemTemplates {
 
                 //new Template("文章预览模板",CmsConst.DEFAULT_ARTICLE_PREVIEW_TEMPLATE, "@articlePreview", TemplateType.ARTICLE,3),
                 new Template("默认的文献模板",CmsConst.DEFAULT_LITERATURE_TEMPLATE,"@literature", TemplateType.Literature,1),
+                new Template("默认的文献分类模板",CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE,"@literatureCategory", TemplateType.CATEGORY,1),
 
 
                 new Template("默认的分类模板",CmsConst.DEFAULT_CATEGORY_TEMPLATE,"@category", TemplateType.CATEGORY,4),

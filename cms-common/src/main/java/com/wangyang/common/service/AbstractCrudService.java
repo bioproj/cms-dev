@@ -151,7 +151,11 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         Assert.isTrue(index >= 0 && index <= 1, "type index must be between 0 to 1");
         return ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[index];
     }
-
+    @Override
+    public Optional<DOMAIN> findOptionalById(ID Id){
+        Optional<DOMAIN> fileOptional = repository.findById(Id);
+        return fileOptional;
+    }
     @Override
     public DOMAIN findById(ID Id){
         Optional<DOMAIN> fileOptional = repository.findById(Id);

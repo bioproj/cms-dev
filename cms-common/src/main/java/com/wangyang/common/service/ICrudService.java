@@ -11,6 +11,7 @@ import org.springframework.lang.Nullable;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -29,6 +30,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
 
     @Transactional
     void importData(List<DOMAIN> entities, int batchSize);
+
+    Optional<DOMAIN> findOptionalById(ID Id);
 
     DOMAIN findById(@NonNull ID id);
 

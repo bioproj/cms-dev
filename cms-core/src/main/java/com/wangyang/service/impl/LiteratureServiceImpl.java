@@ -10,6 +10,7 @@ import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.LiteratureRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.AbstractContentServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     private ICollectionService collectionService;
     private ITemplateService templateService;
     private IComponentsService componentsService;
+    @Autowired
+    IHtmlService htmlService;
 
     public LiteratureServiceImpl(LiteratureRepository literatureRepository,
                                  ITaskService taskService,
@@ -70,26 +73,48 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
             }
         });
     }
-
     @Override
-    public void generateHtml(int userId) {
-        List<Literature> literatureList = listAll();
+    public void generateHtml(List<Literature> literatures) {
+//        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+        for (Literature literature: literatures){
+            htmlService.conventHtml(literature);
+//            Map<String,Object> map = new HashMap<>();
+//            map = new HashMap<>();
+//            map.put("view",literature);
+//            map.put("template",template);
+//            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),literature.getKey(),map, template);
+        }
+    }
+    @Override
+    public void generateListHtml(int userId) {
         List<Collection> collections = collectionService.listAll();
-        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+
+        for (Collection collection : collections){
+            htmlService.conventHtml(collection);
+//            Template template = templateService.findByEnName(collection.getTemplateName());
+//            List<Literature> subLiterature = literatureList.stream().filter(literature ->
+//                    literature.getCategoryId().equals(collection.getId())
+//            ).collect(Collectors.toList());
+//            Map<String,Object> map = new HashMap<>();
+//            map = new HashMap<>();
+//            map.put("view",subLiterature);
+//            map.put("template",template);
+//            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
+        }
 
         Components components = componentsService.findByViewName("collectionTree");
         Object o = componentsService.getModel(components);
         TemplateUtil.convertHtmlAndSave(o, components);
-        for (Collection collection:collections){
-            List<Literature> subLiterature = literatureList.stream().filter(literature ->
-                    literature.getCategoryId().equals(collection.getId())
-            ).collect(Collectors.toList());
-            Map<String,Object> map = new HashMap<>();
-            map = new HashMap<>();
-            map.put("view",subLiterature);
-            map.put("template",template);
-            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
-        }
+//        for (Collection collection:collections){
+//            List<Literature> subLiterature = literatureList.stream().filter(literature ->
+//                    literature.getCategoryId().equals(collection.getId())
+//            ).collect(Collectors.toList());
+//            Map<String,Object> map = new HashMap<>();
+//            map = new HashMap<>();
+//            map.put("view",subLiterature);
+//            map.put("template",template);
+//            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
+//        }
     }
 
     @Override

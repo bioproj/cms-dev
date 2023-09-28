@@ -18,8 +18,10 @@ import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.entity.Literature;
 import com.wangyang.pojo.entity.Tags;
 import com.wangyang.pojo.entity.Task;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.TaskStatus;
 import com.wangyang.pojo.enums.TaskType;
+import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICollectionService;
 import com.wangyang.service.ILiteratureService;
 import com.wangyang.service.ITaskService;
@@ -30,6 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,10 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,15 +59,16 @@ public class ZoteroServiceImpl implements IZoteroService {
     @Autowired
     ILiteratureService literatureService;
 
-//    @Autowired
-//    ICollectionService collectionService;
+    @Autowired
+    ICollectionService collectionService;
 
     @Autowired
     ITaskService taskService;
     @Autowired
     private  ThreadPoolTaskExecutor executorService;
 
-
+    @Autowired
+    ContentRepository<Content> contentContentRepository;
 
     @Override
     public Task importLiterature(int userId) {
@@ -102,7 +110,7 @@ public class ZoteroServiceImpl implements IZoteroService {
             @Override
             public void run() {
                 importLiterature(userId, finalTask);
-                literatureService.generateHtml(userId);
+//                literatureService.generateHtml(userId);
             }
         });
 
@@ -141,10 +149,10 @@ public class ZoteroServiceImpl implements IZoteroService {
     @Async
     @Override
     public void importLiterature(Integer userId, Task task)  {
-//        List<Collection> collections = collectionService.listAll();
-//        if(collections.size()==0){
-//            throw new ObjectException("请先导入分类！！！");
-//        }
+        List<Collection> collections = collectionService.listAll();
+        if(collections.size()==0){
+            throw new ObjectException("请先导入分类！！！");
+        }
         try {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(new Interceptor() {
@@ -197,7 +205,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                 allItem.addAll(itemList);
             }
 
-//            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
+            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
 
             Set<String> findTags = new HashSet<>();
             List<ArticleTagsDto> articleTagsDtos = new ArrayList<>();
@@ -213,6 +221,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                         literature.setTitle(item.getData().getTitle());
                         literature.setKey(item.getKey());
                         literature.setZoteroKey(item.getKey());
+                        literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
                         literature.setUserId(userId);
                         if(item.getData().getUrl().startsWith("http")){
                             literature.setUrl(item.getData().getUrl());
@@ -238,15 +247,15 @@ public class ZoteroServiceImpl implements IZoteroService {
                             articleTagsDtos.add(new ArticleTagsDto(tag.getTag(),literature.getKey()));
                         }
 
-//                        if(collectionMap.containsKey(name)){
-//                            Collection collection = collectionMap.get(name);
-//                            literature.setCategoryId(collection.getId());
-//
-//                        }else {
-//                            literature.setCategoryId(-1);
-//                        }
+                        if(collectionMap.containsKey(name)){
+                            Collection collection = collectionMap.get(name);
+                            literature.setCategoryId(collection.getId());
+
+                        }else {
+                            literature.setCategoryId(-1);
+                        }
                         literature.setPath("html/literature");
-                        literature.setViewName(CMSUtils.randomViewName());
+                        literature.setViewName(item.getKey());
                         literatureList.add(literature);
                     }
                 }else {
@@ -255,11 +264,12 @@ public class ZoteroServiceImpl implements IZoteroService {
                     literature.setKey(item.getKey());
                     literature.setZoteroKey(item.getKey());
                     literature.setUrl(item.getData().getUrl());
+                    literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
                     literature.setUserId(userId);
                     literature.setOriginalContent(item.getData().getAbstractNote());
                     literature.setCategoryId(-1);
                     literature.setPath("html/literature");
-                    literature.setViewName(CMSUtils.randomViewName());
+                    literature.setViewName(item.getKey());
                     literatureList.add(literature);
                 }
 
@@ -273,12 +283,19 @@ public class ZoteroServiceImpl implements IZoteroService {
             List<Literature> literature = literatureService.listAll();
             Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
             Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
-
+            Set<String> findLiterature2 = new HashSet<>(findLiterature);
             findLiterature.removeAll(dbLiterature);
 
             List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
             List<Literature> literatures = literatureService.saveAll(needSave);
-//
+            literatureService.generateHtml(literatures);
+
+            dbLiterature.removeAll(findLiterature2);
+            List<Literature> needRemove = literature.stream().filter(item -> dbLiterature.contains(item.getTitle())).collect(Collectors.toList());
+
+            literatureService.deleteAll(needRemove);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -317,9 +334,9 @@ public class ZoteroServiceImpl implements IZoteroService {
                     .build();
 
             ZoteroService zoteroService = retrofit.create(ZoteroService.class);
-//        Map map = new HashMap<>();
-//        retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
-//        Map<String, String> stringMap = collectionsVersion.execute().body();
+//            Map map = new HashMap<>();
+//            retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
+//            Map<String, String> stringMap = collectionsVersion.execute().body();
             SearchQuery searchQuery = new SearchQuery();
 
             searchQuery.put("sort","title");
@@ -338,22 +355,49 @@ public class ZoteroServiceImpl implements IZoteroService {
                 collection.setName(item.getData().getName());
                 collection.setVersion(item.getVersion());
                 collection.setParentKey(item.getData().getParentCollection());
+                collection.setPath("html/collections");
+                collection.setViewName(item.getData().getName());
+                collection.setTemplateName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
                 collections.add(collection);
 
             }
-//            List<Collection> saveCollections = collectionService.saveAll(collections);
 
-//            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(saveCollections, Collection::getKey);
-//            for (Collection collection : collections){
-//                if(collectionMap.containsKey(collection.getParentKey())){
-//                    Integer id = collectionMap.get(collection.getParentKey()).getId();
-//                    collection.setParentId(id);
-//                }
-//            }
+
+            List<Collection> dbcoll = collectionService.listAll();
+            Set<String> dbCollections = ServiceUtil.fetchProperty(dbcoll, Collection::getName);
+            Set<String> findCollections = ServiceUtil.fetchProperty(collections, Collection::getName);
+            Set<String> findCollections2 = new HashSet<>(findCollections);
+
 //            collectionService.deleteAll();
-//           collectionService.saveAll(collections);
+//            collectionService.saveAll(collections);
+            findCollections.removeAll(dbCollections);
+
+            List<Collection> needSave = collections.stream().filter(item -> findCollections.contains(item.getName())).collect(Collectors.toList());
+            List<Collection> saveCollections = collectionService.saveAll(needSave);
+
+            Map<String, Collection> collectionMap = ServiceUtil.convertToMap( collectionService.listAll(), Collection::getKey);
+            for (Collection collection : collections){
+                if(collectionMap.containsKey(collection.getParentKey())){
+                    Integer id = collectionMap.get(collection.getParentKey()).getId();
+                    collection.setParentId(id);
+                }
+            }
+            collectionService.saveAll(saveCollections);
 
 
+            dbCollections.removeAll(findCollections2);
+            List<Collection> needRemove = dbcoll.stream().filter(item -> dbCollections.contains(item.getName())).collect(Collectors.toList());
+            for (Collection collection: needRemove){
+                List<Content> contents = contentContentRepository.findAll(new Specification<Content>() {
+                    @Override
+                    public Predicate toPredicate(Root<Content> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                        return query.where(criteriaBuilder.equal(root.get("categoryId"),collection.getId())).getRestriction();
+                    }
+                });
+                contentContentRepository.deleteAll(contents);
+            }
+
+            collectionService.deleteAll(needRemove);
 
 
             task.setStatus(TaskStatus.FINISH);

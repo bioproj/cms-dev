@@ -9,4 +9,6 @@ public class CollectionVO extends BaseVo<CollectionVO> {
     private String key;
     private String parentKey;
     private String version;
+    private String path;
+    private String viewName;
 }

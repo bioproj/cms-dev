@@ -93,12 +93,17 @@ public class LiteratureController {
         Literature saveLiterature = literatureService.update(id, literature);
 //        Literature saveLiterature = literatureService.save(literature);
         // 需要判断文章模板路径
-        literatureService.checkContentTemplatePath(saveLiterature);
+//        literatureService.checkContentTemplatePath(saveLiterature);
 
 //        ArticleDetailVO articleDetailVO = contentService.convert(content);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         htmlService.conventHtml(saveLiterature);
         return saveLiterature;
+    }
+    @GetMapping("/delAll")
+    public BaseResponse delAll(){
+         literatureService.deleteAll();
+         return BaseResponse.ok("success");
     }
 
     @GetMapping("/find/{id}")
@@ -127,10 +132,10 @@ public class LiteratureController {
         return task;
 
     }
-    @GetMapping("/generateHtml")
-    public BaseResponse generateHtml(HttpServletRequest request){
+    @GetMapping("/generateListHtml")
+    public BaseResponse generateListHtml(HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
-        literatureService.generateHtml(userId);
+        literatureService.generateListHtml(userId);
         return BaseResponse.ok("success!!");
 
     }
