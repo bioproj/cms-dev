@@ -88,7 +88,10 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     @Override
     public void generateListHtml(int userId) {
         List<Collection> collections = collectionService.listAll();
-
+        List<Literature> literature = listAll();
+        for (Literature literature1 : literature){
+            htmlService.conventHtml(literature1);
+        }
         for (Collection collection : collections){
             htmlService.conventHtml(collection);
 //            Template template = templateService.findByEnName(collection.getTemplateName());

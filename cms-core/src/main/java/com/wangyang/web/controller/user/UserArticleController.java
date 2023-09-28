@@ -161,11 +161,11 @@ public class UserArticleController {
     @GetMapping("/literature")
     @Anonymous
     public String searchLiterature(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable, String keywords, Model model){
-        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
         Set<String> filed = new HashSet<>();
         filed.add("title");
         Page<Literature> literature = literatureService.pageBy(pageable, keywords,filed);
-        model.addAttribute("view",literature);
+        model.addAttribute("contents",literature);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 
