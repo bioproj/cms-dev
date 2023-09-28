@@ -73,9 +73,11 @@ public class GitLabNodeRenderer implements NodeRenderer
             String url = resolvedLink.getUrl();
             if(url.startsWith("zotero://select/library/items")){
                 html.attr("href", url.replace("zotero://select/library/items","/literature")+".html");
-            } else if (url.startsWith("zotero://open-pdf/library/items")) {
-                html.attr("href", url.replace("zotero://open-pdf/library/items","/library/items"));
-            } else {
+            }
+//            else if (url.startsWith("zotero://open-pdf/library/items")) {
+//                html.attr("href", url.replace("zotero://open-pdf/library/items","/library/items"));
+//            }
+            else {
                 html.attr("href", url);
             }
 
