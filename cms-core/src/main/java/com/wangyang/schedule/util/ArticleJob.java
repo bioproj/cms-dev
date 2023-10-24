@@ -4,29 +4,23 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
-import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryDto;
-import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.pojo.entity.Collection;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.support.ScheduleOption;
 import com.wangyang.pojo.support.TemplateOption;
 import com.wangyang.pojo.support.TemplateOptionMethod;
 import com.wangyang.pojo.vo.ArticleVO;
-import com.wangyang.repository.ArticleTagsRepository;
-import com.wangyang.repository.CategoryTagsRepository;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
-import com.wangyang.service.impl.ArticleServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 //@Component
 @Slf4j
@@ -157,7 +151,7 @@ public class ArticleJob {
     public void tagsArticle(){
         List<Tags> tags = tagsService.listAll();
         for (Tags tag : tags){
-            List<ArticleTags> articleTags = articleTagsRepository.findByTagsId(tag.getId());
+            List<ArticleTags> articleTags = articleTagsRepository.findByRelationId(tag.getId());
             Set<Integer> articleIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getArticleId);
             Page<Article> articles = articleService.pageByIds(articleIds, 0, 5, null);
             List<Article> contents = articles.getContent();

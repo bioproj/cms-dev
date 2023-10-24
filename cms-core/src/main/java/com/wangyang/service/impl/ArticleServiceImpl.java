@@ -12,7 +12,7 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.params.ArticleQuery;
@@ -20,6 +20,7 @@ import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.*;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.IComponentsArticleService;
 import com.wangyang.service.ITemplateService;
 import com.wangyang.service.authorize.IUserService;
@@ -35,7 +36,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.OrderBy;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.io.File;
@@ -603,7 +603,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             // Get Article tags
             List<ArticleTags> articleTagsList = tagsIds.stream().map(tagId -> {
                 ArticleTags articleTags = new ArticleTags();
-                articleTags.setTagsId(tagId);
+                articleTags.setRelationId(tagId);
                 articleTags.setArticleId(article.getId());
                 return articleTags;
             }).collect(Collectors.toList());
@@ -732,7 +732,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
         List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
 
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getTagsId);
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
         List<Tags> tags = tagsRepository.findAllById(tagIds);
         Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
         Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
@@ -740,7 +740,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                 articleTag->{
                     tagsListMap.computeIfAbsent(articleTag.getArticleId(),
                                     tagsId->new LinkedList<>())
-                            .add(tagsMap.get(articleTag.getTagsId()));
+                            .add(tagsMap.get(articleTag.getRelationId()));
                 }
 
         );
@@ -790,7 +790,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
         List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
 
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getTagsId);
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
         List<Tags> tags = tagsRepository.findAllById(tagIds);
         Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
         Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
@@ -798,7 +798,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                 articleTag->{
                     tagsListMap.computeIfAbsent(articleTag.getArticleId(),
                                     tagsId->new LinkedList<>())
-                            .add(tagsMap.get(articleTag.getTagsId()));
+                            .add(tagsMap.get(articleTag.getRelationId()));
                 }
 
         );

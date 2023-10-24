@@ -10,6 +10,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.CategoryVO;
@@ -18,7 +19,6 @@ import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.ComponentsArticleRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
-import com.wangyang.service.IHtmlService;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,7 +283,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
             Subquery<Article> subquery = query.subquery(Article.class);
             Root<ArticleTags> subRoot = subquery.from(ArticleTags.class);
-            subquery = subquery.select(subRoot.get("articleId")).where(criteriaBuilder.equal(subRoot.get("tagsId"),articleQuery.getTagsId()));
+            subquery = subquery.select(subRoot.get("articleId")).where(criteriaBuilder.equal(subRoot.get("relationId"),articleQuery.getTagsId()));
             predicates.add(criteriaBuilder.in(root.get("id")).value(subquery));
         }
         if(articleQuery.getTop()!=null){

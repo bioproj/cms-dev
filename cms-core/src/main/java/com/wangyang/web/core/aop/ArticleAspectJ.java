@@ -1,26 +1,18 @@
 package com.wangyang.web.core.aop;
 
-import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.utils.CMSUtils;
-import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.vo.ArticleDetailVO;
-import com.wangyang.pojo.vo.ArticleVO;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.repository.ArticleTagsRepository;
-import com.wangyang.repository.CategoryTagsRepository;
-import com.wangyang.schedule.util.ArticleJob;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -92,7 +84,7 @@ public class ArticleAspectJ {
         if(articleTags.size()==0){
             return;
         }
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getTagsId);
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
         List<CategoryTags> categoryTags = categoryTagsService.listByTagIds(tagIds);
         if(categoryTags.size()==0){
             return;

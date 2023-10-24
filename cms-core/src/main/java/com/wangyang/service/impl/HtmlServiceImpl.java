@@ -13,6 +13,7 @@ import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.enums.TemplateData;
@@ -20,7 +21,7 @@ import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.repository.ArticleRepository;
-import com.wangyang.repository.ArticleTagsRepository;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.repository.ComponentsRepository;
 import com.wangyang.service.*;
@@ -212,7 +213,7 @@ public class HtmlServiceImpl implements IHtmlService {
             if(categoryTags.size()!=0){
                 Set<Integer> tagIds = ServiceUtil.fetchProperty(categoryTags, CategoryTags::getTagsId);
 
-                List<ArticleTags> articleTags = articleTagsRepository.findAllByTagsIdIn(tagIds);
+                List<ArticleTags> articleTags = articleTagsRepository.findAllByRelationIdIn(tagIds);
                 Set<Integer> articleIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getArticleId);
                 Page<Article> articles = articleService.pageByIds(articleIds, 0, 5, null);
                 List<Article> contents = articles.getContent();

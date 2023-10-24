@@ -9,13 +9,14 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.vo.ComponentsVO;
 import com.wangyang.pojo.vo.ContentVO;
-import com.wangyang.repository.ArticleTagsRepository;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.ComponentsRepository;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -377,9 +378,9 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
                 List<Tags> tags = tagsService.listAll();
                 Map<Tags,Integer> mapTags =  new HashMap<>();
                 for (Tags tag : tags){
-                    List<ArticleTags> articleTags = articleTagsRepository.findByTagsId(tag.getId());
+                    List<ArticleTags> articleTags = articleTagsRepository.findByRelationId(tag.getId());
                     int size = articleTags.stream().filter(articleTag -> {
-                        boolean b = articleTag.getTagsId() == tag.getId();
+                        boolean b = articleTag.getRelationId() == tag.getId();
                         return b;
                     }).collect(Collectors.toSet()).size();
                     mapTags.put(tag,size);

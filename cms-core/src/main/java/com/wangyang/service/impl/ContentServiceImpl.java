@@ -5,6 +5,7 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.enums.TemplateData;
@@ -12,7 +13,7 @@ import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
-import com.wangyang.repository.ArticleTagsRepository;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.ComponentsCategoryRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
@@ -120,7 +121,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
         List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
 
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getTagsId);
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
         List<Tags> tags = tagsRepository.findAllById(tagIds);
         Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
         Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
@@ -128,7 +129,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                 articleTag->{
                     tagsListMap.computeIfAbsent(articleTag.getArticleId(),
                                     tagsId->new LinkedList<>())
-                            .add(tagsMap.get(articleTag.getTagsId()));
+                            .add(tagsMap.get(articleTag.getRelationId()));
                 }
 
         );
@@ -186,7 +187,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
         List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
 
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getTagsId);
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
         List<Tags> tags = tagsRepository.findAllById(tagIds);
         Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
         Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
@@ -194,7 +195,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                 articleTag->{
                     tagsListMap.computeIfAbsent(articleTag.getArticleId(),
                                     tagsId->new LinkedList<>())
-                            .add(tagsMap.get(articleTag.getTagsId()));
+                            .add(tagsMap.get(articleTag.getRelationId()));
                 }
 
         );
