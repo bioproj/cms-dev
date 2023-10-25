@@ -65,6 +65,8 @@ public class Category extends BaseCategory{
     private Boolean isRecursive=false;
     private Boolean isDivision=false;
 
+    private Boolean isDisplayNetwork=false;
+
     public Boolean getDesc() {
         return isDesc;
     }

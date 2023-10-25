@@ -40,4 +40,6 @@ public class CategoryContentListDao {
     int size ;
     long totalElements ;
     int page;
+
+    private String forceDirectedGraph;
 }

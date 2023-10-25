@@ -1,5 +1,6 @@
 package com.wangyang.web.controller.user;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.CMSUtils;
@@ -12,6 +13,7 @@ import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.TemplateParam;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.service.*;
 import com.wangyang.pojo.dto.CategoryArticleListDao;
@@ -19,6 +21,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
+import com.wangyang.service.relation.IArticleTagsService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,6 +62,8 @@ public class PreviewController {
     @Autowired
     IHtmlService htmlService;
 
+    @Autowired
+    IArticleTagsService articleTagsService;
     @Autowired
     @Qualifier("contentServiceImpl")
     IContentService<Content,Content, ContentVO> contentService;
@@ -232,6 +237,13 @@ public class PreviewController {
 
         //预览
         CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
+        if(true){
+            List<ContentVO> contents = articleListVo.getContents();
+            ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+            String json = JSON.toJSON(forceDirectedGraph).toString();
+            articleListVo.setForceDirectedGraph(json);
+        }
+
         List<Template> templates = templateService.findByChild(template.getId());
         for (Template templateChild : templates){
 //            TemplateUtil.convertHtmlAndSave(CMSUtils.getCategoryPath()+File.separator+templateChild.getEnName(),articleListVo.getViewName(),articleListVo, templateChild);

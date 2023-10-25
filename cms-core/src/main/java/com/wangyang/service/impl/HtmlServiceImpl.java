@@ -18,6 +18,7 @@ import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.repository.ArticleRepository;
@@ -27,6 +28,7 @@ import com.wangyang.repository.ComponentsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
+import com.wangyang.service.relation.IArticleTagsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -91,6 +93,9 @@ public class HtmlServiceImpl implements IHtmlService {
     @Autowired
     @Qualifier("baseCategoryServiceImpl")
     IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
+
+    @Autowired
+    IArticleTagsService articleTagsService;
 
 
     @Override
@@ -385,6 +390,17 @@ public class HtmlServiceImpl implements IHtmlService {
 
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, 0);
         categoryArticle.setPage(0);
+
+        //是否生成力向图网络
+//        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
+        if(true){
+            List<ContentVO> contents = categoryArticle.getContents();
+            ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+            String json = JSON.toJSON(forceDirectedGraph).toString();
+            categoryArticle.setForceDirectedGraph(json);
+        }
+
+
 //        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
 
 //        if(template.getTree()){

@@ -42,4 +42,7 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;
+
+
+    private Boolean isDisplayNetwork;
 }
