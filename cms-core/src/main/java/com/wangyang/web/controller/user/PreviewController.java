@@ -237,7 +237,8 @@ public class PreviewController {
 
         //预览
         CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
-        if(true){
+//        if(true){
+        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
             List<ContentVO> contents = articleListVo.getContents();
             ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
             String json = JSON.toJSON(forceDirectedGraph).toString();

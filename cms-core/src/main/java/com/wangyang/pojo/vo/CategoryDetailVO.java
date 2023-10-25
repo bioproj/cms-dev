@@ -37,4 +37,5 @@ public class CategoryDetailVO {
     private Boolean isArticleDocLink;
     private Boolean isRecursive;
     private Boolean isDivision;
+    private Boolean isDisplayNetwork;
 }

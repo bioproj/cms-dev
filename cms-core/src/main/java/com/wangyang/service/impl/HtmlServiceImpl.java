@@ -392,8 +392,8 @@ public class HtmlServiceImpl implements IHtmlService {
         categoryArticle.setPage(0);
 
         //是否生成力向图网络
-//        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
-        if(true){
+        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
+//        if(true){
             List<ContentVO> contents = categoryArticle.getContents();
             ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
             String json = JSON.toJSON(forceDirectedGraph).toString();
