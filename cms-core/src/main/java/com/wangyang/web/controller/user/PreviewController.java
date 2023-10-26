@@ -97,16 +97,17 @@ public class PreviewController {
     @GetMapping("/content/{articleId}")
     public String previewContent(@PathVariable("articleId")Integer articleId, Model model){
         Content content = contentService.findById(articleId);
+        ContentVO contentVO = contentService.convertToTagVo(content);
 
         BaseCategory baseCategory = baseCategoryService.findById(content.getCategoryId());
         if(baseCategory instanceof  Category){
             Template template = templateService.findByEnName(((Category)baseCategory).getArticleTemplateName());
-            model.addAttribute("view",content);
+            model.addAttribute("view",contentVO);
 
             return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
         }else {
             Template template = templateService.findByEnName(content.getTemplateName());
-            model.addAttribute("view",content);
+            model.addAttribute("view",contentVO);
 
             return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
         }
