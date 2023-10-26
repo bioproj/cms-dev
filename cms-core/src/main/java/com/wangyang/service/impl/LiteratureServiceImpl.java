@@ -65,8 +65,11 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         Literature literature = super.update(integer, updateDomain);
         LiteratureVo literatureVo;
         if (tagsIds!=null && !CollectionUtils.isEmpty(tagsIds)) {
+
             literatureVo= new LiteratureVo();
             BeanUtils.copyProperties(literature, literatureVo);
+            articleTagsRepository.deleteByArticleId(literatureVo.getId());
+
             // Get Article tags
             List<ArticleTags> articleTagsList = tagsIds.stream().map(tagId -> {
                 ArticleTags articleTags = new ArticleTags();
