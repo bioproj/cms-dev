@@ -1,6 +1,7 @@
 package com.wangyang.pojo.entity;
 
 import com.wangyang.pojo.entity.base.BaseCategory;
+import com.wangyang.pojo.enums.NetworkType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -65,7 +66,7 @@ public class Category extends BaseCategory{
     private Boolean isRecursive=false;
     private Boolean isDivision=false;
 
-    private Boolean isDisplayNetwork=false;
+    private NetworkType networkType=NetworkType.NONE;
 
     public Boolean getDesc() {
         return isDesc;

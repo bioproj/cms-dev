@@ -1,6 +1,7 @@
 package com.wangyang.pojo.vo;
 
 import com.wangyang.pojo.entity.Tags;
+import com.wangyang.pojo.enums.NetworkType;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -37,5 +38,5 @@ public class CategoryDetailVO {
     private Boolean isArticleDocLink;
     private Boolean isRecursive;
     private Boolean isDivision;
-    private Boolean isDisplayNetwork;
+    private NetworkType networkType;
 }

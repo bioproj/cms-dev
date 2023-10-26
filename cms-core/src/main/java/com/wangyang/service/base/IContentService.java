@@ -8,6 +8,7 @@ import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +57,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     Page<ARTICLE>  pagePublishBy(Pageable pageable, ArticleQuery articleQuery);
 
     void checkContentTemplatePath(ARTICLE content);
+
+    ForceDirectedGraph graph(List<ContentVO> contents);
 
 
 //    ARTICLE previewSave(ARTICLE article);

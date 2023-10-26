@@ -3,6 +3,7 @@ package com.wangyang.web.controller.api;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.interfaces.IEnumList;
+import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.common.enums.ValueEnum;
@@ -27,7 +28,9 @@ public class EnumController {
             return TemplateData.values();
         } else if (name.equals("Lang")) {
             return Lang.values();
-        }else {
+        } else if (name.equals("NetworkType")) {
+            return NetworkType.values();
+        } else {
             if(enumList!=null){
                 return enumList.list(name);
             }

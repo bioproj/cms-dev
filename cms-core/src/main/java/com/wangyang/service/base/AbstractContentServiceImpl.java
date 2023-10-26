@@ -2,6 +2,7 @@ package com.wangyang.service.base;
 
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.service.AbstractCrudService;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.CategoryContentList;
@@ -13,6 +14,7 @@ import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
@@ -338,5 +340,36 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     public ARTICLE update(Integer integer, ARTICLE updateDomain) {
         updateDomain = createOrUpdate(updateDomain);
         return super.update(integer, updateDomain);
+    }
+
+
+
+
+//    public static void flattenContentVOTreeToList(List<ContentVO> contentVOS, ForceDirectedGraph forceDirectedGraph) {
+//        for (ContentVO content: contentVOS){
+//            forceDirectedGraph.addNodes(content.getId(),content.getTitle(),content.getLinkPath());
+//
+//            if(content.getChildren().size()!=0){
+//                for (ContentVO child:content.getChildren()){
+//                    forceDirectedGraph.addEdges(content.getId(),child.getId(),60,2);
+//                }
+//                flattenContentVOTreeToList(content.getChildren(),forceDirectedGraph);
+//            }
+//        }
+//    }
+    @Override
+    public ForceDirectedGraph graph(List<ContentVO> contents) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+        Map<Integer,Integer> edgesMap = new LinkedHashMap<>();
+        contents = CMSUtils.flattenContentVOTreeToList(contents);
+        contents.forEach(item->{
+            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+            if(item.getParentId()!=0) {
+                forceDirectedGraph.addEdges(item.getId(),item.getParentId(),60,2);
+            }
+        });
+
+
+        return forceDirectedGraph;
     }
 }

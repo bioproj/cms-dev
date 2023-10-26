@@ -16,6 +16,7 @@ import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.support.ForceDirectedGraph;
@@ -170,8 +171,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
             if(template.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
                 List<ContentVO> contents = categoryContentListDao.getContents();
-                List<ContentVO> contentVOList = new ArrayList<>();
-                CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
+                List<ContentVO> contentVOList = CMSUtils.flattenContentVOTreeToList(contents);
                 List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
                 int index = IntStream.range(0, contentVOS.size())
                         .filter(i -> contentVOS.get(i).getId().equals(articleVO.getId()))
@@ -392,12 +392,21 @@ public class HtmlServiceImpl implements IHtmlService {
         categoryArticle.setPage(0);
 
         //是否生成力向图网络
-        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
+        if(category.getNetworkType()!=null ){
 //        if(true){
-            List<ContentVO> contents = categoryArticle.getContents();
-            ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-            String json = JSON.toJSON(forceDirectedGraph).toString();
-            categoryArticle.setForceDirectedGraph(json);
+            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
+                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(json);
+            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
+                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(json);
+            }
         }
 
 
@@ -431,6 +440,7 @@ public class HtmlServiceImpl implements IHtmlService {
 //                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
 //            }
             // 如果分类有多级别则指定大于0的数字
+            // https://bioinfo.online/articleList/202381024113.html
             if(templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
                 List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
                 CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
@@ -441,10 +451,12 @@ public class HtmlServiceImpl implements IHtmlService {
                 TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
             }else if (templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
                 CategoryVO parentCategory = newCategoryArticle.getParentCategory();
-                List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
-                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
-            }else {
+                if(parentCategory!=null){
+                    List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
+                    newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                    TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
+                }
+           }else {
                 TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
             }
 

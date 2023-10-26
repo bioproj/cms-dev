@@ -11,6 +11,7 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.pojo.support.ForceDirectedGraph;
@@ -238,11 +239,22 @@ public class PreviewController {
         //预览
         CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
 //        if(true){
-        if(category.getIsDisplayNetwork()!=null && category.getIsDisplayNetwork()){
-            List<ContentVO> contents = articleListVo.getContents();
-            ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-            String json = JSON.toJSON(forceDirectedGraph).toString();
-            articleListVo.setForceDirectedGraph(json);
+        //是否生成力向图网络
+        if(category.getNetworkType()!=null ){
+//        if(true){
+            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
+                List<ContentVO> contents = articleListVo.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(json);
+            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
+                List<ContentVO> contents = articleListVo.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(json);
+            }
         }
 
         List<Template> templates = templateService.findByChild(template.getId());

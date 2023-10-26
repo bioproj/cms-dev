@@ -2,6 +2,7 @@ package com.wangyang.pojo.vo;
 
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
+import com.wangyang.pojo.enums.NetworkType;
 import lombok.Data;
 
 @Data
@@ -44,5 +45,5 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private Boolean articleUseViewName;
 
 
-    private Boolean isDisplayNetwork;
+    private NetworkType networkType;
 }

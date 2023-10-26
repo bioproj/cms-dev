@@ -12,10 +12,7 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CMSUtils {
 
@@ -162,14 +159,23 @@ public class CMSUtils {
             }
         }
     }
+    //将树拉平
     public static void flattenContentVOTreeToList(List<ContentVO> contentVOS, List<ContentVO> contentVOList) {
         for (ContentVO content: contentVOS){
             contentVOList.add(content);
-            if(content.getChildren().size()!=0){
+            if(content.getChildren()!=null && content.getChildren().size()!=0){
                 flattenContentVOTreeToList(content.getChildren(),contentVOList);
             }
         }
     }
+    public static  List<ContentVO> flattenContentVOTreeToList(List<ContentVO> contents) {
+        List<ContentVO> contentVOList = new ArrayList<>();
+        CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
+        return contentVOList;
+
+    }
+
+
 
 
 }
