@@ -25,10 +25,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literature, Literature, LiteratureVo> implements ILiteratureService {
 
     private LiteratureRepository literatureRepository;
@@ -64,11 +66,12 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
 
         Literature literature = super.update(integer, updateDomain);
         LiteratureVo literatureVo;
+        articleTagsRepository.deleteByArticleId(updateDomain.getId());
+
         if (tagsIds!=null && !CollectionUtils.isEmpty(tagsIds)) {
 
             literatureVo= new LiteratureVo();
             BeanUtils.copyProperties(literature, literatureVo);
-            articleTagsRepository.deleteByArticleId(literatureVo.getId());
 
             // Get Article tags
             List<ArticleTags> articleTagsList = tagsIds.stream().map(tagId -> {
