@@ -1,5 +1,6 @@
 package com.wangyang.schedule.util;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
@@ -7,13 +8,17 @@ import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.support.ScheduleOption;
 import com.wangyang.pojo.support.TemplateOption;
 import com.wangyang.pojo.support.TemplateOptionMethod;
 import com.wangyang.pojo.vo.ArticleVO;
+import com.wangyang.pojo.vo.CollectionVO;
+import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +61,9 @@ public class ArticleJob {
 
     @Autowired
     ITemplateService templateService;
+
+    @Autowired
+    ILiteratureService literatureService;
 
 
 
@@ -231,7 +239,26 @@ public class ArticleJob {
     @TemplateOptionMethod(name = "文献分类", templateValue = "components/@collectionTree", viewName = "collectionTree")
     public Map<String,Object> listCollection() {
         Map<String,Object> map = new HashMap<>();
-        map.put("view",collectionService.listTree());
+        List<CollectionVO> collectionVOS = collectionService.listTree();
+
+        List<Literature> literature = literatureService.listAll();
+        List<ContentVO> contentVOS = literatureService.convertToListVo(literature);
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+        contentVOS.forEach(item->{
+            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+
+            if(item.getParentId()!=0) {
+                forceDirectedGraph.addEdges(item.getId(),item.getParentId(),60,2);
+            }
+        });
+
+
+
+
+        String json = JSON.toJSON(forceDirectedGraph).toString();
+        map.put("forceDirectedGraph",json);
+        map.put("view",collectionVOS);
+
         return map;
     }
 

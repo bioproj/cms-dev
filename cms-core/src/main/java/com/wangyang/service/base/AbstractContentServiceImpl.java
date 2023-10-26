@@ -360,8 +360,6 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     @Override
     public ForceDirectedGraph graph(List<ContentVO> contents) {
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
-        Map<Integer,Integer> edgesMap = new LinkedHashMap<>();
-        contents = CMSUtils.flattenContentVOTreeToList(contents);
         contents.forEach(item->{
             forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
             if(item.getParentId()!=0) {
