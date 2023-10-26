@@ -40,6 +40,8 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -522,9 +524,42 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         BeanUtils.copyProperties(updateDomain, domain,"id");
         return repository.save(domain);
     }
+    @Override
+    public List<DOMAIN> sortList(Sort.Direction direction, String... name){
+        List<DOMAIN> domains = repository.findAll(Sort.by(direction,name));
+        return domains;
+    }
+    @Override
+    public List<DOMAIN> sortList(Integer size,Sort.Direction direction, String... name){
+        Pageable pageable = PageRequest.of(0,size,direction,name);
+        Page<DOMAIN> domains = repository.findAll(pageable);
 
+        return domains.getContent();
+    }
 
+    @Override
+    public List<DOMAIN> listRecent(String dateName, int day){
+        List<DOMAIN> literature = repository.findAll(new Specification<DOMAIN>() {
+            @Override
+            public Predicate toPredicate(Root<DOMAIN> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 
+                LocalDate startDate = LocalDate.now().minusDays(day);
+                Date date = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(root.get(dateName), date);
+                return predicate;
+            }
+        });
+        return literature;
+
+    }
+    @Override
+    public List<DOMAIN> listRecentUpdateDate(int day){
+        return listRecent("updateDate",day);
+    }
+    @Override
+    public List<DOMAIN> listRecentCreateDate(int day){
+        return listRecent("createDate",day);
+    }
     @Override
     public boolean supportType(CrudType type) {
         return false;

@@ -56,6 +56,17 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     List<DOMAIN> tsvToBean(String filePath);
     DOMAIN delBy(ID id);
     List<DOMAIN> initData(String filePath,Boolean isEmpty);
+
+    List<DOMAIN> sortList(Sort.Direction direction, String... name);
+
+    List<DOMAIN> sortList(Integer size, Sort.Direction direction, String... name);
+
+    List<DOMAIN> listRecent(String dateName, int day);
+
+    List<DOMAIN> listRecentUpdateDate(int day);
+
+    List<DOMAIN> listRecentCreateDate(int day);
+
     boolean supportType(@Nullable CrudType type);
 
     List<DOMAINVO> listWithTree(List<DOMAINVO> list);

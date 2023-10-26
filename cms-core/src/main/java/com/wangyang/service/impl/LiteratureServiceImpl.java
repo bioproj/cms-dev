@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -119,6 +120,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
 //            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
 //        }
     }
+
+
 
     @Override
     public boolean supportType(CrudType type) {

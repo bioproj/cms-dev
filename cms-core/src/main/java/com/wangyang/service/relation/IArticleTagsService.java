@@ -14,4 +14,6 @@ import java.util.List;
 public interface IArticleTagsService  extends IRelationService<ArticleTags,ArticleTags, BaseVo> {
 
     ForceDirectedGraph graph(List<ContentVO> contents);
+
+    ForceDirectedGraph graph(List<ContentVO> contents, int num);
 }

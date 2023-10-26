@@ -17,6 +17,7 @@ import com.wangyang.pojo.vo.CollectionVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
+import com.wangyang.service.relation.IArticleTagsService;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ public class ArticleJob {
 
     @Autowired
     ILiteratureService literatureService;
+
+    @Autowired
+    IArticleTagsService articleTagsService;
 
 
 
@@ -241,16 +245,17 @@ public class ArticleJob {
         Map<String,Object> map = new HashMap<>();
         List<CollectionVO> collectionVOS = collectionService.listTree();
 
-        List<Literature> literature = literatureService.listAll();
+        List<Literature> literature = literatureService.sortList(Sort.Direction.DESC,"updateDate","id");
         List<ContentVO> contentVOS = literatureService.convertToListVo(literature);
-        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
-        contentVOS.forEach(item->{
-            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graph(contentVOS,10);
 
-            if(item.getParentId()!=0) {
-                forceDirectedGraph.addEdges(item.getId(),item.getParentId(),60,2);
-            }
-        });
+//        contentVOS.forEach(item->{
+//            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+//
+////            if(item.getParentId()!=0) {
+////                forceDirectedGraph.addEdges(item.getId(),item.getParentId(),60,2);
+////            }
+//        });
 
 
 
