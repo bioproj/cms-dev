@@ -15,6 +15,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
+import com.wangyang.pojo.enums.RelationType;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.ArticleVO;
@@ -604,6 +605,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             List<ArticleTags> articleTagsList = tagsIds.stream().map(tagId -> {
                 ArticleTags articleTags = new ArticleTags();
                 articleTags.setRelationId(tagId);
+                articleTags.setRelationType(RelationType.ARTICLE);
                 articleTags.setArticleId(article.getId());
                 return articleTags;
             }).collect(Collectors.toList());

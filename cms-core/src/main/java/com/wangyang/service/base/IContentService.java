@@ -23,6 +23,11 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
 
     Page<ARTICLE> pageContentByCategoryIds(Set<Integer> ids, Boolean isDesc, PageRequest pageRequest);
     ARTICLE findByViewName(String viewName);
+
+    ARTICLEVO convertToTagVo(ARTICLE domain);
+
+    List<ARTICLEVO> convertToListTagVo(List<ARTICLE> domains);
+
     ARTICLE findByViewName(String viewName, Lang lang);
     List<ARTICLE> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc);
 

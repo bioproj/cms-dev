@@ -8,6 +8,7 @@ import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
+import com.wangyang.pojo.vo.ContentVO;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface IHtmlService {
+
+    void conventHtml(ContentVO content);
 
     void conventHtml(Content content);
 
@@ -71,6 +74,8 @@ public interface IHtmlService {
 //    void addOrRemoveArticleToCategoryListByCategoryId(int baseCategoryId);
 
 //    void generateCategoryArticleListByCategory(Integer id);
+
+    void generateCollectionTree();
 
     /**
      * 生成分类列表的html, 用于首页显示

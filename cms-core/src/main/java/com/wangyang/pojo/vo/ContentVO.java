@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class ContentVO extends BaseVo<ContentVO> {
@@ -49,7 +50,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private Boolean top;
     private String cssClass;
     private Boolean isDivision;
-    
+    private Set<Integer> tagIds;
 
 
 //    public String getLinkPath() {

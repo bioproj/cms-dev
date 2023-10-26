@@ -15,6 +15,7 @@ import com.wangyang.pojo.support.TemplateOptionMethod;
 import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.pojo.vo.CollectionVO;
 import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.relation.IArticleTagsService;
@@ -246,8 +247,8 @@ public class ArticleJob {
         List<CollectionVO> collectionVOS = collectionService.listTree();
 
         List<Literature> literature = literatureService.sortList(Sort.Direction.DESC,"updateDate","id");
-        List<ContentVO> contentVOS = literatureService.convertToListVo(literature);
-        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graph(contentVOS,10);
+        List<LiteratureVo> contentVOS = literatureService.convertToListVo(literature);
+        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graph( contentVOS,10);
 
 //        contentVOS.forEach(item->{
 //            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());

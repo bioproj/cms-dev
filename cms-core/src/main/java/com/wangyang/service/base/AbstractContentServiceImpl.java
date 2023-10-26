@@ -2,11 +2,11 @@ package com.wangyang.service.base;
 
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.service.AbstractCrudService;
-import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.entity.base.Content;
@@ -19,6 +19,7 @@ import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.ComponentsArticleRepository;
+import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.util.FormatUtil;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -45,6 +47,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Autowired
     ICategoryService categoryService;
+
+    @Autowired
+    TagsRepository tagsRepository;
 
 //    @Autowired
 //    ArticleRepository articleRepository;
@@ -209,6 +214,49 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         }
         return contents.get(0);
     }
+
+
+
+    @Override
+    public ARTICLEVO convertToTagVo(ARTICLE domain) {
+        ARTICLEVO domainvo = getVOInstance();
+        List<Tags> tags = tagsRepository.findTagsByArticleId(domain.getId());
+        if(!CollectionUtils.isEmpty(tags)){
+            domainvo.setTags(tags.stream().map(item->{
+                TagsDto tagsDto = new TagsDto();
+                BeanUtils.copyProperties(item,tagsDto);
+                return  tagsDto;
+            }).collect(Collectors.toList()));
+
+            domainvo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
+        }
+
+        BeanUtils.copyProperties(domain,domainvo);
+        domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+        return domainvo;
+    }
+    @Override
+    public List<ARTICLEVO> convertToListTagVo(List<ARTICLE> domains) {
+        return domains.stream().map(domain -> {
+            ARTICLEVO domainvo = getVOInstance();
+            List<Tags> tags = tagsRepository.findTagsByArticleId(domain.getId());
+            if(!CollectionUtils.isEmpty(tags)){
+                domainvo.setTags(tags.stream().map(item->{
+                    TagsDto tagsDto = new TagsDto();
+                    BeanUtils.copyProperties(item,tagsDto);
+                    return  tagsDto;
+                }).collect(Collectors.toList()));
+
+                domainvo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
+            }
+
+            BeanUtils.copyProperties(domain,domainvo);
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            return domainvo;
+
+        }).collect(Collectors.toList());
+    }
+
     @Override
     public List<ARTICLEVO> convertToListVo(List<ARTICLE> domains) {
         return domains.stream().map(domain -> {

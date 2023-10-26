@@ -1,29 +1,35 @@
 package com.wangyang.service.impl;
 
-import com.wangyang.common.CmsConst;
-import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
+import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
 import com.wangyang.common.enums.CrudType;
+import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.enums.RelationType;
 import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.repository.LiteratureRepository;
+import com.wangyang.repository.TagsRepository;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.AbstractContentServiceImpl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literature, Literature, ContentVO> implements ILiteratureService {
+public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literature, Literature, LiteratureVo> implements ILiteratureService {
 
     private LiteratureRepository literatureRepository;
     private ITaskService taskService;
@@ -31,7 +37,12 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     private ITemplateService templateService;
     private IComponentsService componentsService;
     @Autowired
+    ArticleTagsRepository articleTagsRepository;
+
+    @Autowired
     IHtmlService htmlService;
+    @Autowired
+    TagsRepository tagsRepository;
 
     public LiteratureServiceImpl(LiteratureRepository literatureRepository,
                                  ITaskService taskService,
@@ -44,6 +55,51 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         this.collectionService = collectionService;
         this.templateService = templateService;
         this.componentsService =componentsService;
+    }
+
+    @Override
+    public LiteratureVo update(Integer integer, Literature updateDomain, Set<Integer> tagsIds) {
+
+        updateDomain.setUpdateDate(new Date());
+
+        Literature literature = super.update(integer, updateDomain);
+        LiteratureVo literatureVo;
+        if (tagsIds!=null && !CollectionUtils.isEmpty(tagsIds)) {
+            literatureVo= new LiteratureVo();
+            BeanUtils.copyProperties(literature, literatureVo);
+            // Get Article tags
+            List<ArticleTags> articleTagsList = tagsIds.stream().map(tagId -> {
+                ArticleTags articleTags = new ArticleTags();
+                articleTags.setRelationId(tagId);
+                articleTags.setRelationType(RelationType.LITERATURE);
+                articleTags.setArticleId(updateDomain.getId());
+                return articleTags;
+            }).collect(Collectors.toList());
+            //save article tags
+            articleTagsRepository.saveAll(articleTagsList);
+            literatureVo.setTagIds(tagsIds);
+            List<Tags> tags = tagsRepository.findAllById(tagsIds);
+            literatureVo.setTags(tags.stream().map(item->{
+                TagsDto tagsDto = new TagsDto();
+                BeanUtils.copyProperties(item,tagsDto);
+                return  tagsDto;
+            }).collect(Collectors.toList()));
+
+        }else {
+            literatureVo = convertToTagVo(literature);
+//            List<Tags> tags = tagsRepository.findTagsByArticleId(literatureVo.getId());
+//            if(!CollectionUtils.isEmpty(tags)){
+//                literatureVo.setTags(tags.stream().map(item->{
+//                    TagsDto tagsDto = new TagsDto();
+//                    BeanUtils.copyProperties(item,tagsDto);
+//                    return  tagsDto;
+//                }).collect(Collectors.toList()));
+//
+//                literatureVo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
+//            }
+        }
+
+        return literatureVo;
     }
 
     @Override
@@ -78,7 +134,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     public void generateHtml(List<Literature> literatures) {
 //        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
         for (Literature literature: literatures){
-            htmlService.conventHtml(literature);
+            LiteratureVo literatureVo = convertToTagVo(literature);
+            htmlService.conventHtml(literatureVo);
 //            Map<String,Object> map = new HashMap<>();
 //            map = new HashMap<>();
 //            map.put("view",literature);
@@ -91,7 +148,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         List<Collection> collections = collectionService.listAll();
         List<Literature> literature = listAll();
         for (Literature literature1 : literature){
-            htmlService.conventHtml(literature1);
+            LiteratureVo literatureVo = convertToTagVo(literature1);
+            htmlService.conventHtml(literatureVo);
         }
         for (Collection collection : collections){
             htmlService.conventHtml(collection);

@@ -12,6 +12,8 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
+import com.wangyang.pojo.params.LiteratureParam;
+import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.service.*;
 import com.wangyang.util.AuthorizationUtil;
 import io.reactivex.rxjava3.core.Observable;
@@ -74,7 +76,7 @@ public class LiteratureController {
         return literatureService.pageBy(pageable);
     }
     @PostMapping("/save/{id}")
-    public Literature save(@RequestBody  Literature literatureParam,@PathVariable("id") Integer id){
+    public Literature save(@RequestBody LiteratureParam literatureParam, @PathVariable("id") Integer id){
         Literature literature = literatureService.findById(id);
         BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
         Literature saveLiterature = literatureService.update(id, literature);
@@ -87,10 +89,10 @@ public class LiteratureController {
         return saveLiterature;
     }
     @PostMapping("/update/{id}")
-    public Literature update(@RequestBody  Literature literatureParam,@PathVariable("id") Integer id){
+    public LiteratureVo update(@RequestBody  LiteratureParam literatureParam,@PathVariable("id") Integer id){
         Literature literature = literatureService.findById(id);
         BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
-        Literature saveLiterature = literatureService.update(id, literature);
+        LiteratureVo saveLiterature = literatureService.update(id, literature,literatureParam.getTagIds());
 //        Literature saveLiterature = literatureService.save(literature);
         // 需要判断文章模板路径
 //        literatureService.checkContentTemplatePath(saveLiterature);
@@ -98,6 +100,8 @@ public class LiteratureController {
 //        ArticleDetailVO articleDetailVO = contentService.convert(content);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         htmlService.conventHtml(saveLiterature);
+        htmlService.generateCollectionTree();
+
         return saveLiterature;
     }
     @GetMapping("/delAll")

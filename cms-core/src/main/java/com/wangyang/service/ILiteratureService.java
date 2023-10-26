@@ -2,12 +2,15 @@ package com.wangyang.service;
 
 import com.wangyang.pojo.entity.Literature;
 import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.service.base.IContentService;
 
 import java.util.List;
 import java.util.Set;
 
-public interface ILiteratureService  extends IContentService<Literature,Literature, ContentVO> {
+public interface ILiteratureService  extends IContentService<Literature,Literature, LiteratureVo> {
+    LiteratureVo update(Integer integer, Literature updateDomain, Set<Integer> tagIds);
+
     List<Literature> listByKeys(Set<String> literatureStrIds);
 
     List<Literature> listByCollectionId(Integer collectionId);

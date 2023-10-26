@@ -4,12 +4,14 @@ package com.wangyang.service.relation;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.entity.Tags;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.ITagsService;
 import com.wangyang.service.base.AbstractRelationServiceImpl;
+import com.wangyang.service.base.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,11 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
     @Autowired
     ITagsService tagsService;
     ArticleTagsRepository articleTagsRepository;
+
+
+    @Autowired
+    IContentService<Content,Content,ContentVO> contentService;
+
     public ArticleTagsServiceImpl(ArticleTagsRepository articleTagsRepository) {
         super(articleTagsRepository);
         this.articleTagsRepository = articleTagsRepository;
@@ -52,10 +59,10 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
 
 
     @Override
-    public ForceDirectedGraph graph(List<ContentVO> contents, int num) {
+    public ForceDirectedGraph graph(List<? extends ContentVO> contents, int num) {
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
 
-        List<ContentVO> firstContent = contents.subList(0, Math.min(contents.size(), num));
+        List<? extends ContentVO> firstContent = contents.subList(0, Math.min(contents.size(), num));
         firstContent.forEach(item->{
             forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
         });
@@ -78,7 +85,9 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
         Set<Integer> articleIds = ServiceUtil.fetchProperty(edges, ArticleTags::getArticleId);
         Set<Integer> articleAddIds = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
 
-        List<ContentVO> nodes = contents.stream().filter(item -> articleIds.contains(item.getId()) &&  !articleAddIds.contains(item.getId())).collect(Collectors.toList());
+        List<Content> contentsDb = contentService.listByIds(articleIds);
+        List<ContentVO> contentVOS = contentService.convertToListTagVo(contentsDb);
+        List<ContentVO> nodes = contentVOS.stream().filter(item -> articleIds.contains(item.getId()) &&  !articleAddIds.contains(item.getId())).collect(Collectors.toList());
 
 
         nodes.forEach(item->{

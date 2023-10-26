@@ -121,10 +121,12 @@ public class UserArticleController {
     public String editContent(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
         Content content = contentService.findById(id);
+        ContentVO contentVO = contentService.convertToTagVo(content);
 
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        model.addAttribute("view",content);
+        model.addAttribute("view",contentVO);
+        model.addAttribute("originalContent",content.getOriginalContent());
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/editContent";
     }
     @GetMapping("/editComponents/{id}")

@@ -97,6 +97,20 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Autowired
     IArticleTagsService articleTagsService;
+    @Override
+    public void conventHtml(ContentVO content) {
+        Template template = templateService.findOptionalByEnName(content.getTemplateName());
+        Map<String,Object> map = new HashMap<>();
+        map.put("view",content);
+        map.put("template",template);
+        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
+        if(content.getCategoryId()!=null){
+            BaseCategory baseCategory = baseCategoryService.findOptionalById(content.getCategoryId()).orElse(null);
+            if(baseCategory!=null){
+                conventHtml(baseCategory);
+            }
+        }
+    }
 
 
     @Override
@@ -111,9 +125,7 @@ public class HtmlServiceImpl implements IHtmlService {
             if(baseCategory!=null){
                 conventHtml(baseCategory);
             }
-
         }
-
     }
 
     @Override
@@ -663,7 +675,17 @@ public class HtmlServiceImpl implements IHtmlService {
         return components;
     }
 
+    @Override
+    public void generateCollectionTree() {
+        Components components = componentsService.findByViewName("collectionTree");
+        Object data = componentsService.getModel(components);
+        TemplateUtil.convertHtmlAndSave(data,components);
 
+//        //获取该列表所在的组
+//        List<CategoryVO> categoryVOS = categoryService.listCategoryVo();
+//        Template template = templateService.findByEnName(CmsConst.DEFAULT_CATEGORY_LIST);
+//        TemplateUtil.convertHtmlAndSave(CMSUtils.getComponentsPath(),CmsConst.CATEGORY_MENU,categoryVOS,template);
+    }
     /**
      * 生成分类树的Html
      */

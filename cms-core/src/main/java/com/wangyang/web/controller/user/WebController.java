@@ -10,7 +10,9 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
@@ -43,6 +45,10 @@ public class WebController {
     ITemplateService templateService;
     @Autowired
     CrudHandlers crudHandlers;
+
+
+    @Autowired
+    IContentService<Content,Content, ContentVO> contentService;
 
 
 //    @Autowired
@@ -165,8 +171,9 @@ public class WebController {
      */
     @RequestMapping(value = "/articleList")
     public String articleListBySort(ArticleQuery articleQuery, @PageableDefault(sort = {"id"},direction = DESC) Pageable pageable, Model model) {
-        Page<Article> articlePage = articleService.pagePublishBy(pageable, articleQuery);
-        Page<ArticleDto> articleDtoPage = articleService.convertToSimple(articlePage);
+
+        Page<Content> articlePage = contentService.pagePublishBy(pageable, articleQuery);
+        Page<ContentVO> articleDtoPage = contentService.convertToPageVo(articlePage);
         model.addAttribute("view",articleDtoPage);
         Template template = templateService.findOptionalByEnName(CmsConst.ARTICLE_PAGE);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
