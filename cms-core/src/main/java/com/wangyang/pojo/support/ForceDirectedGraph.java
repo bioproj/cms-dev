@@ -22,7 +22,10 @@ public class ForceDirectedGraph {
         Node node = new Node(index,title,url);
         nodes.add(node);
     }
-
+    public void addNodes(Integer index,String title,String url,double radius){
+        Node node = new Node(index,title,url,radius);
+        nodes.add(node);
+    }
     public void addEdges(Integer source,Integer target,double distance,double weight){
         Edge edge = new Edge(source,target,distance,weight);
         edges.add(edge);

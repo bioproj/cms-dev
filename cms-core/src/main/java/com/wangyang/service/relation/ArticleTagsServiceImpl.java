@@ -63,9 +63,12 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
 
         List<? extends ContentVO> firstContent = contents.subList(0, Math.min(contents.size(), num));
-        firstContent.forEach(item->{
-            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
-        });
+
+        int r =8+num;
+        for (ContentVO item:firstContent){
+            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath(),r);
+            r=r-1;
+        }
 
         Set<Integer> ids = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
         List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(ids);
@@ -74,7 +77,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
 
         List<Tags> tags = tagsService.listByIds(rIds);
         tags.forEach(item->{
-            forceDirectedGraph.addNodes(item.getId(),item.getName(),"/articleList?tagsId="+item.getId());
+            forceDirectedGraph.addNodes(item.getId(),item.getName(),"/articleList?tagsId="+item.getId(),8);
         });
         List<ArticleTags> edges = articleTagsRepository.findAllByRelationIdIn(rIds);
 
@@ -91,7 +94,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
 
 
         nodes.forEach(item->{
-            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath(),8);
         });
 
 
