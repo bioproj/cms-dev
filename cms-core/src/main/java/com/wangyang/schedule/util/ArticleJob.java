@@ -247,8 +247,8 @@ public class ArticleJob {
         List<CollectionVO> collectionVOS = collectionService.listTree();
 
         List<Literature> literature = literatureService.sortList(20,Sort.Direction.DESC,"updateDate","id");
-        List<LiteratureVo> contentVOS = literatureService.convertToListVo(literature);
-        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graphTags( contentVOS);
+        List<LiteratureVo> contentVOS = literatureService.convertToListCategoryVo(literature);
+        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graphTagsCategory( contentVOS);
 
 //        contentVOS.forEach(item->{
 //            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
