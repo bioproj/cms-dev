@@ -16,4 +16,6 @@ IBaseCategoryService <CATEGORY extends BaseCategory,CATEGORYDTO,CATEGORYVO>  ext
     List<CATEGORYVO> listByComponentsId(int componentsId);
 
     CATEGORY findByViewName(String viewName);
+
+    List<CATEGORY> listByParentId(int i);
 }

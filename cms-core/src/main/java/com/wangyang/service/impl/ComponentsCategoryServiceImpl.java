@@ -21,6 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -110,6 +111,25 @@ public class ComponentsCategoryServiceImpl extends AbstractCrudService<Component
         return componentsCategories;
     }
 
+    @Override
+    public List<ComponentsCategory> addAllParentCategory(Integer componentId) {
+        Components components = componentsService.findById(componentId);
+        List<ComponentsCategory> componentsCategories = new ArrayList<>();
+        List<BaseCategory> baseCategories = baseCategoryService.listByParentId(0);
+        for (BaseCategory category:baseCategories){
+            ComponentsCategory componentsCategory = componentsCategoryRepository.findByCategoryIdAndComponentId(category.getId(), components.getId());
+            if(componentsCategory==null){
+                ComponentsCategory componentsArticle = new ComponentsCategory();
+                componentsArticle.setCategoryId(category.getId());
+                componentsArticle.setComponentId(components.getId());
+                componentsCategories.add(componentsArticle);
+            }
+        }
+        componentsCategoryRepository.saveAll(componentsCategories);
+
+
+        return componentsCategories;
+    }
 
     @Override
     public boolean supportType(CrudType type) {

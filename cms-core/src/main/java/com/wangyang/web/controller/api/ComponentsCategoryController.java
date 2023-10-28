@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/componentsCategory")
 public class ComponentsCategoryController {
@@ -30,5 +32,12 @@ public class ComponentsCategoryController {
     public ComponentsCategory delete(@PathVariable("componentId") Integer componentId,Integer categoryId){
         return  componentsCategoryService.delete(categoryId,componentId);
     }
+
+    @GetMapping("/addAllCategory/{componentId}")
+    public List<ComponentsCategory> addAllCategory(@PathVariable("componentId") Integer componentId){
+
+        return  componentsCategoryService.addAllParentCategory(componentId);
+    }
+
 
 }

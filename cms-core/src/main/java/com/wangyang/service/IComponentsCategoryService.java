@@ -16,4 +16,6 @@ public interface IComponentsCategoryService extends ICrudService<ComponentsCateg
     ComponentsCategory delete(Integer categoryId, Integer componentId);
 
     List<ComponentsCategory> findByCategoryId(Set<Integer> categoryIds);
+
+    List<ComponentsCategory> addAllParentCategory(Integer componentId);
 }

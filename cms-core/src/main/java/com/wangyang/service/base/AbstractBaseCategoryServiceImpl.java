@@ -75,4 +75,13 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
         return baseCategoryRepository.findByViewName(viewName);
     }
 
+    @Override
+    public List<CATEGORY> listByParentId(int i) {
+        return baseCategoryRepository.findAll(new Specification<CATEGORY>() {
+            @Override
+            public Predicate toPredicate(Root<CATEGORY> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return query.where(criteriaBuilder.equal(root.get("parentId"),i)).getRestriction();
+            }
+        });
+    }
 }
