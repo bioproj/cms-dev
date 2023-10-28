@@ -2,14 +2,11 @@ package com.wangyang.service.base;
 
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.pojo.dto.CategoryChild;
 import com.wangyang.pojo.dto.CategoryDto;
-import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsCategory;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.ComponentsCategoryRepository;
 import com.wangyang.repository.base.BaseCategoryRepository;
 import com.wangyang.util.FormatUtil;
@@ -22,10 +19,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCategory,CATEGORYDTO extends BaseEntity,CATEGORYVO extends BaseVo>  extends AbstractCrudService<CATEGORY,CATEGORYDTO,CATEGORYVO,Integer>
         implements IBaseCategoryService<CATEGORY,CATEGORYDTO,CATEGORYVO>{
@@ -36,7 +33,17 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
         super(baseCategoryRepository);
         this.baseCategoryRepository=baseCategoryRepository;
     }
-
+    @Override
+    public  List<CategoryDto> covertToListDto(List<CATEGORY> categories) {
+        List<CategoryDto> collect = categories.stream().map(category -> {
+            return covertToDto(category);
+        }).collect(Collectors.toList());
+        return collect;
+//        CategoryDto categoryDto = new CategoryDto();
+//        BeanUtils.copyProperties(category,categoryDto);
+//        categoryDto.setLinkPath(FormatUtil.categoryListFormat(category));
+//        return categoryDto;
+    }
     @Override
     public CategoryDto covertToDto(CATEGORY category) {
         CategoryDto categoryDto = new CategoryDto();

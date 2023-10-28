@@ -9,6 +9,8 @@ import java.util.Set;
 
 public interface
 IBaseCategoryService <CATEGORY extends BaseCategory,CATEGORYDTO,CATEGORYVO>  extends ICrudService<CATEGORY,CATEGORYDTO,CATEGORYVO,Integer> {
+    List<CategoryDto> covertToListDto(List<CATEGORY> categories);
+
     CategoryDto covertToDto(CATEGORY category);
 
     List<CATEGORY> listByIdsOrderComponent(Set<Integer> categoryIds);

@@ -4,18 +4,26 @@ package com.wangyang.service.relation;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.CategoryDto;
+import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.entity.CategoryTags;
 import com.wangyang.pojo.entity.Tags;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.support.ForceDirectedGraph;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
+import com.wangyang.service.ICategoryTagsService;
 import com.wangyang.service.ITagsService;
 import com.wangyang.service.base.AbstractRelationServiceImpl;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,10 +34,12 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
     @Autowired
     ITagsService tagsService;
     ArticleTagsRepository articleTagsRepository;
-
-
+    @Autowired
+    ICategoryTagsService categoryTagsService;
     @Autowired
     IContentService<Content,Content,ContentVO> contentService;
+    @Autowired
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 
     public ArticleTagsServiceImpl(ArticleTagsRepository articleTagsRepository) {
         super(articleTagsRepository);
@@ -129,12 +139,12 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
 
         List<Tags> tags = tagsService.listByIds(rIds);
         tags.forEach(item->{
-            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId(),8);
+            forceDirectedGraph.addNodes("t-"+String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId(),8);
         });
         List<ArticleTags> edges = articleTagsRepository.findAllByRelationIdIn(rIds);
 
         edges.forEach(item->{
-            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),300,2);
+            forceDirectedGraph.addEdges("t-"+String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),300,2);
         });
 
         Set<Integer> articleIds = ServiceUtil.fetchProperty(edges, ArticleTags::getArticleId);
@@ -158,15 +168,30 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
         });
 
 
+        List<CategoryTags> categoryTags = categoryTagsService.listByTagIds(rIds);
+        if(categoryTags.size()!=0){
+            Set<Integer> categoryIds = ServiceUtil.fetchProperty(categoryTags, CategoryTags::getCategoryId);
+            List<BaseCategory> categories = baseCategoryService.listByIds(categoryIds);
+            List<CategoryDto> categoryDtoList = baseCategoryService.covertToListDto(categories);
+            firstCategory.addAll(categoryDtoList);
+            categoryTags.forEach(item->{
+                forceDirectedGraph.addEdges("t-"+String.valueOf(item.getTagsId()),"c-"+String.valueOf(item.getCategoryId()),300,2);
+            });
+        }
+
+
 
 
         Set<CategoryDto> otherCategory = ServiceUtil.fetchProperty(contentVOS, ContentVO::getCategory);
         firstCategory.addAll(otherCategory);
+
         firstCategory.forEach(item->{
             if(item!=null){
                 forceDirectedGraph.addNodes("c-"+String.valueOf(item.getId()),item.getName(),item.getLinkPath(),8);
             }
         });
+
+
 
 
 
