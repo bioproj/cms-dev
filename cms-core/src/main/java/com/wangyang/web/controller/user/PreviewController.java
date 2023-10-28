@@ -71,7 +71,7 @@ public class PreviewController {
 
     @Autowired
     @Qualifier("baseCategoryServiceImpl")
-    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 
     @PostMapping("/templates/update/{id}")
     public String update(@PathVariable("id") Integer id,TemplateParam templateParam){

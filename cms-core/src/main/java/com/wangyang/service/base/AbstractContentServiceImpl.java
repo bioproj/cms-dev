@@ -1,10 +1,12 @@
 package com.wangyang.service.base;
 
+import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.interfaces.IContentAop;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.dto.CategoryDto;
@@ -18,10 +20,12 @@ import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.ComponentsArticleRepository;
+import com.wangyang.repository.ComponentsRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
@@ -54,10 +58,61 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     @Autowired
     TagsRepository tagsRepository;
 
+    @Autowired
+    IContentAop contentAop;
+    @Autowired
+    ComponentsRepository componentsRepository;
 
 
     @Autowired
-    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
+
+
+    public void injectBeforeCategory(BaseCategory category){
+        contentAop.injectContent(category);
+    }
+
+    public void injectContent(ARTICLE article,BaseCategory category){
+        contentAop.injectContent(article,category);
+    }
+
+
+    @Override
+    public ComponentsArticle addComponentsArticle(int articleId, int componentsId){
+        Content content = findById(articleId);
+        Components components = componentsRepository.findById(componentsId).get();
+        ComponentsArticle findComponentsArticle = componentsArticleRepository.findByArticleIdAndComponentId(content.getId(), componentsId);
+        if(findComponentsArticle!=null){
+            throw new ObjectException(content.getTitle()+"已经在组件"+components.getName()+"中！！！");
+        }
+        ComponentsArticle componentsArticle = new ComponentsArticle();
+        componentsArticle.setArticleId(content.getId());
+        componentsArticle.setComponentId(components.getId());
+        return  componentsArticleRepository.save(componentsArticle);
+    }
+    @Override
+    public ComponentsArticle addComponentsArticle(String viewName, int componentsId){
+        Content content = findByViewName(viewName);
+        Components components = componentsRepository.findById(componentsId).get();
+
+        if(content==null){
+            throw new ObjectException("要添加的内容不存在！！");
+        }
+        if(components==null){
+            throw new ObjectException("要添加的组件不存在！！");
+        }
+        if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
+            ComponentsArticle findComponentsArticle = componentsArticleRepository.findByArticleIdAndComponentId(content.getId(), componentsId);
+            if(findComponentsArticle!=null){
+                throw new ObjectException("["+content.getTitle()+"]已经在组件["+components.getName()+"]中！！！");
+            }
+            ComponentsArticle componentsArticle = new ComponentsArticle();
+            componentsArticle.setArticleId(content.getId());
+            componentsArticle.setComponentId(components.getId());
+            return  componentsArticleRepository.save(componentsArticle);
+        }
+        throw new ObjectException("文章["+content.getTitle()+"]不能添加到组件["+components.getName()+"]中");
+    }
 
 //    @Autowired
 //    ArticleRepository articleRepository;

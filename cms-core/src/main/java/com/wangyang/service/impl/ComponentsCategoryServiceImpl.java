@@ -4,11 +4,15 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.pojo.BaseVo;
+import com.wangyang.pojo.entity.base.BaseCategory;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.repository.ComponentsCategoryRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IComponentsCategoryService;
 import com.wangyang.service.IComponentsService;
 import com.wangyang.common.service.AbstractCrudService;
+import com.wangyang.service.base.IBaseCategoryService;
+import org.quartz.impl.calendar.BaseCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,8 +31,12 @@ public class ComponentsCategoryServiceImpl extends AbstractCrudService<Component
     @Autowired
     IComponentsService componentsService;
 
+//    @Autowired
+//    ICategoryService categoryService;
+
+
     @Autowired
-    ICategoryService categoryService;
+    IBaseCategoryService<BaseCategory, BaseCategory, BaseCategoryVo> baseCategoryService;
 
     ComponentsCategoryRepository componentsCategoryRepository;
     public ComponentsCategoryServiceImpl( ComponentsCategoryRepository componentsCategoryRepository) {
@@ -45,7 +53,7 @@ public class ComponentsCategoryServiceImpl extends AbstractCrudService<Component
 
     @Override
     public ComponentsCategory add(String viewName, int componentsId) {
-        Category category = categoryService.findByViewName(viewName);
+        BaseCategory category = baseCategoryService.findByViewName(viewName);
         Components components = componentsService.findById(componentsId);
 
         if(category==null){

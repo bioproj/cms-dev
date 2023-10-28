@@ -62,6 +62,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     }
 
 
+
     @Autowired
     TagsRepository tagsRepository;
     @Autowired
@@ -415,6 +416,8 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         articleTagsRepository.deleteByArticleId(id);
         log.debug("delete article");
         articleRepository.deleteById(id);
+        Category category = categoryService.findById(article.getCategoryId());
+        super.injectContent(article,category);
         return article;
     }
 
@@ -496,7 +499,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
 //        保存文章
         Article saveArticle = articleRepository.save(article);
+        super.injectContent(article,category);
         ArticleDetailVO articleDetailVO = convert(saveArticle, category, tagsIds);
+
+
+
 //        articleDetailVO.setCategory(categoryService.covertToVo(category));
 ////        articleDetailVO.setUpdateChannelFirstName(true);
 //        BeanUtils.copyProperties(saveArticle,articleDetailVO);
@@ -969,6 +976,8 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         if(article.getCategoryId()==null){
             throw new ArticleException("文章类别不能为空!!");
         }
+        Category oldCategory = categoryService.findById(article.getCategoryId());
+        super.injectBeforeCategory(oldCategory);
 //        if(article.getStatus()!=ArticleStatus.PUBLISHED){
 //            throw new ArticleException("文章没有发布不能更改类别!!");
 //        }
@@ -993,7 +1002,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         Article saveArticle = articleRepository.save(article);
         ArticleDetailVO articleDetailVO = conventToAddTags(saveArticle);
         articleDetailVO.setCategory(categoryService.covertToVo(category));
-
+        injectContent(article,category);
         return articleDetailVO;
     }
 

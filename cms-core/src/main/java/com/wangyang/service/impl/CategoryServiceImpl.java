@@ -77,19 +77,31 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         this.categoryRepository =categoryRepository;
     }
 
-    @Override
-    public List<Category> listByIdsOrderComponent(Set<Integer> categoryIds){
-        if(categoryIds.size()==0){
-            return Collections.emptyList();
-        }
-        List<Category>  categories = categoryRepository.findAll(new Specification<Category>() {
-            @Override
-            public Predicate toPredicate(Root<Category> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaQuery.where(root.get("id").in(categoryIds)).getRestriction();
-            }
-        },Sort.by(Sort.Direction.DESC,"categoryInComponentOrder"));
-        return categories;
-    }
+//    @Override
+//    public List<CategoryVO> listByComponentsId(int componentsId){
+//        List<ComponentsCategory> componentsCategories = componentsCategoryRepository.findByComponentId(componentsId);
+//                Set<Integer> categoryIds = ServiceUtil.fetchProperty(componentsCategories, ComponentsCategory::getCategoryId);
+//                if(categoryIds.size()==0){
+//                    return Collections.emptyList();
+//                }
+////        List<Article> articles = articleRepository.findAllById(articleIds);
+//                List<Category>  categories = listByIdsOrderComponent(categoryIds);
+//
+//                return convertToListVo(categories);
+//            }
+//    @Override
+//    public List<Category> listByIdsOrderComponent(Set<Integer> categoryIds){
+//        if(categoryIds.size()==0){
+//            return Collections.emptyList();
+//        }
+//        List<Category>  categories = categoryRepository.findAll(new Specification<Category>() {
+//            @Override
+//            public Predicate toPredicate(Root<Category> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+//                return criteriaQuery.where(root.get("id").in(categoryIds)).getRestriction();
+//            }
+//        },Sort.by(Sort.Direction.DESC,"categoryInComponentOrder"));
+//        return categories;
+//    }
 
     @Override
     public List<CategoryChild> listChildByComponentsId(int componentsId){
@@ -111,18 +123,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         }
         return categoryChildList;
     }
-    @Override
-    public List<CategoryVO> listByComponentsId(int componentsId){
-        List<ComponentsCategory> componentsCategories = componentsCategoryRepository.findByComponentId(componentsId);
-        Set<Integer> categoryIds = ServiceUtil.fetchProperty(componentsCategories, ComponentsCategory::getCategoryId);
-        if(categoryIds.size()==0){
-            return Collections.emptyList();
-        }
-//        List<Article> articles = articleRepository.findAllById(articleIds);
-        List<Category>  categories = listByIdsOrderComponent(categoryIds);
 
-        return convertToListVo(categories);
-    }
     @Override
     public Category save(Category category){
         return categoryRepository.save(category);
@@ -634,10 +635,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         return categories.get(0);
     }
 
-    @Override
-    public Category findByViewName(String viewName){
-        return categoryRepository.findByViewName(viewName);
-    }
+
 
     @Override
     public CategoryDetailVO covertToDetailVO(Category category) {

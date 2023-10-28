@@ -65,6 +65,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         updateDomain.setUpdateDate(new Date());
 
         Literature literature = super.update(integer, updateDomain);
+        Collection collection = collectionService.findById(literature.getCategoryId());
+        super.injectContent(literature,collection);
         LiteratureVo literatureVo;
         articleTagsRepository.deleteByArticleId(updateDomain.getId());
 

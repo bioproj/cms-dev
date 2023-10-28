@@ -4,6 +4,7 @@ import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.base.BaseCategoryRepository;
 import com.wangyang.service.base.AbstractBaseCategoryServiceImpl;
@@ -15,7 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BaseCategoryServiceImpl extends AbstractBaseCategoryServiceImpl<BaseCategory,BaseCategory, BaseVo> implements IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> {
+public class BaseCategoryServiceImpl extends AbstractBaseCategoryServiceImpl<BaseCategory,BaseCategory, BaseCategoryVo> implements IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> {
 
 
     private BaseCategoryRepository<BaseCategory> baseCategoryRepository;

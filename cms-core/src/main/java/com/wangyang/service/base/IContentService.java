@@ -4,6 +4,7 @@ import com.wangyang.common.service.ICrudService;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
@@ -18,6 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  extends ICrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer> {
+    ComponentsArticle addComponentsArticle(int articleId, int componentsId);
+
+    ComponentsArticle addComponentsArticle(String viewName, int componentsId);
+
     ARTICLE createOrUpdate(ARTICLE article);
     List<ARTICLEVO> listByComponentsId(int componentsId);
 

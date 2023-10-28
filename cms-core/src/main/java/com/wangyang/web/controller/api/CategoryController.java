@@ -3,6 +3,7 @@ package com.wangyang.web.controller.api;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
+import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.authorize.Role;
 import com.wangyang.pojo.authorize.User;
@@ -10,9 +11,7 @@ import com.wangyang.pojo.authorize.UserDetailDTO;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.pojo.vo.ArticleDetailVO;
-import com.wangyang.pojo.vo.CategoryDetailVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -23,8 +22,8 @@ import com.wangyang.pojo.params.CategoryParam;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
-import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.service.authorize.IUserService;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.util.AuthorizationUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +63,9 @@ public class CategoryController {
     @Qualifier("contentServiceImpl")
     IContentService<Content,Content, ContentVO> contentService;
 
+
     @GetMapping
+    @Qualifier("baseCategoryServiceImpl")
     public List<CategoryDto> list(){
         return categoryService.listAllDto();
     }

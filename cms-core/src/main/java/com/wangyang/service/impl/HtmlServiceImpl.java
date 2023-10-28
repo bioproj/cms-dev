@@ -93,7 +93,7 @@ public class HtmlServiceImpl implements IHtmlService {
     IComponentsCategoryService componentsCategoryService;
     @Autowired
     @Qualifier("baseCategoryServiceImpl")
-    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 
     @Autowired
     IArticleTagsService articleTagsService;
@@ -334,19 +334,19 @@ public class HtmlServiceImpl implements IHtmlService {
 //        }
 //    }
 
-    public void findAllParentCategoryId(Integer categoryId,Set<Category> ids){
+    public void findAllParentCategoryId(Integer categoryId,Set<BaseCategory> ids){
         if(categoryId==0){
             return;
         }
-        Category category = categoryService.findById(categoryId);
+        BaseCategory category = baseCategoryService.findById(categoryId);
         ids.add(category);
         findAllParentCategoryId(category.getParentId(),ids);
     }
 
 
     @Override
-    public Set<Category> findAllCategoryPatent(Integer categoryParentId){
-        Set<Category> categorySet = new HashSet<>();
+    public Set<BaseCategory> findAllCategoryPatent(Integer categoryParentId){
+        Set<BaseCategory> categorySet = new HashSet<>();
         findAllParentCategoryId(categoryParentId,categorySet);
         return categorySet;
     }
@@ -356,8 +356,8 @@ public class HtmlServiceImpl implements IHtmlService {
     public void generateComponentsByCategory(Integer categoryId, Integer categoryParentId){
         Set<Integer> ids = new HashSet<>();
         ids.add(categoryId);
-        Set<Category> categorySet = findAllCategoryPatent(categoryParentId);
-        ids.addAll(ServiceUtil.fetchProperty(categorySet, Category::getId));
+        Set<BaseCategory> categorySet = findAllCategoryPatent(categoryParentId);
+        ids.addAll(ServiceUtil.fetchProperty(categorySet, BaseCategory::getId));
 
         List<ComponentsCategory> componentsCategoryList = componentsCategoryService.findByCategoryId(ids);
         List<Components> components1 = componentsService.listByIds(ServiceUtil.fetchProperty(componentsCategoryList, ComponentsCategory::getComponentId));

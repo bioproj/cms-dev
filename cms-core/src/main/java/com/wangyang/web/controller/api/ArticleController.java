@@ -296,11 +296,11 @@ public class ArticleController {
 
 
     @GetMapping("/delete/{id}")
-    public ArticleDetailVO delete(@PathVariable("id") Integer id){
+    public Article delete(@PathVariable("id") Integer id){
         Article article = articleService.deleteByArticleId(id);
         //删除文章
         TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
-        ArticleDetailVO articleDetailVO = articleService.convert(article);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
         if(article.getStatus().equals(ArticleStatus.PUBLISHED)||article.getStatus().equals(ArticleStatus.MODIFY)){
             Category category = categoryService.findById(article.getCategoryId());
             //重新生成文章列表
@@ -313,7 +313,7 @@ public class ArticleController {
             }
         }
 
-        return  articleDetailVO;
+        return  article;
     }
 
 

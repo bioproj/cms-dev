@@ -19,9 +19,9 @@ public interface IComponentsArticleService {
 
     List<ComponentsArticle> findByArticleId(Integer articleId);
 
-    ComponentsArticle add(int articleId, int componentsId);
-
-    ComponentsArticle add(String viewName, int componentsId);
+//    ComponentsArticle add(int articleId, int componentsId);
+//
+//    ComponentsArticle add(String viewName, int componentsId);
 
     void delete(int id);
 

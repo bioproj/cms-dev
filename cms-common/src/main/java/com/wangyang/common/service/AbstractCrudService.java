@@ -439,7 +439,7 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     }
 
     @Override
-    public List<DOMAIN> findByParentId(Integer parentId) {
+    public List<DOMAIN>  findByParentId(Integer parentId) {
        return repository.findAll(new Specification<DOMAIN>() {
             @Override
             public Predicate toPredicate(Root<DOMAIN> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {

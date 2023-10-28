@@ -16,5 +16,5 @@ public class BaseCategory extends BaseEntity {
     private String templateName;
     private String path;
     private String viewName;
-
+    private Integer categoryInComponentOrder=0;
 }

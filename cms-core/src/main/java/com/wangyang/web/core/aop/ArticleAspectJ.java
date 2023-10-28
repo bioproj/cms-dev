@@ -4,6 +4,7 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
@@ -51,13 +52,13 @@ public class ArticleAspectJ {
     @Autowired
     ArticleTagsRepository articleTagsRepository;
 
-
-    ITemplateService templateService;
-
-
-    @Autowired
-    IArticleService articleService;
-
+//
+//    ITemplateService templateService;
+//
+//
+//    @Autowired
+//    IArticleService articleService;
+//
 
 
     public boolean findArticleInCategory(String categoryViewName,String articleCategoryViewName){
@@ -100,48 +101,43 @@ public class ArticleAspectJ {
     /**
      * 需要执行删除
      */
-    @Around("execution(* com.wangyang.web.controller.api.ArticleController.updateArticleDetailVO(..)) or " +
-            "execution(* com.wangyang.web.controller.api.ArticleController.createArticleDetailVO(..)) or " +
-            "execution(* com.wangyang.web.controller.api.ArticleController.delete(..)) or " +
-            "execution(* com.wangyang.web.controller.api.ArticleController.createArticleDetailVO(..)) or " +
-//            "execution(* com.wangyang.web.controller.user.UserArticleController.fastWriteArticle(..)) or " +
-            "execution(* com.wangyang.web.controller.api.ArticleController.updateCategory(..))")
-    public ArticleDetailVO test(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
-            Object o = joinPoint.proceed();
-            ArticleDetailVO articleDetailVO = (ArticleDetailVO)o;
-//            if(findArticleInCategory("technologyServices",articleDetailVO.getCategory().getViewName())){
-//                htmlService.generateMenuListHtml();
+//    @Around("execution(* com.wangyang.web.controller.api.ArticleController.updateArticleDetailVO(..)) or " +
+//            "execution(* com.wangyang.web.controller.api.ArticleController.createArticleDetailVO(..)) or " +
+//            "execution(* com.wangyang.web.controller.api.ArticleController.delete(..)) or " +
+//            "execution(* com.wangyang.web.controller.api.ArticleController.createArticleDetailVO(..)) or " +
+////            "execution(* com.wangyang.web.controller.user.UserArticleController.fastWriteArticle(..)) or " +
+//            "execution(* com.wangyang.web.controller.api.ArticleController.updateCategory(..))")
+//    public ArticleDetailVO test(ProceedingJoinPoint joinPoint) throws Throwable {
+//        try {
+//            Object o = joinPoint.proceed();
+//            ArticleDetailVO articleDetailVO = (ArticleDetailVO)o;
+////            if(findArticleInCategory("technologyServices",articleDetailVO.getCategory().getViewName())){
+////                htmlService.generateMenuListHtml();
+////            }
+////            if(findArticleInCategory("news",articleDetailVO.getCategory().getViewName())){
+////                htmlService.generateHome();
+////            }
+//
+//
+//            generateRecommendArticle(articleDetailVO.getId());
+//            htmlService.generateComponentsByCategory(articleDetailVO.getCategory().getId(),articleDetailVO.getCategory().getParentId());
+//            htmlService.generateComponentsByArticle(articleDetailVO.getId());
+//
+//
+//            deleteTemp(articleDetailVO.getCategory().getName(),articleDetailVO.getCategory().getPath(),articleDetailVO.getCategory().getViewName(),articleDetailVO.getCategory().getParentId());
+//            if(articleDetailVO.getOldCategory()!=null){
+//                deleteTemp(articleDetailVO.getOldCategory());
 //            }
-//            if(findArticleInCategory("news",articleDetailVO.getCategory().getViewName())){
-//                htmlService.generateHome();
-//            }
-
-
-            generateRecommendArticle(articleDetailVO.getId());
-            htmlService.generateComponentsByCategory(articleDetailVO.getCategory().getId(),articleDetailVO.getCategory().getParentId());
-            htmlService.generateComponentsByArticle(articleDetailVO.getId());
-
-
-
-
-
-
-
-            deleteTemp(articleDetailVO.getCategory().getName(),articleDetailVO.getCategory().getPath(),articleDetailVO.getCategory().getViewName(),articleDetailVO.getCategory().getParentId());
-            if(articleDetailVO.getOldCategory()!=null){
-                deleteTemp(articleDetailVO.getOldCategory());
-            }
-//            htmlService.newArticleListHtml();
-            log.info(">>> "+articleDetailVO.getCategory().getName()+"的临时文件");
-            return articleDetailVO;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+////            htmlService.newArticleListHtml();
+//            log.info(">>> "+articleDetailVO.getCategory().getName()+"的临时文件");
+//            return articleDetailVO;
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
 
     public void findAllChildCategoryId(Integer categoryParentId,Set<Category> categoriesInput){
@@ -170,8 +166,8 @@ public class ArticleAspectJ {
 //            htmlService.generateMenuListHtml();
             if(category!=null){
                 Set<Integer> categoryIds =  new HashSet<>();
-                Set<Category> categories = htmlService.findAllCategoryPatent(category.getParentId());
-                Set<Integer> set = ServiceUtil.fetchProperty(categories, Category::getId);
+                Set<BaseCategory> categories = htmlService.findAllCategoryPatent(category.getParentId());
+                Set<Integer> set = ServiceUtil.fetchProperty(categories, BaseCategory::getId);
                 categoryIds.addAll(set);
                 categoryIds.add(category.getId());
 

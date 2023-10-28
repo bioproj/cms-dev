@@ -42,9 +42,9 @@ public class ComponentsArticleServiceImpl implements IComponentsArticleService {
     ComponentsArticleRepository componentsArticleRepository;
 
 
-    @Autowired
-    @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+//    @Autowired
+//    @Qualifier("contentServiceImpl")
+//    IContentService<Content,Content, ContentVO> contentService;
 
 
 //    @Override
@@ -65,46 +65,13 @@ public class ComponentsArticleServiceImpl implements IComponentsArticleService {
     public List<ComponentsArticle> findByArticleId(Integer articleId){
         return componentsArticleRepository.findByArticleId(articleId);
     }
-    public ComponentsArticle add(int articleId, int componentsId){
-        Content content = contentService.findById(articleId);
-        Components components = componentsRepository.findById(componentsId).get();
-        ComponentsArticle findComponentsArticle = componentsArticleRepository.findByArticleIdAndComponentId(content.getId(), componentsId);
-        if(findComponentsArticle!=null){
-            throw new ObjectException(content.getTitle()+"已经在组件"+components.getName()+"中！！！");
-        }
-        ComponentsArticle componentsArticle = new ComponentsArticle();
-        componentsArticle.setArticleId(content.getId());
-        componentsArticle.setComponentId(components.getId());
-        return  componentsArticleRepository.save(componentsArticle);
-    }
 
-    @Override
-    public ComponentsArticle add(String viewName, int componentsId){
-        Content content = contentService.findByViewName(viewName);
-        Components components = componentsRepository.findById(componentsId).get();
 
-        if(content==null){
-            throw new ObjectException("要添加的内容不存在！！");
-        }
-        if(components==null){
-            throw new ObjectException("要添加的组件不存在！！");
-        }
-        if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
-            ComponentsArticle findComponentsArticle = componentsArticleRepository.findByArticleIdAndComponentId(content.getId(), componentsId);
-            if(findComponentsArticle!=null){
-                throw new ObjectException("["+content.getTitle()+"]已经在组件["+components.getName()+"]中！！！");
-            }
-            ComponentsArticle componentsArticle = new ComponentsArticle();
-            componentsArticle.setArticleId(content.getId());
-            componentsArticle.setComponentId(components.getId());
-            return  componentsArticleRepository.save(componentsArticle);
-        }
-        throw new ObjectException("文章["+content.getTitle()+"]不能添加到组件["+components.getName()+"]中");
-    }
+
 
     @Override
     public void delete(int id){
-        contentService.delBy(id);
+        componentsArticleRepository.deleteById(id);
     }
 
     @Override

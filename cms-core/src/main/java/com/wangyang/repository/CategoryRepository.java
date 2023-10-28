@@ -18,5 +18,5 @@ public interface CategoryRepository extends BaseCategoryRepository<Category> {
     @Query(value = "select o.id from Category o")
     List<Integer> findAllId();
 
-    Category findByViewName(String viewName);
+
 }

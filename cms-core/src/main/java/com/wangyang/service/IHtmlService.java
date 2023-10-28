@@ -30,7 +30,7 @@ public interface IHtmlService {
      */
     void conventHtml(ArticleDetailVO articleVO);
 
-    Set<Category> findAllCategoryPatent(Integer categoryParentId);
+    Set<BaseCategory> findAllCategoryPatent(Integer categoryParentId);
 
     /**
      * 生成该栏目下所有文章的列表, 用于动态添加到文章详情的旁边

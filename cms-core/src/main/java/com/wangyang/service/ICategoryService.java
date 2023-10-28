@@ -17,11 +17,11 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ICategoryService  extends IBaseCategoryService<Category,Category,CategoryVO> {
-    List<Category> listByIdsOrderComponent(Set<Integer> categoryIds);
-
+//    List<Category> listByIdsOrderComponent(Set<Integer> categoryIds);
+//    List<CategoryVO> listByComponentsId(int componentsId);
     List<CategoryChild> listChildByComponentsId(int componentsId);
 
-    List<CategoryVO> listByComponentsId(int componentsId);
+
 
     Category save(Category category);
 
@@ -110,7 +110,6 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
 
     Category findByViewName(String viewName, Lang lang);
 
-    Category findByViewName(String viewName);
 
     void updateOrder(List<CategoryVO> categoryVOList);
 

@@ -7,6 +7,7 @@ import com.wangyang.common.utils.*;
 import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
@@ -14,6 +15,7 @@ import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.common.pojo.BaseVo;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ComponentsVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
@@ -23,6 +25,7 @@ import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IComponentsService;
 import com.wangyang.service.ITagsService;
 import com.wangyang.common.service.AbstractCrudService;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -71,6 +74,8 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
 
     @Autowired
     ApplicationContext applicationContext;
+    @Autowired
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
     private final Map<String, IComponentsData> componentsDataMap = new HashMap<>();
 
     @PostConstruct
@@ -278,7 +283,7 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
             }else if(components.getDataName().equals(CmsConst.CATEGORY_DATA)){
 
 //                Map<String,Object> map = new HashMap<>();
-                map.put("view",categoryService.listByComponentsId(components.getId()));
+                map.put("view",baseCategoryService.listByComponentsId(components.getId()));
                 return  map;
             }else if(components.getDataName().equals(CmsConst.CATEGORY_CHILD_DATA)){
 
