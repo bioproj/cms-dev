@@ -61,7 +61,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
 
     List<DOMAIN> sortList(Integer size, Sort.Direction direction, String... name);
 
-    List<DOMAIN> listRecent(String dateName, int day);
+
+    List<DOMAIN> listRecent(String dateName, int day, Sort.Direction direction, String... name);
 
     List<DOMAIN> listRecentUpdateDate(int day);
 

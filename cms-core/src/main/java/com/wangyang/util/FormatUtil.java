@@ -5,6 +5,7 @@ import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Sheet;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
@@ -22,7 +23,7 @@ public class FormatUtil {
      * @param category
      * @return
      */
-    public static String categoryListFormat(Category category){
+    public static String categoryListFormat(BaseCategory category){
         if(category.getPath().startsWith("html")){
             return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
         }

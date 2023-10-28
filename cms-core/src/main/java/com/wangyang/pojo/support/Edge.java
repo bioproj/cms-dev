@@ -5,12 +5,12 @@ import lombok.Data;
 @Data
 public class Edge {
 
-    private Integer source;
-    private Integer target;
+    private String source;
+    private String target;
     private double distance;
     private  double weight;
 
-    public Edge(Integer source, Integer target, double distance, double weight) {
+    public Edge(String source, String target, double distance, double weight) {
         this.source = source;
         this.target = target;
         this.distance = distance;

@@ -102,6 +102,8 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
     Category addOrRemoveToMenu(int id);
 
 
+    CategoryDto covertToDto(Category category);
+
     CategoryVO covertToVo(Category category);
 
     List<CategoryVO> listChildByViewName(String viewName);

@@ -530,7 +530,7 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         return domains;
     }
     @Override
-    public List<DOMAIN> sortList(Integer size,Sort.Direction direction, String... name){
+    public List<DOMAIN> sortList(Integer size, Sort.Direction direction, String... name){
         Pageable pageable = PageRequest.of(0,size,direction,name);
         Page<DOMAIN> domains = repository.findAll(pageable);
 
@@ -538,7 +538,9 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     }
 
     @Override
-    public List<DOMAIN> listRecent(String dateName, int day){
+    public List<DOMAIN> listRecent(String dateName, int day, Sort.Direction direction, String... name){
+
+        Sort sort = Sort.by(direction, name);
         List<DOMAIN> literature = repository.findAll(new Specification<DOMAIN>() {
             @Override
             public Predicate toPredicate(Root<DOMAIN> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -548,17 +550,23 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
                 Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(root.get(dateName), date);
                 return predicate;
             }
-        });
+        },sort);
         return literature;
 
     }
+//    @Override
+//    public List<DOMAIN> listRecent(String dateName, int day,String... name){
+//
+//        return listRecent(dateName,day, Sort.Direction.DESC,name);
+//
+//    }
     @Override
     public List<DOMAIN> listRecentUpdateDate(int day){
-        return listRecent("updateDate",day);
+        return listRecent("updateDate",day, Sort.Direction.DESC,"updateDate","id");
     }
     @Override
     public List<DOMAIN> listRecentCreateDate(int day){
-        return listRecent("createDate",day);
+        return listRecent("createDate",day, Sort.Direction.DESC,"createDate","id");
     }
     @Override
     public boolean supportType(CrudType type) {

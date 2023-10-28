@@ -589,6 +589,13 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
             return covertToVo(category);
         }).collect(Collectors.toList());
     }
+    @Override
+    public CategoryDto covertToDto(Category category){
+        CategoryDto categoryDto = new CategoryDto();
+        BeanUtils.copyProperties(category, categoryDto);
+        categoryDto.setLinkPath(FormatUtil.categoryListFormat(category));
+        return categoryDto;
+    }
 
     @Override
     public CategoryVO covertToVo(Category category){

@@ -15,5 +15,9 @@ public interface IArticleTagsService  extends IRelationService<ArticleTags,Artic
 
     ForceDirectedGraph graph(List<ContentVO> contents);
 
+    ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent);
+
+    ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent);
+
     ForceDirectedGraph graph(List<? extends ContentVO> contents, int num);
 }

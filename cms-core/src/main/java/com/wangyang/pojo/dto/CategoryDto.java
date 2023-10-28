@@ -19,4 +19,18 @@ public class CategoryDto {
     private Boolean isArticleDocLink;
     private Boolean isRecursive;
     private Boolean isDivision;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryDto myObject = (CategoryDto) o;
+        return id.equals(myObject.id);
+    }
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

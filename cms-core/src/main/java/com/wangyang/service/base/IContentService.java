@@ -27,6 +27,9 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     ARTICLEVO convertToTagVo(ARTICLE domain);
 
     List<ARTICLEVO> convertToListTagVo(List<ARTICLE> domains);
+    List<ARTICLEVO> convertToListCategoryVo(List<ARTICLE> domains);
+
+    List<ARTICLEVO> convertToListSimpleVo(List<ARTICLE> domains);
 
     ARTICLE findByViewName(String viewName, Lang lang);
     List<ARTICLE> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc);

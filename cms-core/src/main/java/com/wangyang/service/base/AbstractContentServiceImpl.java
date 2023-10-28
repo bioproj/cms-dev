@@ -1,14 +1,17 @@
 package com.wangyang.service.base;
 
 import com.wangyang.common.exception.ObjectException;
+import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.pojo.BaseEntity;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
@@ -50,6 +53,11 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Autowired
     TagsRepository tagsRepository;
+
+
+
+    @Autowired
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseVo> baseCategoryService;
 
 //    @Autowired
 //    ArticleRepository articleRepository;
@@ -257,6 +265,41 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         }).collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<ARTICLEVO> convertToListCategoryVo(List<ARTICLE> domains) {
+
+        List<ARTICLE> filterDomains = domains.stream().filter(item -> item.getCategoryId() != null).collect(Collectors.toList());
+        Set<Integer> categories = ServiceUtil.fetchProperty(filterDomains, ARTICLE::getCategoryId);
+        List<CategoryDto> categoryDtos = baseCategoryService.listByIds(categories).stream().map(category -> {
+            return baseCategoryService.covertToDto(category);
+        }).collect(Collectors.toList());
+        Map<Integer, CategoryDto> categoryMap = ServiceUtil.convertToMap(categoryDtos, CategoryDto::getId);
+
+
+        return domains.stream().map(domain -> {
+            ARTICLEVO domainvo = getVOInstance();
+            if(categoryMap.containsKey(domain.getCategoryId())){
+                domainvo.setCategory( categoryMap.get(domain.getCategoryId()));
+            }
+
+            BeanUtils.copyProperties(domain,domainvo);
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            return domainvo;
+
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ARTICLEVO> convertToListSimpleVo(List<ARTICLE> domains) {
+        return domains.stream().map(domain -> {
+            ARTICLEVO domainvo = getVOInstance();
+            BeanUtils.copyProperties(domain,domainvo);
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            return domainvo;
+
+        }).collect(Collectors.toList());
+    }
     @Override
     public List<ARTICLEVO> convertToListVo(List<ARTICLE> domains) {
         return domains.stream().map(domain -> {
@@ -409,9 +452,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     public ForceDirectedGraph graph(List<ContentVO> contents) {
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
         contents.forEach(item->{
-            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath());
             if(item.getParentId()!=0) {
-                forceDirectedGraph.addEdges(item.getId(),item.getParentId(),60,2);
+                forceDirectedGraph.addEdges(String.valueOf(item.getId()),String.valueOf(item.getParentId()),60,2);
             }
         });
 
