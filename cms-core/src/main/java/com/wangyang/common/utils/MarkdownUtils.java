@@ -39,6 +39,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -119,7 +120,7 @@ public class MarkdownUtils {
 //            String tocJSON = jsonArray.toJSONString();
 
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private static void getTocList( Elements elements, List<Toc> tocList){
