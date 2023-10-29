@@ -21,5 +21,7 @@ public class Literature extends Content {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;
 
+    private String itemType;
+
 
 }

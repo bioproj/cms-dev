@@ -146,6 +146,55 @@ public class ZoteroServiceImpl implements IZoteroService {
         return task;
     }
 
+    public List<Item> listByItemType(String itemType) throws IOException {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+
+                        Request request = original.newBuilder()
+                                .header(HttpHeaders.AUTHORIZATION,HttpHeaders.AUTHORIZATION_BEARER_X + "anXNFXA8ng0ri04DIAz99Vdd")
+                                .header(HttpHeaders.ZOTERO_API_VERSION,"3")
+                                .method(original.method(), original.body())
+                                .build();
+                        return chain.proceed(request);
+                    }
+                })
+
+                .build();
+        Retrofit retrofit  = new Retrofit.Builder()
+                .baseUrl("https://api.zotero.org")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+
+        ZoteroService zoteroService = retrofit.create(ZoteroService.class);
+        SearchQuery searchQueryVersion = new SearchQuery();
+        searchQueryVersion.put("itemType",itemType);
+        Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQueryVersion,null);
+        ObjectVersions objectVersions = itemVersions.execute().body();
+        int size = objectVersions.size();
+        int num;
+        if(size%100==0){
+            num = size/100;
+        }else {
+            num =Integer.valueOf(size/100)+1;
+        }
+        List<Item> allItem = new ArrayList<>();
+        for (int i=0;i<num;i++){
+            SearchQuery searchQuery = new SearchQuery();
+            searchQuery.put("limit",100);
+            searchQuery.put("start",i*100);
+            searchQuery.put("sort","title");
+
+            searchQuery.put("itemType",itemType);
+            Call<List<Item>> items = zoteroService.getItems(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
+            List<Item> itemList = items.execute().body();
+            allItem.addAll(itemList);
+        }
+        return allItem;
+    }
     @Async
     @Override
     public void importLiterature(Integer userId, Task task)  {
@@ -154,56 +203,19 @@ public class ZoteroServiceImpl implements IZoteroService {
             throw new ObjectException("请先导入分类！！！");
         }
         try {
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .addInterceptor(new Interceptor() {
-                        @Override
-                        public Response intercept(Chain chain) throws IOException {
-                            Request original = chain.request();
 
-                            Request request = original.newBuilder()
-                                    .header(HttpHeaders.AUTHORIZATION,HttpHeaders.AUTHORIZATION_BEARER_X + "anXNFXA8ng0ri04DIAz99Vdd")
-                                    .header(HttpHeaders.ZOTERO_API_VERSION,"3")
-                                    .method(original.method(), original.body())
-                                    .build();
-                            return chain.proceed(request);
-                        }
-                    })
-
-                    .build();
-            Retrofit retrofit  = new Retrofit.Builder()
-                    .baseUrl("https://api.zotero.org")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(okHttpClient)
-                    .build();
-
-            ZoteroService zoteroService = retrofit.create(ZoteroService.class);
 //        Map map = new HashMap<>();
 //        retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
 //        Map<String, String> stringMap = collectionsVersion.execute().body();
+            List<Item> allItem = listByItemType("journalArticle");
+//            allItem.addAll(listByItemType("thesis"));
+            List<Item> thesis = listByItemType("thesis");
+            allItem.addAll(thesis);
+//            searchQueryVersion.put("itemType","thesis");
+//            itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQueryVersion,null);
 
-            SearchQuery searchQueryVersion = new SearchQuery();
-            searchQueryVersion.put("itemType","journalArticle");
-            Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQueryVersion,null);
-            ObjectVersions objectVersions = itemVersions.execute().body();
-            int size = objectVersions.size();
-            int num;
-            if(size%100==0){
-                num = size/100;
-            }else {
-                num =Integer.valueOf(size/100)+1;
-            }
-            List<Item> allItem = new ArrayList<>();
-            for (int i=0;i<num;i++){
-                SearchQuery searchQuery = new SearchQuery();
-                searchQuery.put("limit",100);
-                searchQuery.put("start",i*100);
-                searchQuery.put("sort","title");
 
-                searchQuery.put("itemType","journalArticle");
-                Call<List<Item>> items = zoteroService.getItems(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
-                List<Item> itemList = items.execute().body();
-                allItem.addAll(itemList);
-            }
+
 
             Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
 
@@ -221,6 +233,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                         literature.setTitle(item.getData().getTitle());
                         literature.setKey(item.getKey());
                         literature.setZoteroKey(item.getKey());
+                        literature.setItemType(item.getData().getItemType());
                         literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
                         literature.setUserId(userId);
                         if(item.getData().getUrl().startsWith("http")){
@@ -266,6 +279,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                     literature.setUrl(item.getData().getUrl());
                     literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
                     literature.setUserId(userId);
+                    literature.setItemType(item.getData().getItemType());
                     literature.setOriginalContent(item.getData().getAbstractNote());
                     literature.setCategoryId(-1);
                     literature.setPath("html/literature");
