@@ -638,6 +638,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         articleDetailVO.setCommentPath( article.getPath()+ CMSUtils.getComment()+ File.separator +article.getViewName());
         articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
 
+        if(article.getToc()!=null){
+            List<Toc> toc = MarkdownUtils.getToc(article.getToc());
+            articleDetailVO.setTocList(toc);
+        }
+
         return articleDetailVO;
     }
 

@@ -4,6 +4,7 @@ import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.dto.TagsDto;
+import com.wangyang.pojo.dto.Toc;
 import com.wangyang.pojo.enums.ArticleStatus;
 import lombok.Data;
 
@@ -51,6 +52,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private String cssClass;
     private Boolean isDivision;
     private Set<Integer> tagIds;
+    private  List<Toc> tocList;
 
 
 //    public String getLinkPath() {

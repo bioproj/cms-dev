@@ -4,6 +4,7 @@ package com.wangyang.common.utils;
 //import com.vladsch.flexmark.ext.tables.TablesExtension;
 //import com.vladsch.flexmark.ext.toc.TocExtension;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.vladsch.flexmark.ext.admonition.AdmonitionExtension;
@@ -28,6 +29,7 @@ import com.wangyang.common.flexmark.footnotes.FootnoteExtension;
 import com.wangyang.common.flexmark.gitlab.GitLabExtension;
 //import com.wangyang.common.flexmark.imgattr.AttributeExtension;
 import com.wangyang.common.flexmark.table.TablesExtension;
+import com.wangyang.pojo.dto.Toc;
 import com.wangyang.pojo.entity.base.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -35,7 +37,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 //import com.wangyang.cms.gitlab.GitLabExtension;
@@ -95,35 +99,50 @@ public class MarkdownUtils {
         String[] split = render.split("<p>@@@</p>");
         article.setFormatContent(split[1]);
         article.setToc(split[0]);
-        Document doc = Jsoup.parse(split[0]);
-        Element searchInfo= doc.getElementsByClass("thisToc").first();
-        if(searchInfo!=null){
-            Elements elements = searchInfo.select(" > li");
-            JSONArray jsonArray = new JSONArray();
-            getTocList(elements,jsonArray);
-            String tocJSON = jsonArray.toJSONString();
-            article.setTocJSON(tocJSON);
-        }else {
-            article.setTocJSON(null);
-        }
+        List<Toc> tocList = getToc(split[0]);
+        String tocJSON = JSON.toJSON(tocList).toString();
+        article.setTocJSON(tocJSON);
 
         return article;
     }
 
-    private static void getTocList( Elements elements, JSONArray jsonArray){
+    public static List<Toc> getToc(String tocStr){
+        Document doc = Jsoup.parse(tocStr);
+        Element searchInfo= doc.getElementsByClass("thisToc").first();
+        if(searchInfo!=null){
+            Elements elements = searchInfo.select(" > li");
+//            JSONArray jsonArray = new JSONArray();
+            List<Toc> tocList = new ArrayList<>();
+            getTocList(elements,tocList);
+            return tocList;
+//            String tocJSON = JSON.toJSON(tocLost).toString();
+//            String tocJSON = jsonArray.toJSONString();
+
+        }
+        return null;
+    }
+
+    private static void getTocList( Elements elements, List<Toc> tocList){
         for (Element element : elements) {
             Elements as = element.getElementsByTag("a");
-            JSONArray newArray = new JSONArray();
+//            JSONArray newArray = new JSONArray();
+            List<Toc> newToc = new ArrayList<>();
 
             if(as.size()>0){
                 Element a = as.get(0);
                 String href = a.attr("href");
                 String html = a.html();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("title",html);
-                jsonObject.put("linkPath",href);
-                jsonObject.put("children",newArray);
-                jsonArray.add(jsonObject);
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("title",html);
+//                jsonObject.put("linkPath",href);
+//                jsonObject.put("children",newArray);
+                Toc toc = new Toc();
+                toc.setTitle(html);
+                toc.setLinkPath(href);
+                toc.setChildren(newToc);
+                tocList.add(toc);
+
+//                jsonArray.add(jsonObject);
             }
 
 //            jsonArray.add(JSONObject.parse("{title:" + html + ",children:[]}"));
@@ -131,7 +150,7 @@ public class MarkdownUtils {
 
             if(ul.size()>0){
                 Elements lis = ul.get(0).select(" > li");
-                getTocList(lis,newArray);
+                getTocList(lis,newToc);
             }
 
         }
