@@ -1,18 +1,15 @@
-package com.wangyang.service;
+package com.wangyang.service.templates;
 
 import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.entity.Components;
-import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.common.service.ICrudService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
 
-public interface IComponentsService  extends ICrudService<Components, Components, BaseVo,Integer> {
+public interface IComponentsService  extends IBaseTemplateService<Components,Components, BaseVo> {
 
 
     Map<String, IComponentsData> getComponentsDataMap();
@@ -24,9 +21,9 @@ public interface IComponentsService  extends ICrudService<Components, Components
      * 查找所有组件
      * @return
      */
-    List<Components> listAll();
-
-    List<Components> listAll(Lang lang);
+//    List<Components> listAll();
+//
+//    List<Components> listAll(Lang lang);
 
     Components add(ComponentsParam componentsParam);
 

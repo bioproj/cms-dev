@@ -10,7 +10,7 @@ import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.BaseTemplate;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.web.core.view.GenerateHtml;
 import lombok.extern.slf4j.Slf4j;

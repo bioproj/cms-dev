@@ -1,23 +1,18 @@
 package com.wangyang.web.controller.user;
 
 
-import com.google.common.base.Joiner;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
-import com.wangyang.pojo.dto.CategoryContentListDao;
-import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
-import com.wangyang.service.ITemplateService;
-import com.wangyang.pojo.entity.Article;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.service.base.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +26,6 @@ import com.wangyang.handle.CrudHandlers;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.*;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 

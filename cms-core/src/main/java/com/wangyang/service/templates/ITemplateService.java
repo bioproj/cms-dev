@@ -1,12 +1,12 @@
-package com.wangyang.service;
+package com.wangyang.service.templates;
 
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.TemplateChild;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.common.service.ICrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-public interface ITemplateService extends ICrudService<Template, Template, BaseVo,Integer> {
+public interface ITemplateService  extends IBaseTemplateService<Template,Template, BaseVo> {
     Optional<Template> findOptionalById(int id);
 
     List<Template> saveAll(List<Template> templates);
@@ -28,9 +28,9 @@ public interface ITemplateService extends ICrudService<Template, Template, BaseV
 
     Template findDetailsById(int id);
 
-    List<Template> listAll();
-
-    List<Template> listAll(Lang lang);
+//    List<Template> listAll();
+//
+//    List<Template> listAll(Lang lang);
 
     List<Template> findAll();
 

@@ -1,8 +1,6 @@
 package com.wangyang.common.thymeleaf;
 
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.exception.ObjectException;
-import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.FilenameUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.config.ApplicationBean;
@@ -10,16 +8,12 @@ import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.entity.Sheet;
 import com.wangyang.service.*;
 import com.wangyang.service.impl.*;
-import org.thymeleaf.IEngineConfiguration;
+import com.wangyang.service.templates.ComponentsServiceImpl;
+import com.wangyang.service.templates.IComponentsService;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
-import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.model.IProcessableElementTag;
-import org.thymeleaf.processor.element.AbstractAttributeTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
-import org.thymeleaf.standard.expression.IStandardExpression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.AbstractStandardFragmentInsertionTagProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 

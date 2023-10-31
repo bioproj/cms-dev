@@ -7,7 +7,7 @@ import com.wangyang.pojo.entity.ComponentsCategory;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.repository.ComponentsCategoryRepository;
+import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.base.BaseCategoryRepository;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;

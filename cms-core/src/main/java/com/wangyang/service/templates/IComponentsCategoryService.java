@@ -1,4 +1,4 @@
-package com.wangyang.service;
+package com.wangyang.service.templates;
 
 import com.wangyang.pojo.entity.ComponentsCategory;
 import com.wangyang.common.pojo.BaseVo;

@@ -1,4 +1,4 @@
-package com.wangyang.repository;
+package com.wangyang.repository.template;
 
 import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.common.repository.BaseRepository;

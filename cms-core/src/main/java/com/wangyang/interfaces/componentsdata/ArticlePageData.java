@@ -9,17 +9,13 @@ import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.vo.ArticleVO;
-import com.wangyang.repository.ComponentsRepository;
+import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.service.IArticleService;
-import com.wangyang.service.IComponentsService;
-import com.wangyang.service.IHtmlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.thymeleaf.context.Context;
 
-import java.io.File;
 import java.util.*;
 
 @Component

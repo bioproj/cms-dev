@@ -19,14 +19,14 @@ import com.wangyang.pojo.dto.UserDto;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.service.base.IContentService;
+import com.wangyang.service.templates.IComponentsService;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.FormatUtil;
 import com.wangyang.util.AuthorizationUtil;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;

@@ -6,7 +6,7 @@ import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.IndexVo;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.ICommonService;
-import com.wangyang.service.ITemplateService;
+import com.wangyang.service.templates.ITemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,7 @@
 package com.wangyang.web.controller.api;
 
-import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.MenuVo;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.service.IMenuService;
 import com.wangyang.pojo.entity.Menu;

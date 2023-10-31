@@ -1,46 +1,27 @@
 package com.wangyang.web.controller.api;
 
-import com.gimranov.libzotero.*;
-import com.gimranov.libzotero.model.Item;
-import com.gimranov.libzotero.model.ObjectVersions;
-import com.google.gson.Gson;
 import com.wangyang.common.BaseResponse;
-import com.wangyang.common.CmsConst;
-import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
-import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.params.LiteratureParam;
 import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.service.*;
+import com.wangyang.service.templates.IComponentsService;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
-import io.reactivex.rxjava3.core.Observable;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 //import retrofit.RequestInterceptor;
 //import retrofit.RestAdapter;
 //import retrofit.converter.GsonConverter;
 //import rx.Observable;
 //import zotero.api.Collection;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 

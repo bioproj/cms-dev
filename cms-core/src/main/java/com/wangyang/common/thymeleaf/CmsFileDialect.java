@@ -1,13 +1,11 @@
 package com.wangyang.common.thymeleaf;
 
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.templates.IComponentsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
-import org.thymeleaf.standard.processor.StandardInlineHTMLTagProcessor;
 import org.thymeleaf.standard.processor.StandardInliningCDATASectionProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 

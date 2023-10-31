@@ -1,4 +1,4 @@
-package com.wangyang.service.impl;
+package com.wangyang.service.templates;
 
 
 import com.alibaba.fastjson.JSONObject;
@@ -12,14 +12,20 @@ import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.FileDTO;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseTemplate;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.*;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.repository.TemplateChildRepository;
+import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.repository.template.TemplateChildRepository;
 import com.wangyang.service.authorize.IArticleAttachmentService;
-import com.wangyang.repository.TemplateRepository;
+import com.wangyang.repository.template.TemplateRepository;
 import com.wangyang.service.IAttachmentService;
-import com.wangyang.service.ITemplateService;
+import com.wangyang.service.base.AbstractBaseTemplateServiceImpl;
+import com.wangyang.service.base.AbstractContentServiceImpl;
+import com.wangyang.service.base.IContentService;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.util.ZipHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +59,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class TemplateServiceImpl extends AbstractCrudService<Template, Template, BaseVo,Integer>  implements ITemplateService {
+public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Template,Template, BaseVo> implements ITemplateService {
 
 
 

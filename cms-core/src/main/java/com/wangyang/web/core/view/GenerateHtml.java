@@ -2,21 +2,16 @@ package com.wangyang.web.core.view;
 
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
-import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.TemplateUtil;
-import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.dto.ArticleAndCategoryMindDto;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
-import com.wangyang.service.ITemplateService;
+import com.wangyang.service.templates.ITemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 

@@ -2,25 +2,24 @@ package com.wangyang.interfaces.componentsdata;
 
 
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.interfaces.IContentAop;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
-import com.wangyang.pojo.vo.ArticleVO;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.IBaseCategoryService;
+import com.wangyang.service.templates.IComponentsArticleService;
+import com.wangyang.service.templates.IComponentsCategoryService;
+import com.wangyang.service.templates.IComponentsService;
+import com.wangyang.service.templates.ITemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 

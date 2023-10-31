@@ -10,14 +10,13 @@ import com.wangyang.pojo.entity.AuthRedirect;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.repository.AuthRedirectRepository;
 import com.wangyang.service.IAuthRedirectService;
-import com.wangyang.service.ITemplateService;
+import com.wangyang.service.templates.ITemplateService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

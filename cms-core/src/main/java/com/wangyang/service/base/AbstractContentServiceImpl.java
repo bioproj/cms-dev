@@ -2,7 +2,6 @@ package com.wangyang.service.base;
 
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
-import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
@@ -24,8 +23,8 @@ import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
-import com.wangyang.repository.ComponentsArticleRepository;
-import com.wangyang.repository.ComponentsRepository;
+import com.wangyang.repository.template.ComponentsArticleRepository;
+import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;

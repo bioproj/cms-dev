@@ -7,7 +7,7 @@ import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.common.enums.Lang;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.common.BaseResponse;

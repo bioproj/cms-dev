@@ -3,15 +3,12 @@ package com.wangyang.web.controller.api;
 
 import com.wangyang.pojo.entity.AuthRedirect;
 import com.wangyang.service.IAuthRedirectService;
-import com.wangyang.service.ITemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 

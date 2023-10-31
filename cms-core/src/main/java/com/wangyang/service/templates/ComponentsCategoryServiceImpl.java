@@ -1,4 +1,4 @@
-package com.wangyang.service.impl;
+package com.wangyang.service.templates;
 
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.pojo.entity.*;
@@ -6,13 +6,11 @@ import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.repository.ComponentsCategoryRepository;
-import com.wangyang.service.ICategoryService;
-import com.wangyang.service.IComponentsCategoryService;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.repository.template.ComponentsCategoryRepository;
+import com.wangyang.service.templates.IComponentsCategoryService;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.service.base.IBaseCategoryService;
-import org.quartz.impl.calendar.BaseCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

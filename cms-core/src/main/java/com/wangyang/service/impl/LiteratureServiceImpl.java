@@ -1,6 +1,5 @@
 package com.wangyang.service.impl;
 
-import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
@@ -8,13 +7,14 @@ import com.wangyang.pojo.entity.Collection;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.RelationType;
-import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.repository.LiteratureRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.AbstractContentServiceImpl;
+import com.wangyang.service.templates.IComponentsService;
+import com.wangyang.service.templates.ITemplateService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;

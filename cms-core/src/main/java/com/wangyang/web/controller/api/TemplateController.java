@@ -9,7 +9,7 @@ import com.wangyang.pojo.entity.TemplateChild;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.service.IHtmlService;
-import com.wangyang.service.ITemplateService;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.params.TemplateParam;
@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

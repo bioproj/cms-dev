@@ -1,4 +1,4 @@
-package com.wangyang.service.impl;
+package com.wangyang.service.templates;
 
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
@@ -8,6 +8,7 @@ import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
+import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
@@ -19,10 +20,11 @@ import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ComponentsVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
-import com.wangyang.repository.ComponentsRepository;
+import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.base.AbstractBaseTemplateServiceImpl;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.ITagsService;
 import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.service.base.IBaseCategoryService;
@@ -34,7 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ComponentsServiceImpl extends AbstractCrudService<Components, Components, BaseVo,Integer> implements IComponentsService {
+public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Components,Components, BaseVo> implements IComponentsService {
 
 
     @Autowired
@@ -116,21 +117,21 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
         return componentsRepository.findAll(specification);
     }
 
-    @Override
-    public List<Components> listAll() {
-        return componentsRepository.findAll();
-    }
-
-    @Override
-    public List<Components> listAll(Lang lang){
-        List<Components> components = componentsRepository.findAll(new Specification<Components>() {
-            @Override
-            public Predicate toPredicate(Root<Components> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return query.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
-            }
-        });
-        return components;
-    }
+//    @Override
+//    public List<Components> listAll() {
+//        return componentsRepository.findAll();
+//    }
+//
+//    @Override
+//    public List<Components> listAll(Lang lang){
+//        List<Components> components = componentsRepository.findAll(new Specification<Components>() {
+//            @Override
+//            public Predicate toPredicate(Root<Components> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+//                return query.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
+//            }
+//        });
+//        return components;
+//    }
 
     @Override
     public Components add(ComponentsParam componentsParam){

@@ -1,12 +1,23 @@
 package com.wangyang.web.controller.api;
 
 import com.wangyang.common.CmsConst;
+import com.wangyang.common.enums.Lang;
+import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
+import com.wangyang.pojo.entity.base.BaseTemplate;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
+import com.wangyang.pojo.vo.BaseCategoryVo;
+import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.*;
+import com.wangyang.service.base.IBaseCategoryService;
+import com.wangyang.service.templates.IBaseTemplateService;
+import com.wangyang.service.base.IContentService;
+import com.wangyang.service.templates.IComponentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +46,17 @@ public class OptionController {
     @Autowired
     ISheetService sheetService;
 
+
+    @Autowired
+    IContentService<Content,Content, ContentVO> contentService;
+
+    @Autowired
+    IBaseCategoryService<BaseCategory,BaseCategory,BaseCategoryVo> baseCategoryService;
+
+
+    @Autowired
+    IBaseTemplateService<BaseTemplate,BaseTemplate, BaseVo> baseTemplateService;
+
     @PostMapping
     public List<Option> addOption(@RequestBody List<Option> options){
         return optionService.saveUpdateOptionList(options);
@@ -43,7 +65,35 @@ public class OptionController {
     public List<Option> list(){
         return optionService.list();
     }
+    @GetMapping("/updateLanguage")
+    public String updateLanguage(){
 
+        List<Content> contents = contentService.listAll();
+        contents.forEach(content -> {
+            if(content.getLang()==null){
+                content.setLang(Lang.ZH);
+                contentService.save(content);
+            }
+        });
+
+        List<BaseCategory> baseCategories = baseCategoryService.listAll();
+        baseCategories.forEach(baseCategory -> {
+            if(baseCategory.getLang()==null){
+                baseCategory.setLang(Lang.ZH);
+                baseCategoryService.save(baseCategory);
+            }
+        });
+
+        List<BaseTemplate> baseTemplates = baseTemplateService.listAll();
+        baseTemplates.forEach(baseTemplate -> {
+            if(baseTemplate.getLang()==null){
+                baseTemplate.setLang(Lang.ZH);
+                baseTemplateService.save(baseTemplate);
+            }
+        });
+
+        return "success!";
+    }
     @GetMapping("/initialize")
     public String initialize(){
         // 初始化组件

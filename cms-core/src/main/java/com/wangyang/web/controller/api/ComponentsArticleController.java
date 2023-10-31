@@ -3,7 +3,7 @@ package com.wangyang.web.controller.api;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ContentVO;
-import com.wangyang.service.IComponentsArticleService;
+import com.wangyang.service.templates.IComponentsArticleService;
 import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.service.base.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;

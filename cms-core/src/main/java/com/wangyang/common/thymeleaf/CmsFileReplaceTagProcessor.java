@@ -1,20 +1,16 @@
 package com.wangyang.common.thymeleaf;
 
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.FilenameUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.entity.Sheet;
-import com.wangyang.service.IComponentsService;
+import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.service.ISheetService;
-import com.wangyang.service.impl.ComponentsServiceImpl;
+import com.wangyang.service.templates.ComponentsServiceImpl;
 import com.wangyang.service.impl.SheetServiceImpl;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
-import org.springframework.stereotype.Service;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
@@ -29,10 +25,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
