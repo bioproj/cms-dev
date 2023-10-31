@@ -20,6 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class CmsApplication {
 
 
+
 	public static void main(String[] args) {
 		// Customize the spring config location
 		System.setProperty("spring.config.additional-location", "optional:file:${user.home}/cms/application.yml");

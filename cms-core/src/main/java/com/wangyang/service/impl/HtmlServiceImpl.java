@@ -453,7 +453,8 @@ public class HtmlServiceImpl implements IHtmlService {
 //            }
             // 如果分类有多级别则指定大于0的数字
             // https://bioinfo.online/articleList/202381024113.html
-            if(templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
+            // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
+            if(newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
                 List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
                 CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
                 List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
@@ -461,7 +462,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
                 TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
-            }else if (templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
+            }else if ( newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
                 CategoryVO parentCategory = newCategoryArticle.getParentCategory();
                 if(parentCategory!=null){
                     List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
