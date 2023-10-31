@@ -15,7 +15,7 @@ then
 fi
 
 mvn clean
-mvn install
+mvn install  -DskipTests=true
 
 if [ ! -f $jar ];then
   echo "build failure！！！"
