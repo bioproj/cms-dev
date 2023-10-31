@@ -76,7 +76,7 @@ public class TemplateController {
     @GetMapping
     public Page<Template> list(@PageableDefault(sort = {"id"},direction = DESC)Pageable pageable,Template template){
 //        Page<Template> templatePage = templateService.list(pageable,lang);
-        Page<Template> templates = templateService.pageBy(pageable, template, "", new HashSet<>());
+        Page<Template> templates = templateService.pageBy(pageable, template);
 
         return templates;
     }

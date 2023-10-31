@@ -19,7 +19,10 @@ import java.util.Set;
  * @date 2021/6/27
  */
 public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
+    Page<DOMAIN> page(Pageable pageable, Lang lang);
+
     List<DOMAIN> listAll();
+    List<DOMAIN> listAll(Lang lang);
     DOMAIN add(@NonNull DOMAIN domain);
     DOMAIN save(@NonNull DOMAIN domain);
 
@@ -44,6 +47,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     Page<DOMAIN> pageBy(Pageable pageable,String keywords,Set<String> sets);
 
     Page<DOMAIN> pageBy(Pageable pageable, DOMAIN baseFileQuery, String keywords, Set<String> sets);
+
+    Page<DOMAIN> pageBy(Pageable pageable, DOMAIN baseFileQuery);
 
     void deleteAll(Iterable<DOMAIN> domains);
 

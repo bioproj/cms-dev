@@ -76,7 +76,7 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
 
     List<CategoryDto> listAllDto();
 
-    List<Category> listAll(Lang lang);
+
 
     List<Category> listAll();
 
@@ -91,7 +91,7 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
      * 显示haveHtml=false的Category
      * @return
      */
-    List<CategoryVO> listAdminCategoryVo();
+    List<CategoryVO> listAdminCategoryVo(Lang lang);
 
 //    List<Category> list();
 

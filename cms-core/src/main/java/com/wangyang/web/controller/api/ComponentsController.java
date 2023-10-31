@@ -38,7 +38,7 @@ public class ComponentsController {
 
     @GetMapping
     public Page<Components> list(@PageableDefault(sort = {"name"},direction = DESC) Pageable pageable,@RequestParam(required = false) Lang lang){
-        return  componentsService.list(pageable, lang);
+        return  componentsService.page(pageable, lang);
     }
 
     @RequestMapping("/find/{id}")

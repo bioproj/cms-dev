@@ -1,9 +1,12 @@
 package com.wangyang.pojo.dto;
 
+import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.enums.ArticleStatus;
+import lombok.Data;
 
+@Data
 public class SheetDto {
-
+    private Lang lang;
     private Integer id;
     private ArticleStatus status =ArticleStatus.PUBLISHED;
     private Integer userId;

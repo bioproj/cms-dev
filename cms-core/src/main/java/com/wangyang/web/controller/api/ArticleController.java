@@ -67,6 +67,18 @@ public class ArticleController {
     ITemplateService templateService;
 
 
+    @GetMapping
+    public Page<? extends ArticleVO> articleList(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable,
+                                                 @RequestParam(value = "more", defaultValue = "true") Boolean more,
+                                                 Article article,String keyword){
+        Page<Article> articles = articleService.pageBy(pageable,article,keyword,new HashSet<>( Arrays.asList("title")));
+//        if(more){
+//
+//        }
+
+        return articleService.convertToPageVo(articles);
+//        return articleService.convertToSimple(articles);
+    }
     @PostMapping
     public ArticleDetailVO createArticleDetailVO(@RequestBody @Valid ArticleParams articleParams, HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
@@ -626,18 +638,6 @@ public class ArticleController {
     }
 
 
-    @GetMapping
-    public Page<? extends ArticleVO> articleList(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable,
-                                                  @RequestParam(value = "more", defaultValue = "true") Boolean more,
-                                                  ArticleQuery articleQuery){
-        Page<Article> articles = articleService.pageAllBy(pageable,articleQuery);
-//        if(more){
-//
-//        }
-
-        return articleService.convertToPageVo(articles);
-//        return articleService.convertToSimple(articles);
-    }
 
     @GetMapping("/findArticleDetail/{id}")
     public ArticleDetailVO findDetailArticleById(@PathVariable("id") Integer id){

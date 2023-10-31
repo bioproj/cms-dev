@@ -1,5 +1,6 @@
 package com.wangyang.common.pojo;
 
+import com.wangyang.common.enums.Lang;
 import lombok.Data;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public class BaseVo<T> {
     private Integer parentId;
     private Integer order;
     private List<T> children;
+    private Lang lang=Lang.ZH;
 }

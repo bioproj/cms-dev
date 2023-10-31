@@ -104,8 +104,8 @@ public class SheetController {
     }
 
     @GetMapping
-    public Page<SheetVo> list(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable){
-        Page<Sheet> sheetPage = sheetService.list(pageable);
+    public Page<SheetVo> list(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable,Sheet sheet){
+        Page<Sheet> sheetPage = sheetService.pageBy(pageable,sheet);
         return sheetService.conventTo(sheetPage);
     }
     @GetMapping("/find/{id}")

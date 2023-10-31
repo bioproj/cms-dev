@@ -62,6 +62,31 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     }
 
     @Override
+    public List<DOMAIN> listAll(Lang lang) {
+        return repository.findAll(new Specification<DOMAIN>() {
+            @Override
+            public Predicate toPredicate(Root<DOMAIN> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return  criteriaQuery.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
+            }
+        });
+    }
+
+    @Override
+    public Page<DOMAIN> page(Pageable pageable, Lang lang) {
+        if(lang!=null && !lang.equals("")){
+            return repository.findAll(new Specification<DOMAIN>() {
+                @Override
+                public Predicate toPredicate(Root<DOMAIN> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                    return query.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
+                }
+            }, pageable);
+        }else {
+            return repository.findAll(pageable);
+        }
+    }
+
+
+    @Override
     public List<DOMAIN> listByIds(List<ID> ids) {
         return repository.findAllById(ids);
     }
@@ -78,7 +103,7 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     protected Specification<DOMAIN> buildSpecByQuery(DOMAIN baseFileQuery, String keywords, Set<String> sets) {
         return (Specification<DOMAIN>) (root, query, criteriaBuilder) ->{
             List<Predicate> predicates = toPredicate(baseFileQuery,root, query, criteriaBuilder);
-            if(sets!=null && sets.size()!=0 && keywords!=null ){
+            if(sets!=null && sets.size()!=0 && keywords!=null && !keywords.equals("")){
                 String likeCondition = String
                         .format("%%%s%%", StringUtils.strip(keywords));
                 List<Predicate> orPredicates = new ArrayList<>();
@@ -234,6 +259,10 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     @Override
     public Page<DOMAIN> pageBy(Pageable pageable,DOMAIN baseFileQuery, String keywords,Set<String> sets) {
         return repository.findAll(buildSpecByQuery(baseFileQuery,keywords,sets),pageable);
+    }
+    @Override
+    public Page<DOMAIN> pageBy(Pageable pageable,DOMAIN baseFileQuery) {
+        return repository.findAll(buildSpecByQuery(baseFileQuery,null, null),pageable);
     }
     @Override
     public void deleteAll(Iterable<DOMAIN> domains){

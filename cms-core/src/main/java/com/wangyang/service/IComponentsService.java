@@ -17,7 +17,6 @@ public interface IComponentsService  extends ICrudService<Components, Components
 
     Map<String, IComponentsData> getComponentsDataMap();
 
-    Page<Components> list(Pageable pageable, Lang lang);
 
     List<Components> listNeedArticle();
 

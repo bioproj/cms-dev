@@ -103,19 +103,7 @@ public class ComponentsServiceImpl extends AbstractCrudService<Components, Compo
 
 
 
-    @Override
-    public Page<Components> list(Pageable pageable,Lang lang){
-        if(lang!=null && !lang.equals("")){
-            return componentsRepository.findAll(new Specification<Components>() {
-                @Override
-                public Predicate toPredicate(Root<Components> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                    return query.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
-                }
-            }, pageable);
-        }else {
-            return componentsRepository.findAll(pageable);
-        }
-    }
+
 
     @Override
     public List<Components> listNeedArticle(){

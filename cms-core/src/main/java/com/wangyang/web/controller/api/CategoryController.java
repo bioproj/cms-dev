@@ -304,8 +304,8 @@ public class CategoryController {
     }
 
     @GetMapping("/listVoTree")
-    public List<CategoryVO> listCategoryVo(){
-        return categoryService.listAdminCategoryVo();
+    public List<CategoryVO> listCategoryVo(Lang lang){
+        return categoryService.listAdminCategoryVo(lang);
     }
     @PostMapping("/updatePos")
     public BaseResponse addPos(@RequestBody List<CategoryVO> categoryVOList){

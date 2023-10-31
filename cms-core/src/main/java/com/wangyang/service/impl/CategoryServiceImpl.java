@@ -382,16 +382,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         List<Category> categories = listAll();
         return convertTo(categories);
     }
-    @Override
-    public List<Category> listAll(Lang lang){
-        return categoryRepository.findAll(new Specification<Category>() {
-            @Override
-            public Predicate toPredicate(Root<Category> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return  criteriaQuery.where(criteriaBuilder.equal(root.get("lang"),lang)).getRestriction();
-            }
-        });
 
-    }
     @Override
     public List<Category> listAll(){
         return categoryRepository.findAll();
@@ -405,8 +396,8 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         return categoryVOS;
     }
     @Override
-    public List<CategoryVO> listAdminCategoryVo() {
-        List<Category> categories = categoryRepository.findAll();
+    public List<CategoryVO> listAdminCategoryVo(Lang lang) {
+        List<Category> categories = listAll(lang);
         List<CategoryVO> categoryVOS = convertCategory2CategoryVO(categories);
         return categoryVOS;
     }
