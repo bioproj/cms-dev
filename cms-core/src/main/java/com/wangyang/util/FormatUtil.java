@@ -24,17 +24,20 @@ public class FormatUtil {
      * @return
      */
     public static String categoryListFormat(BaseCategory category){
-        if(category.getPath().startsWith("html")){
-            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
-        }
-        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
+        return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+//        if(category.getPath().startsWith("html")){
+//            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+//        }
+//        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
     }
 
     public static String categoryListFormat(CategoryVO category){
-        if(category.getPath().startsWith("html")){
-            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
-        }
-        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
+        return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+
+//        if(category.getPath().startsWith("html")){
+//            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+//        }
+//        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
     }
     /**
      * 第二页分类文章列表
@@ -46,17 +49,21 @@ public class FormatUtil {
         return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName();
     }
     public static String categoryList2Format(CategoryVO category) {
-        if(category.getPath().startsWith("html")){
-            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName();
-        }
-        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName();
+        return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName();
+
+//        if(category.getPath().startsWith("html")){
+//            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName();
+//        }
+//        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName();
     }
 
     public static String articleList2Format(Article article) {
-        if(article.getPath().startsWith("html")){
-            return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName();
-        }
         return File.separator+article.getPath().replace(File.separator,"_")+"_"+article.getViewName();
+
+//        if(article.getPath().startsWith("html")){
+//            return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName();
+//        }
+//        return File.separator+article.getPath().replace(File.separator,"_")+"_"+article.getViewName();
     }
     public static String articleListFormat(Article article) {
         if(article!=null && (article.getIsArticleDocLink()!=null && article.getIsArticleDocLink())){
@@ -67,16 +74,20 @@ public class FormatUtil {
 
             return File.separator+path+File.separator+article.getCategoryViewName()+".html#/"+article.getViewName()+".html";
         }
-        if(article.getPath().startsWith("html")){
-            return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName()+".html";
-        }
-        return File.separator+article.getPath().replace(File.separator,"_")+"_"+article.getViewName()+".html";
+        return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName()+".html";
+//
+//        if(article.getPath().startsWith("html")){
+//            return File.separator+article.getPath().replace("html/","")+File.separator+article.getViewName()+".html";
+//        }
+//        return File.separator+article.getPath().replace(File.separator,"_")+"_"+article.getViewName()+".html";
     }
     public static String sheetListFormat(Sheet sheet) {
-        if(sheet.getPath().startsWith("html")){
-            return File.separator+sheet.getPath().replace("html/","")+File.separator+sheet.getViewName()+".html";
-        }
-        return File.separator+sheet.getPath().replace(File.separator,"_")+"_"+sheet.getViewName()+".html";
+        return File.separator+sheet.getPath().replace("html/","")+File.separator+sheet.getViewName()+".html";
+
+//        if(sheet.getPath().startsWith("html")){
+//            return File.separator+sheet.getPath().replace("html/","")+File.separator+sheet.getViewName()+".html";
+//        }
+//        return File.separator+sheet.getPath().replace(File.separator,"_")+"_"+sheet.getViewName()+".html";
     }
 
 
@@ -89,10 +100,12 @@ public class FormatUtil {
 
             return File.separator+path+File.separator+content.getCategoryViewName()+".html#/"+content.getViewName()+".html";
         }
-        if(content.getPath().startsWith("html")){
-            return File.separator+content.getPath().replace("html/","")+File.separator+content.getViewName()+".html";
-        }
-        return File.separator+content.getPath().replace(File.separator,"_")+"_"+content.getViewName()+".html";
+        return File.separator+content.getPath().replace("html/","")+File.separator+content.getViewName()+".html";
+//
+//        if(content.getPath().startsWith("html")){
+//            return File.separator+content.getPath().replace("html/","")+File.separator+content.getViewName()+".html";
+//        }
+//        return File.separator+content.getPath().replace(File.separator,"_")+"_"+content.getViewName()+".html";
 
     }
 
@@ -105,9 +118,11 @@ public class FormatUtil {
 
             return File.separator+path+File.separator+articleDetailVO.getCategoryViewName()+".html#/"+articleDetailVO.getViewName()+".html";
         }
-        if(articleDetailVO.getPath().startsWith("html")){
-            return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
-        }
-        return File.separator+articleDetailVO.getPath().replace(File.separator,"_")+"_"+articleDetailVO.getViewName()+".html";
+        return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
+//
+//        if(articleDetailVO.getPath().startsWith("html")){
+//            return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
+//        }
+//        return File.separator+articleDetailVO.getPath().replace(File.separator,"_")+"_"+articleDetailVO.getViewName()+".html";
     }
 }
