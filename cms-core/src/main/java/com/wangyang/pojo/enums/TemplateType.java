@@ -8,21 +8,26 @@ import java.util.List;
 
 public enum  TemplateType implements ValueEnum<Integer> {
     ARTICLE(0,"文章模板"), //文章模板
-    CATEGORY(1,"分类模板"), //分类模板
+    Literature(8,"文献模板"),
     SHEET(2,""), //单页模板
+
+    CATEGORY(1,"分类模板"), //分类模板
+
+    CATEGORY_LIST(4,"分类名称列表"),
+    ARTICLE_LIST(5,"文章组件列表"),
+
 //    CHANNEL(3), //栏目模板
 //    ARTICLE_CHANNEL(4),// 文章栏目模板
     COMMENT(3,"评论模板"),
-    TEMPLATE_CHILD(4,"分类名称列表"),
-    ARTICLE_LIST(5,"文章组件列表"),
-    ARTICLE_MIND(6,"文章思维导图"),
+
+//    ARTICLE_MIND(6,"文章思维导图"),
     EMAIL(7,"EMAIL"),
-    Literature(8,"文献模板"),
+
     TAGS(8,"标签"),
-    SURVEY(8,"标签"),
-    SUBMIT_PAGE(8,"标签"),
-    OTHER_PAGE(8,"标签"),
-    REPORT(8,"标签"),
+//    SURVEY(8,"标签"),
+//    SUBMIT_PAGE(8,"标签"),
+//    OTHER_PAGE(8,"标签"),
+//    REPORT(8,"标签"),
     TAGS_LIST(9,"标签");
 
     private final int value;

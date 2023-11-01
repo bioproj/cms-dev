@@ -53,7 +53,7 @@ public class SystemTemplates {
                 new Template("标签模板",CmsConst.TAGS, "@tags", TemplateType.TAGS,7),
 
 
-                new Template("默认分类列表",CmsConst.DEFAULT_CATEGORY_LIST, "@categoryList", TemplateType.TEMPLATE_CHILD,7),
+                new Template("默认分类列表",CmsConst.DEFAULT_CATEGORY_LIST, "@categoryList", TemplateType.CATEGORY_LIST,7),
 
                 new Template("默认的页面模板",CmsConst.DEFAULT_SHEET_TEMPLATE, "sheet/@sheet", TemplateType.SHEET,8),
                 new Template("公司介绍",CmsConst.COMPANY_INTRODUCTION, "sheet/@company", TemplateType.SHEET,8),
@@ -76,11 +76,11 @@ public class SystemTemplates {
 
                 new Template("文章置顶列表",CmsConst.ARTICLE_TOP_LIST,"@articleTopList", TemplateType.ARTICLE_LIST,12),
                 new Template("更多文章和文章搜索",CmsConst.ARTICLE_PAGE,"@articleMore", TemplateType.ARTICLE_LIST,12),
-                new Template("文章思维导图jsMind",CmsConst.ARTICLE_JS_MIND,"@jsMind", TemplateType.ARTICLE_MIND,12),
-                new Template("手机验证码页面", CmsConst.LOGIN_PHONE_AUTH,"@loginPhoneAuth", TemplateType.SUBMIT_PAGE,1),
-                new Template("确认页面", CmsConst.LOGIN_CONFIRM,"@loginConfirm", TemplateType.SUBMIT_PAGE,1),
-                new Template("手机验证码直接登陆", CmsConst.PHONE_AUTH_PAGE,"@phoneAuth", TemplateType.SUBMIT_PAGE,1),
-                new Template("登陆后操作完成页面", CmsConst.AUTH_OTHER_PAGE,"@resultPage", TemplateType.OTHER_PAGE,1)
+                new Template("文章思维导图jsMind",CmsConst.ARTICLE_JS_MIND,"@jsMind", TemplateType.ARTICLE_LIST,12)
+//                new Template("手机验证码页面", CmsConst.LOGIN_PHONE_AUTH,"@loginPhoneAuth", TemplateType.SUBMIT_PAGE,1),
+//                new Template("确认页面", CmsConst.LOGIN_CONFIRM,"@loginConfirm", TemplateType.SUBMIT_PAGE,1),
+//                new Template("手机验证码直接登陆", CmsConst.PHONE_AUTH_PAGE,"@phoneAuth", TemplateType.SUBMIT_PAGE,1),
+//                new Template("登陆后操作完成页面", CmsConst.AUTH_OTHER_PAGE,"@resultPage", TemplateType.OTHER_PAGE,1)
 
 
 //                new Template("手机验证码登陆页面",CmsConst.PHONE_AUTH_PAGE,"@phoneAuth", TemplateType.SUBMIT_PAGE,12)
