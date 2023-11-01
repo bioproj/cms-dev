@@ -12,21 +12,14 @@ import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.FileDTO;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.pojo.entity.base.BaseTemplate;
-import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.*;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.template.TemplateChildRepository;
 import com.wangyang.service.authorize.IArticleAttachmentService;
 import com.wangyang.repository.template.TemplateRepository;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.service.base.AbstractBaseTemplateServiceImpl;
-import com.wangyang.service.base.AbstractContentServiceImpl;
-import com.wangyang.service.base.IContentService;
-import com.wangyang.service.templates.ITemplateService;
-import com.wangyang.common.service.AbstractCrudService;
 import com.wangyang.util.ZipHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -484,6 +477,22 @@ public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Templa
         templateChildRepository.save(templateChild);
         return templateChild;
     }
+
+    @Override
+    public TemplateChild addChild(Integer id, Integer childId) {
+        Template template = findById(id);
+        Template template2= findById(childId);
+        TemplateChild findTemplateChild = templateChildRepository.findByTemplateIdAndTemplateChildId(template.getId(), template2.getId());
+        if(findTemplateChild!=null){
+            throw new ObjectException(template2.getName()+"已经是"+template.getName()+"的子类了！！");
+        }
+        TemplateChild templateChild = new TemplateChild();
+        templateChild.setTemplateId(template.getId());
+        templateChild.setTemplateChildId(template2.getId());
+        templateChildRepository.save(templateChild);
+        return templateChild;
+    }
+
 
     @Override
     public List<Template> findByChild(Integer id) {

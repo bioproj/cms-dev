@@ -448,35 +448,33 @@ public class HtmlServiceImpl implements IHtmlService {
                     }
                     newCategoryArticle.setContents(newContents);
                 }
-            }
-//            else {
+                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
 
+            }else if (templateChild.getTemplateType().equals(TemplateType.CATEGORY_LIST) ){
 
-//                TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),categoryArticle.getViewName(),categoryArticle, templateChild);
-//            }
-            // 如果分类有多级别则指定大于0的数字
-            // https://bioinfo.online/articleList/202381024113.html
-            // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
-            if(newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
-                List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
-                CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
-                List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
-
-
-                TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
-            }else if ( newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
-                CategoryVO parentCategory = newCategoryArticle.getParentCategory();
-                if(parentCategory!=null){
+                // 如果分类有多级别则指定大于0的数字
+                // https://bioinfo.online/articleList/202381024113.html
+                // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
+                if(newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder() > -1){
+                    List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
+                    CategoryVO categoryVO = parentCategories.get(templateChild.getParentOrder());
                     List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
                     newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
-                    TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
+
+
+                    TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+templateChild.getEnName(),categoryVO.getViewName(),newCategoryArticle, templateChild);
+                }else if ( newCategoryArticle.getParentCategories()!=null && templateChild.getParentOrder()!=null && templateChild.getParentOrder().equals(-1)){
+                    CategoryVO parentCategory = newCategoryArticle.getParentCategory();
+                    if(parentCategory!=null){
+                        List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
+                        newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                        TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+templateChild.getEnName(),parentCategory.getViewName(),newCategoryArticle, templateChild);
+                    }
                 }
-           }else {
-                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+templateChild.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, templateChild);
             }
 
             map.put(templateChild.getEnName(),category.getPath()+File.separator+templateChild.getEnName()+File.separator+categoryArticle.getViewName());
+
         }
 
 

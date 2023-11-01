@@ -59,6 +59,8 @@ public interface ITemplateService  extends IBaseTemplateService<Template,Templat
 
     TemplateChild addChild(Integer id, String enName);
 
+    TemplateChild addChild(Integer id, Integer childId);
+
     List<Template> findByChild(Integer id);
 
     TemplateChild removeChildTemplate(Integer templateId,Integer templateChildId);

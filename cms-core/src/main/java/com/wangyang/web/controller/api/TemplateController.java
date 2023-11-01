@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -128,7 +132,12 @@ public class TemplateController {
         List<Template> saveAll = templateService.saveAll(templates);
         return saveAll;
     }
+    @GetMapping("/addChildById/{id}")
+    public TemplateChild addChildById(@PathVariable("id") Integer id,@RequestParam(required = true)Integer childId){
 
+        TemplateChild templateChild = templateService.addChild(id, childId);
+        return templateChild;
+    }
     @GetMapping("/addChild/{id}")
     public TemplateChild addChild(@PathVariable("id") Integer id,@RequestParam(required = true)String enName){
         TemplateChild templateChild = templateService.addChild(id, enName);
@@ -145,14 +154,22 @@ public class TemplateController {
         TemplateChild templateChild = templateService.removeChildTemplate(templateId,templateChildId);
         return templateChild;
     }
-    @GetMapping("/fetchComponents")
-    public List<Template> fetchComponents(@RequestParam(required = false) String path){
+    @GetMapping("/fetchTemplates")
+    public List<Template> fetchTemplates(@RequestParam(required = false) String path){
         String workDir = CMSUtils.getWorkDir();
         String componentsDir;
         if(path!=null && !path.equals("")){
             componentsDir=workDir+ File.separator+CMSUtils.getTemplates()+path;
         }else{
             componentsDir=workDir+ File.separator+CMSUtils.getTemplates()+"templates";
+        }
+        Path componentsPath = Paths.get(componentsDir);
+        if(!componentsPath.toFile().exists()){
+            try {
+                Files.createDirectories(componentsPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         List<String> fileNames = FileUtils.getFileNames(componentsDir);
         List<Template> components = templateService.findAll();
