@@ -53,7 +53,7 @@ public class SystemTemplates {
                 new Template("标签模板",CmsConst.TAGS, "@tags", TemplateType.TAGS,7),
 
 
-                new Template("默认分类列表",CmsConst.DEFAULT_CATEGORY_LIST, "@categoryList", TemplateType.CATEGORY_LIST,7),
+                new Template("默认分类列表",CmsConst.DEFAULT_CATEGORY_LIST, "@categoryList", TemplateType.TEMPLATE_CHILD,7),
 
                 new Template("默认的页面模板",CmsConst.DEFAULT_SHEET_TEMPLATE, "sheet/@sheet", TemplateType.SHEET,8),
                 new Template("公司介绍",CmsConst.COMPANY_INTRODUCTION, "sheet/@company", TemplateType.SHEET,8),

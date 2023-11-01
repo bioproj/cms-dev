@@ -6,8 +6,7 @@ import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
 import lombok.Data;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -20,9 +19,18 @@ public class Template extends BaseTemplate implements Serializable {
 
 //    @Column(name = "template_type", columnDefinition = "int")
     @QueryField
+    @Enumerated(EnumType.STRING)
+    @Column(name = "template_type_name")
     private TemplateType templateType;
+//    @Column(name = "template_type_name")
+    @Column(name = "template_type")
+    private Integer templateTypeTmp;
     @QueryField
+    @Enumerated(EnumType.STRING)
+    @Column(name = "template_data_name")
     private TemplateData templateData;
+    @Column(name = "template_data")
+    private Integer templateDateTmp;
     private Integer parentOrder=-2;
 
     public Template(){}

@@ -10,6 +10,8 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.TemplateData;
+import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentVO;
@@ -93,6 +95,30 @@ public class OptionController {
         });
 
         return "success!";
+    }
+    @GetMapping("/updateTemplateType")
+    public void updateTemplateType(){
+        List<BaseTemplate> baseTemplates = baseTemplateService.listAll();
+        TemplateType[] values = TemplateType.values();
+        TemplateData[] templateDatas = TemplateData.values();
+        for (BaseTemplate baseTemplate :baseTemplates){
+           if(baseTemplate instanceof  Template){
+               Template template = (Template) baseTemplate;
+               if(template.getTemplateType()==null && template.getTemplateTypeTmp()!=null){
+                   TemplateType templateType = values[template.getTemplateTypeTmp()];
+                   template.setTemplateType(templateType);
+                   baseTemplateService.save(template);
+               }
+               if(template.getTemplateData()==null &&template.getTemplateDateTmp()!=null){
+                   TemplateData templateData = templateDatas[template.getTemplateDateTmp()];
+                   template.setTemplateData(templateData);
+                   baseTemplateService.save(template);
+               }
+
+
+           }
+        }
+
     }
     @GetMapping("/initialize")
     public String initialize(){
