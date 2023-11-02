@@ -47,4 +47,6 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private TemplateData templateData;
 
     private NetworkType networkType;
+
+
 }

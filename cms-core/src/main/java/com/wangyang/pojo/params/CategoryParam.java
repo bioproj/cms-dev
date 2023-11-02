@@ -4,6 +4,7 @@ import com.wangyang.pojo.dto.InputConverter;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.enums.NetworkType;
+import com.wangyang.pojo.enums.TemplateData;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -40,4 +41,6 @@ public class CategoryParam implements InputConverter<Category> {
     private Boolean isRecursive;
     private Boolean isDivision;
     private NetworkType networkType;
+
+    private TemplateData templateData;
 }
