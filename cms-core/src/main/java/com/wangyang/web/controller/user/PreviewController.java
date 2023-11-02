@@ -5,6 +5,7 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
+import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentListDao;
@@ -12,6 +13,7 @@ import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
+import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
@@ -23,6 +25,7 @@ import com.wangyang.service.base.IContentService;
 import com.wangyang.service.relation.IArticleTagsService;
 import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.templates.ITemplateService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -32,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -232,6 +236,100 @@ public class PreviewController {
         modelAndView.addObject("view",articleDetailVo);
         modelAndView.setViewName(template.getTemplateValue());
         return modelAndView;
+    }
+    @GetMapping("/categoryTemplate/{id}")
+//    @ResponseBody
+    public String previewCategoryTemplate(@PathVariable("id") Integer id,Integer templateId,Model model){
+        Category category = categoryService.findById(id);
+        Template template = templateService.findById(templateId);
+
+        //预览
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryService.covertToVo(category),0);
+//        if(true){
+        //是否生成力向图网络
+        if(category.getNetworkType()!=null ){
+//        if(true){
+            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
+                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(json);
+            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
+                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
+                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(json);
+            }
+        }
+        Map<String,Object> map = new HashMap<>();
+        if(template.getTemplateType().equals(TemplateType.CATEGORY)){
+            map.put("view",categoryArticle);
+//        为了与按钮分页匹配 CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, page-1);
+            String url = category.getPath()+File.separator+category.getViewName()+"-2-page.html";
+            map.put("url",url);
+//            String html = TemplateUtil.convertHtmlAndSave(category.getPath(),categoryArticle.getViewName(),map, template);
+        }else {
+//            CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
+//            BeanUtils.copyProperties(categoryArticle, newCategoryArticle);
+            if(template.getTemplateType().equals(TemplateType.ARTICLE_LIST)  ){
+
+                if(template.getArticleSize()!=null){
+                    int size = template.getArticleSize();
+                    List<ContentVO> contents = categoryArticle.getContents();
+//                    int size= template.getArticleSize();
+//                CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
+                    if(contents.size()>size){
+                        List<ContentVO> newContents = new ArrayList<>();
+                        for (int i = 0;i<size;i++){
+                            newContents.add(contents.get(i));
+                        }
+                        categoryArticle.setContents(newContents);
+                    }
+                }
+
+//                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+template.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, template);
+
+            }else if (template.getTemplateType().equals(TemplateType.CATEGORY_LIST) ){
+
+                // 如果分类有多级别则指定大于0的数字
+                // https://bioinfo.online/articleList/202381024113.html
+                // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
+                if(categoryArticle.getParentCategories()!=null && template.getParentOrder()!=null && template.getParentOrder() > -1){
+                    List<CategoryVO> parentCategories = categoryArticle.getParentCategories();
+                    CategoryVO categoryVO = parentCategories.get(template.getParentOrder());
+                    List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
+                    categoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+
+
+//                    TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+template.getEnName(),categoryVO.getViewName(),newCategoryArticle, template);
+                }else if ( categoryArticle.getParentCategories()!=null ){
+                    CategoryVO parentCategory = categoryArticle.getParentCategory();
+                    if(parentCategory!=null){
+                        List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
+                        categoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+//                        TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+template.getEnName(),parentCategory.getViewName(),newCategoryArticle, template);
+                    }
+                }else {
+//                    log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
+                }
+            }
+            map.put(template.getEnName(),category.getPath()+File.separator+template.getEnName()+File.separator+categoryArticle.getViewName());
+        }
+
+//        List<Template> templates = templateService.findByChild(template.getId());
+//        for (Template templateChild : templates){
+////            TemplateUtil.convertHtmlAndSave(CMSUtils.getCategoryPath()+File.separator+templateChild.getEnName(),articleListVo.getViewName(),articleListVo, templateChild);
+//            model.addAttribute(templateChild.getEnName(),category.getPath()+CMSUtils.getCategoryPathList()+File.separator+templateChild.getEnName()+File.separator+articleListVo.getViewName());
+//        }
+//        String html = TemplateUtil.convertHtmlAndPreview(articleListVo, template);
+//        String convertHtml = FileUtils.convertByString(html);
+        model.addAttribute("view", categoryArticle);
+        String url = category.getPath()+File.separator+category.getViewName()+"-2-ajaxPage";
+        model.addAttribute("url",url);
+//        modelAndView.setViewName(template.getTemplateValue());
+        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 
     @GetMapping("/category/{id}")
