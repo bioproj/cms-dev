@@ -12,11 +12,13 @@ import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.CategoryQuery;
 import com.wangyang.pojo.vo.CategoryDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.CategoryRepository;
 import com.wangyang.repository.CategoryTagsRepository;
+import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.service.*;
@@ -71,6 +73,13 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 
     @Autowired
     CategoryTagsRepository categoryTagsRepository;
+
+    @Autowired
+    CategoryTemplateRepository categoryTemplateRepository;
+
+
+    @Autowired
+    ICategoryTemplateService categoryTemplateService;
 
     private  CategoryRepository categoryRepository;
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -175,9 +184,9 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
             category.setHaveHtml(true);
         }
 
-        if(category.getTemplateName()==null||"".equals(category.getTemplateName())){
-            category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
-        }
+//        if(category.getTemplateName()==null||"".equals(category.getTemplateName())){
+//            category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
+//        }
 
 
 
@@ -189,10 +198,17 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         }
 
 
-        if(category.getUseTemplatePath()!=null && category.getUseTemplatePath()){
-            Template template = templateService.findByEnName(category.getTemplateName());
-            category.setPath(template.getPath());
+//        if(category.getUseTemplatePath()!=null && category.getUseTemplatePath()){
+//            Template template = templateService.findByEnName(category.getTemplateName());
+//            category.setPath(template.getPath());
+//        }
+
+        if(category.getTemplateData()==null){
+            category.setTemplateData(TemplateData.OTHER);
         }
+
+
+
         if(category.getPath()==null || category.getPath().equals("")){
             category.setPath(CMSUtils.getCategoryPath());
         }
@@ -210,6 +226,13 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 
 
         Category saveCategory = categoryRepository.save(category);
+        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByCategoryId(category.getId());
+        if(categoryTemplates.size()==0){
+            Template template = templateService.findOptionalByEnName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
+            CategoryTemplate categoryTemplate = new CategoryTemplate(saveCategory.getId(),template.getId(),template.getTemplateType());
+            categoryTemplateRepository.save(categoryTemplate);
+        }
+
         return saveCategory;
     }
 
@@ -701,14 +724,14 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         newCategory.setPath(category.getPath().replace("html",lang.getSuffix()));
         newCategory.setParentId(0);
 
-        Template template = templateService.findByEnName(category.getTemplateName());
-        Template langTemplate = templateService.findByLang(template.getId(), lang);
-        if(langTemplate==null){
-            Template templateLanguage = templateService.createTemplateLanguage(template.getId(), lang);
-            newCategory.setTemplateName(templateLanguage.getEnName());
-        }else {
-            newCategory.setTemplateName(langTemplate.getEnName());
-        }
+//        Template template = templateService.findByEnName(category.getTemplateName());
+//        Template langTemplate = templateService.findByLang(template.getId(), lang);
+//        if(langTemplate==null){
+//            Template templateLanguage = templateService.createTemplateLanguage(template.getId(), lang);
+//            newCategory.setTemplateName(templateLanguage.getEnName());
+//        }else {
+//            newCategory.setTemplateName(langTemplate.getEnName());
+//        }
 
 
         Template articleTemplate = templateService.findByEnName(category.getArticleTemplateName());

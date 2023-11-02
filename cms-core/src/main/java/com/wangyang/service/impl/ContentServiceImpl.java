@@ -400,12 +400,13 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         return listCategoryContent(categories);
     }
     @Override
-    public CategoryContentListDao findCategoryContentBy(Category category, Template template, int page){
+    public CategoryContentListDao findCategoryContentBy(Category category, int page){
         CategoryVO categoryVO = categoryService.covertToVo(category);
-        return findCategoryContentBy(categoryVO, template, page);
+        return findCategoryContentBy(categoryVO, page);
     }
+
     @Override
-    public CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page){
+    public CategoryContentListDao findCategoryContentBy(CategoryVO category, int page){
         CategoryContentListDao articleListVo = new CategoryContentListDao();
 
         /**
@@ -446,10 +447,10 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         }
 
 
-        if(template.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+        if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
             List<ContentVO> contents=listVoTree(ids,category.getIsDesc());
             articleListVo.setContents(contents);
-        }else if(template.getTemplateData().equals(TemplateData.CATEGORY_CHILD_PAGE)){
+        }else if(category.getTemplateData().equals(TemplateData.CATEGORY_CHILD_PAGE)){
             List<CategoryContentList> categoryContentLists = listCategoryChild(category.getId(), page);
             articleListVo.setCategoryContentLists(categoryContentLists);
             List<ContentVO> allVos = new ArrayList<>();
@@ -458,7 +459,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                 allVos.addAll(contentVOS);
             }
             articleListVo.setContents(allVos);
-        }else if(template.getTemplateData().equals(TemplateData.CATEGORY_CHILD_TREE)){
+        }else if(category.getTemplateData().equals(TemplateData.CATEGORY_CHILD_TREE)){
             List<CategoryContentList> categoryContentLists = listCategoryChild(category.getId());
             articleListVo.setCategoryContentLists(categoryContentLists);
             List<ContentVO> allVos = new ArrayList<>();

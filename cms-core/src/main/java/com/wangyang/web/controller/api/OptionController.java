@@ -15,11 +15,13 @@ import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.templates.IBaseTemplateService;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.service.templates.IComponentsService;
+import com.wangyang.service.templates.ITemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +46,9 @@ public class OptionController {
     @Autowired
     ICategoryService categoryService;
 
+    @Autowired
+    ITemplateService templateService;
+
 
     @Autowired
     ISheetService sheetService;
@@ -58,6 +63,11 @@ public class OptionController {
 
     @Autowired
     IBaseTemplateService<BaseTemplate,BaseTemplate, BaseVo> baseTemplateService;
+
+
+    @Autowired
+    CategoryTemplateRepository categoryTemplateRepository;
+
 
     @PostMapping
     public List<Option> addOption(@RequestBody List<Option> options){
@@ -84,6 +94,13 @@ public class OptionController {
                 baseCategory.setLang(Lang.ZH);
                 baseCategoryService.save(baseCategory);
             }
+            if(baseCategory.getTemplateData()==null){
+                baseCategory.setTemplateData(TemplateData.OTHER);
+                baseCategoryService.save(baseCategory);
+            }
+
+
+
         });
 
         List<BaseTemplate> baseTemplates = baseTemplateService.listAll();
@@ -94,32 +111,52 @@ public class OptionController {
             }
         });
 
+        List<Category> categories = categoryService.listAll();
+        categories.forEach(item->{
+            Template template = templateService.findByEnName(item.getTemplateName());
+            CategoryTemplate findCategoryTemplate = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), template.getId());
+            if(findCategoryTemplate==null){
+                CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),template.getId(),template.getTemplateType());
+                categoryTemplateRepository.save(categoryTemplate);
+            }
+            List<Template> templates = templateService.findByChild(template.getId());
+            templates.forEach(templateChild->{
+                CategoryTemplate findCategoryTemplate2 = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), templateChild.getId());
+                if(findCategoryTemplate2==null){
+                    CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),templateChild.getId(),templateChild.getTemplateType());
+                    categoryTemplateRepository.save(categoryTemplate);
+                }
+            });
+
+        });
+
+
         return "success!";
     }
-    @GetMapping("/updateTemplateType")
-    public void updateTemplateType(){
-        List<BaseTemplate> baseTemplates = baseTemplateService.listAll();
-        TemplateType[] values = TemplateType.values();
-        TemplateData[] templateDatas = TemplateData.values();
-        for (BaseTemplate baseTemplate :baseTemplates){
-           if(baseTemplate instanceof  Template){
-               Template template = (Template) baseTemplate;
-               if(template.getTemplateType()==null && template.getTemplateTypeTmp()!=null){
-                   TemplateType templateType = values[template.getTemplateTypeTmp()];
-                   template.setTemplateType(templateType);
-                   baseTemplateService.save(template);
-               }
-               if(template.getTemplateData()==null &&template.getTemplateDateTmp()!=null){
-                   TemplateData templateData = templateDatas[template.getTemplateDateTmp()];
-                   template.setTemplateData(templateData);
-                   baseTemplateService.save(template);
-               }
-
-
-           }
-        }
-
-    }
+//    @GetMapping("/updateTemplateType")
+//    public void updateTemplateType(){
+//        List<BaseTemplate> baseTemplates = baseTemplateService.listAll();
+//        TemplateType[] values = TemplateType.values();
+//        TemplateData[] templateDatas = TemplateData.values();
+//        for (BaseTemplate baseTemplate :baseTemplates){
+//           if(baseTemplate instanceof  Template){
+//               Template template = (Template) baseTemplate;
+//               if(template.getTemplateType()==null && template.getTemplateTypeTmp()!=null){
+//                   TemplateType templateType = values[template.getTemplateTypeTmp()];
+//                   template.setTemplateType(templateType);
+//                   baseTemplateService.save(template);
+//               }
+//               if(template.getTemplateData()==null &&template.getTemplateDateTmp()!=null){
+//                   TemplateData templateData = templateDatas[template.getTemplateDateTmp()];
+//                   template.setTemplateData(templateData);
+//                   baseTemplateService.save(template);
+//               }
+//
+//
+//           }
+//        }
+//
+//    }
     @GetMapping("/initialize")
     public String initialize(){
         // 初始化组件
@@ -132,9 +169,9 @@ public class OptionController {
         List<Category> categories = categoryService.listAll();
         categories.forEach(category -> {
             if(true){
-                if(category.getTemplateName()==null){
-                    category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
-                }
+//                if(category.getTemplateName()==null){
+//                    category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
+//                }
                 if(category.getArticleTemplateName()==null){
                     category.setArticleTemplateName(CmsConst.DEFAULT_ARTICLE_TEMPLATE);
                 }

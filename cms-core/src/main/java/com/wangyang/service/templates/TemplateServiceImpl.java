@@ -15,6 +15,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.enums.*;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
+import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.repository.template.TemplateChildRepository;
 import com.wangyang.service.authorize.IArticleAttachmentService;
 import com.wangyang.repository.template.TemplateRepository;

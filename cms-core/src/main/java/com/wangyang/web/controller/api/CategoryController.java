@@ -10,11 +10,15 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.authorize.UserDetailDTO;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.CategoryTemplate;
+import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.CategoryTagsRepository;
+import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
+import com.wangyang.service.ICategoryTemplateService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.Category;
@@ -25,13 +29,16 @@ import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +64,14 @@ public class CategoryController {
     @Autowired
     IUserService userService;
     @Autowired
-    CategoryTagsRepository categoryTagsRepository;
+    CategoryTemplateRepository categoryTemplateRepository;
+
+    @Autowired
+    ICategoryTemplateService  categoryTemplateService;
+
+    @Autowired
+    ITemplateService templateService;
+
 
     @Autowired
     @Qualifier("contentServiceImpl")
@@ -90,7 +104,37 @@ public class CategoryController {
     }
 
 
+    @GetMapping("/delCategoryTemplate/{categoryId}")
+    public CategoryTemplate delCategoryTemplate(@PathVariable("categoryId") Integer categoryId, Integer templateId){
+        CategoryTemplate categoryTemplate = categoryTemplateRepository.findByCategoryIdAndTemplateId(categoryId,templateId);
 
+        categoryTemplateService.delete(categoryTemplate);
+        return categoryTemplate;
+
+    }
+    @GetMapping("/listTemplateByCategoryId/{categoryId}")
+    public List<Template> listTemplateByCategoryId(@PathVariable("categoryId") Integer categoryId){
+        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByCategoryId(categoryId);
+        Set<Integer> templatesIds = ServiceUtil.fetchProperty(categoryTemplates, CategoryTemplate::getTemplateId);
+        List<Template> templates = templateService.listByIds(templatesIds);
+        return templates;
+    }
+
+    @GetMapping("/addTemplates/{categoryId}")
+    public CategoryTemplate addTemplates(@PathVariable("categoryId") Integer categoryId, Integer templateId){
+        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(categoryId);
+        if(categoryTemplate!=null){
+            throw new ObjectException("已经添加了1个类型为CATEGORY的模板！！！");
+        }
+        Template template = templateService.findById(templateId);
+        Category category = categoryService.findById(categoryId);
+        CategoryTemplate categoryTemplates = new CategoryTemplate(category.getId(),template.getId(),template.getTemplateType());
+//        categoryTemplates.setCategoryId(category.getId());
+//        categoryTemplates.setTemplateId(template.getId());
+        categoryTemplateService.save(categoryTemplates);
+
+        return categoryTemplates;
+    }
 
 
 
@@ -219,9 +263,9 @@ public class CategoryController {
         List<Category> categories = categoryService.listAll();
         categories.forEach(category -> {
             if(more){
-                if(category.getTemplateName()==null){
-                    category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
-                }
+//                if(category.getTemplateName()==null){
+//                    category.setTemplateName(CmsConst.DEFAULT_CATEGORY_TEMPLATE);
+//                }
                 if(category.getArticleTemplateName()==null){
                     category.setArticleTemplateName(CmsConst.DEFAULT_ARTICLE_TEMPLATE);
                 }

@@ -17,5 +17,5 @@ public class Collection extends BaseCategory {
     private String parentKey;
     @Column(name = "collection_version")
     private String version;
-
+    private String templateName;
 }

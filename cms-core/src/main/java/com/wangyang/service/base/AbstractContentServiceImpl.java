@@ -172,7 +172,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     }
 
     @Override
-    public CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page) {
+    public CategoryContentListDao findCategoryContentBy(CategoryVO category, int page) {
         return null;
     }
 
@@ -394,7 +394,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     }
 
     @Override
-    public CategoryContentListDao findCategoryContentBy(Category category, Template template, int page) {
+    public CategoryContentListDao findCategoryContentBy(Category category, int page) {
         return null;
     }
 

@@ -15,6 +15,7 @@ public enum  TemplateType implements ValueEnum<Integer> {
 
     CATEGORY_LIST(4,"分类名称列表"),
     ARTICLE_LIST(5,"文章组件列表"),
+    ARTICLE_LIST_TOP(5,"文章组件列表"),
 
 //    CHANNEL(3), //栏目模板
 //    ARTICLE_CHANNEL(4),// 文章栏目模板

@@ -86,7 +86,7 @@ public class PreviewController {
         List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
 //        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
 
-        Template template = templateService.findByEnName(baseCategory.getTemplateName());
+        Template template = templateService.findByMainCategoryId(baseCategory.getId());
         model.addAttribute("contents",contents);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
@@ -148,10 +148,10 @@ public class PreviewController {
         articleDetailVo.setParentCategory(categoryVOS);
 
 
-        Template categoryTemplate = templateService.findOptionalByEnName(category.getTemplateName());
-        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,categoryTemplate, 0);
+//        Template categoryTemplate = templateService.findByMainCategoryId(category.getId());
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, 0);
 
-        if(categoryTemplate.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+        if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
             List<ContentVO> contents = categoryArticle.getContents();
             List<ContentVO> contentVOList = new ArrayList<>();
             CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
@@ -237,10 +237,10 @@ public class PreviewController {
 //    @ResponseBody
     public String previewCategory(@PathVariable("id") Integer id,Model model){
         Category category = categoryService.findById(id);
-        Template template = templateService.findByEnName(category.getTemplateName());
+        Template template = templateService.findByMainCategoryId(category.getId());
 
         //预览
-        CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);
+        CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),0);
 //        if(true){
         //是否生成力向图网络
         if(category.getNetworkType()!=null ){

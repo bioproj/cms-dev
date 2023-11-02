@@ -467,10 +467,10 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //
 //        }
         article.setTemplateName(category.getArticleTemplateName());
-        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
-            Template template = templateService.findByEnName(category.getTemplateName());
-            article.setPath(template.getPath());
-        }
+//        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
+//            Template template = templateService.findByEnName(category.getTemplateName());
+//            article.setPath(template.getPath());
+//        }
 
         if(category.getArticleUseViewName()){
             article.setPath(category.getPath()+File.separator+category.getViewName());

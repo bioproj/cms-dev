@@ -125,4 +125,6 @@ public interface IHtmlService {
     void generateHtmlByViewName(String type, String viewName);
 
     void articleTopListByCategoryId(int id);
+
+    void articleTopListByCategoryId(Template template, int id);
 }

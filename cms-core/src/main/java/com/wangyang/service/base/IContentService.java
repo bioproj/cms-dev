@@ -51,9 +51,9 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
 
     List<CategoryContentList> listCategoryContentByComponentsIdSize(int componentsId, Integer size);
 
-    CategoryContentListDao findCategoryContentBy(Category category, Template template, int page);
+    CategoryContentListDao findCategoryContentBy(Category category,int page);
 
-    CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page);
+    CategoryContentListDao findCategoryContentBy(CategoryVO category,  int page);
 
     List<ARTICLEVO> listVoTree(Integer categoryId);
 

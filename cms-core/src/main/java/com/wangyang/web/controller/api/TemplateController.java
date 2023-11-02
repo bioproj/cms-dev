@@ -118,17 +118,17 @@ public class TemplateController {
     @GetMapping("/updateAllTemplate")
     public List<Template> updateAllTemplate(){
         List<Template> templates = templateService.findAll();
-        for (Template template : templates){
-            if(template.getTemplateType().equals(TemplateType.CATEGORY)){
-                if(template.getTree()){
-                    template.setTemplateData(TemplateData.ARTICLE_TREE);
-                }else {
-                    template.setTemplateData(TemplateData.ARTICLE_PAGE);
-                }
-            }else {
-                template.setTemplateData(TemplateData.OTHER);
-            }
-        }
+//        for (Template template : templates){
+//            if(template.getTemplateType().equals(TemplateType.CATEGORY)){
+//                if(template.getTree()){
+//                    template.setTemplateData(TemplateData.ARTICLE_TREE);
+//                }else {
+//                    template.setTemplateData(TemplateData.ARTICLE_PAGE);
+//                }
+//            }else {
+//                template.setTemplateData(TemplateData.OTHER);
+//            }
+//        }
         List<Template> saveAll = templateService.saveAll(templates);
         return saveAll;
     }

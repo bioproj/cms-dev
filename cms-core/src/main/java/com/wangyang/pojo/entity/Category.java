@@ -67,7 +67,7 @@ public class Category extends BaseCategory{
     private Boolean isDivision=false;
 
     private NetworkType networkType=NetworkType.NONE;
-
+    private String templateName;
     public Boolean getDesc() {
         return isDesc;
     }

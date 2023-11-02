@@ -3,6 +3,7 @@ package com.wangyang.pojo.vo;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.enums.NetworkType;
+import com.wangyang.pojo.enums.TemplateData;
 import lombok.Data;
 
 @Data
@@ -25,7 +26,7 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private Boolean recommend;
     private Boolean existNav;
     private Integer articleNumber;
-    private String templateName;
+//    private String templateName;
     private String articleTemplateName;
     private String picPath;
     private String picThumbPath;
@@ -43,7 +44,7 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;
-
+    private TemplateData templateData;
 
     private NetworkType networkType;
 }
