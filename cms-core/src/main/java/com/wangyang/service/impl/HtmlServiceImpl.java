@@ -173,9 +173,7 @@ public class HtmlServiceImpl implements IHtmlService {
         if(articleVO.getStatus().equals(ArticleStatus.PUBLISHED)||articleVO.getStatus().equals(ArticleStatus.MODIFY)){
 //            CategoryVO categoryVO = articleVO.getCategory();
 //
-//            List<CategoryVO> categoryVOS =new ArrayList<>();
-//            articleService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
-//            articleVO.setParentCategories(categoryVOS);
+
 
 //            List<Category> partnerCategory = categoryService.findByParentId(categoryVO.getParentId());
 //            articleVO.setPartnerCategory(categoryService.convertToListVo(partnerCategory));
@@ -202,6 +200,9 @@ public class HtmlServiceImpl implements IHtmlService {
 
                 categoryContentListDao = convertArticleListBy(categoryArticle,templates);
             }else {
+                List<CategoryVO> categoryVOS =new ArrayList<>();
+                articleService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
+                articleVO.setParentCategories(categoryVOS);
                 categoryContentListDao = contentService.findCategoryContentBy(categoryVO, 0);
             }
 
