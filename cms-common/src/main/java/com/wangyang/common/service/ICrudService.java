@@ -79,6 +79,8 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
 
     List<DOMAINVO> listWithTree(List<DOMAINVO> list, Integer parentId);
 
+    List<DOMAINVO> listWithChildTree(Integer parentId);
+
     void updateOrder(List<DOMAIN> domains, List<DOMAINVO> domainvos);
 
     void updateOrder(List<DOMAINVO> domainvos);

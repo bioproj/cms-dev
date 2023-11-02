@@ -751,16 +751,20 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
     }
 
     @Override
-    public void addChildFilterRecursive(List<CategoryVO> domainvos, Integer id){
-        List<Category> domains = findByParentId(id);
-        if(domains.size()==0){
-            return;
-        }
-        domains = domains.stream().filter(item-> (item.getIsRecursive()!=null && item.getIsRecursive())).collect(Collectors.toList());
-        domainvos.addAll(convertToListVo(domains));
-        if(domains.size()!=0){
-            for (Category domain:domains){
-                addChild(domainvos,domain.getId());
+    public  List<CategoryVO> addChildFilterRecursive(List<CategoryVO> domainvos){
+        List<CategoryVO> saveCategories = new ArrayList<>();
+        addChildFilterRecursive(domainvos,saveCategories);
+        return saveCategories;
+    }
+
+
+    public  void addChildFilterRecursive(List<CategoryVO> domainvos,List<CategoryVO> saveCategories ){
+        List<CategoryVO> filterCategories = domainvos.stream().filter(item -> (item.getIsRecursive() != null && item.getIsRecursive())).collect(Collectors.toList());
+        saveCategories.addAll(filterCategories);
+
+        for (CategoryVO categoryVO : domainvos){
+            if(categoryVO.getChildren()!=null && categoryVO.getChildren().size()!=0){
+                addChildFilterRecursive(categoryVO.getChildren(),saveCategories);
             }
         }
 

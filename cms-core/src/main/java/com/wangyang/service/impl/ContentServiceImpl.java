@@ -413,19 +413,23 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
          * 根据一组id查找article
          * **/
         Set<Integer> ids =new HashSet<>();
-        List<CategoryVO> categoryVOS = new ArrayList<>();
         ids.add(category.getId());
-        categoryService.addChildFilterRecursive(categoryVOS,category.getId());
+//        List<CategoryVO> categoryVOS = new ArrayList<>();
+
+        List<CategoryVO> categoryVOS1 = categoryService.listWithChildTree(category.getId());
+        articleListVo.setChildren(categoryVOS1);
+        List<CategoryVO> filterCategories = categoryService.addChildFilterRecursive(categoryVOS1);
+        ids.addAll(ServiceUtil.fetchProperty(filterCategories, CategoryVO::getId));
 
 
 //        List<Category> categoryPartner = categoryService.findByParentId(category.getParentId());
 //        articleListVo.setPartner(categoryService.convertToListVo(categoryPartner));
 
-        if(categoryVOS.size()!=0){
-            ids.addAll(ServiceUtil.fetchProperty(categoryVOS, CategoryVO::getId));
-            List<CategoryVO> categoryVOSTree = categoryService.listWithTree(categoryVOS,category.getId());
-            articleListVo.setChildren(categoryVOSTree);
-        }
+//        if(categoryVOS.size()!=0){
+//
+////            List<CategoryVO> categoryVOSTree = categoryService.listWithTree(categoryVOS,category.getId());
+////            articleListVo.setChildren(categoryVOSTree);
+//        }
         if(category.getParentId()!=0){
             // add forward parent
 //            Category parentCategory = categoryService.findById(category.getParentId());

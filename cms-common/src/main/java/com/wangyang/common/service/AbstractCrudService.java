@@ -421,6 +421,14 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
         return collect;
     }
 
+    @Override
+    public List<DOMAINVO> listWithChildTree(Integer parentId) {
+        List<DOMAINVO> categoryVOS = new ArrayList<>();
+        addChild(categoryVOS,parentId);
+        return categoryVOS;
+
+    }
+
     // 根据当前父类 找出子类， 并通过递归找出子类的子类
     private List<DOMAINVO> getChildList(DOMAINVO domainvo, List<DOMAINVO> list) {
         return list.stream()
