@@ -486,13 +486,15 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
                         TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+template.getEnName(),categoryVO.getViewName(),newCategoryArticle, template);
-                    }else if ( newCategoryArticle.getParentCategories()!=null && template.getParentOrder()!=null && template.getParentOrder().equals(-1)){
+                    }else if ( newCategoryArticle.getParentCategories()!=null ){
                         CategoryVO parentCategory = newCategoryArticle.getParentCategory();
                         if(parentCategory!=null){
                             List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
                             newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
                             TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+template.getEnName(),parentCategory.getViewName(),newCategoryArticle, template);
                         }
+                    }else {
+                        log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
                     }
                 } else if (template.getTemplateType().equals(TemplateType.ARTICLE_LIST_TOP)) {
                     String topHtmlPath = category.getPath()+ File.separator+"top";

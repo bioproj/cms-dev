@@ -13,6 +13,7 @@ import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.CategoryTemplate;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.CategoryTagsRepository;
 import com.wangyang.repository.CategoryTemplateRepository;
@@ -123,12 +124,14 @@ public class CategoryController {
     @GetMapping("/addTemplates/{categoryId}")
     public CategoryTemplate addTemplates(@PathVariable("categoryId") Integer categoryId, Integer templateId){
         Category category = categoryService.findById(categoryId);
-
-        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(categoryId,category.getLang());
-        if(categoryTemplate!=null){
-            throw new ObjectException("已经添加了1个类型为CATEGORY的模板！！！");
-        }
         Template template = templateService.findById(templateId);
+        if(template.getTemplateType().equals(TemplateType.CATEGORY)){
+            CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(categoryId,category.getLang());
+            if(categoryTemplate!=null){
+                throw new ObjectException("已经添加了1个类型为CATEGORY的模板！！！");
+            }
+        }
+
         if(category.getLang()!=template.getLang()){
             throw new ObjectException("分类和模板的语言不一致！");
         }
