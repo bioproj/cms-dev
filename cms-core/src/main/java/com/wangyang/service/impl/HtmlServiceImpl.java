@@ -460,9 +460,13 @@ public class HtmlServiceImpl implements IHtmlService {
             }else {
                 CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
                 BeanUtils.copyProperties(categoryArticle, newCategoryArticle);
-                if(template.getTemplateType().equals(TemplateType.ARTICLE_LIST)  && template.getArticleSize()!=null && template.getArticleSize()!=0){
+                if(template.getTemplateType().equals(TemplateType.ARTICLE_LIST)  ){
+                    int size = 5;
+                    if(template.getArticleSize()!=null){
+                        size = template.getArticleSize();
+                    }
                     List<ContentVO> contents = categoryArticle.getContents();
-                    int size= template.getArticleSize();
+//                    int size= template.getArticleSize();
 //                CategoryContentListDao newCategoryArticle = new CategoryContentListDao();
                     if(contents.size()>size){
                         List<ContentVO> newContents = new ArrayList<>();
