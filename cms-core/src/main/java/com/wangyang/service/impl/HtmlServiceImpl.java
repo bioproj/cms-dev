@@ -569,7 +569,7 @@ public class HtmlServiceImpl implements IHtmlService {
             return "Page is not exist!!";
         }
 
-        Template template = templateService.findByMainCategoryId(category.getId(),TemplateType.CATEGORY);
+        Template template = templateService.findByMainCategoryId(category.getId(),category.getLang());
 
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, page-1);
 //        Page<ArticleVO> articlePage = categoryArticle.getContents();
@@ -850,7 +850,7 @@ public class HtmlServiceImpl implements IHtmlService {
     @Override
     public void articleTopListByCategoryId(int id) {
         Category category = categoryService.findById(id);
-        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(category.getId());
+        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(category.getId(),category.getLang());
         Template template = templateService.findById(categoryTemplate.getTemplateId());
         List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category);
 //        if(articleDtos.size()==0)return;

@@ -1,5 +1,6 @@
 package com.wangyang.service.base;
 
+import com.wangyang.common.enums.Lang;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.service.AbstractCrudService;
@@ -40,8 +41,8 @@ public abstract class AbstractBaseTemplateServiceImpl<BASETEMPLATE extends BaseT
         return baseTemplates;
     }
     @Override
-    public BASETEMPLATE findByMainCategoryId(Integer id, TemplateType templateType) {
-        CategoryTemplate categoryTemplate = categoryTemplateRepository.findByCategoryIdAndTemplateType(id, templateType);
+    public BASETEMPLATE findByMainCategoryId(Integer id, TemplateType templateType, Lang lang) {
+        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(id, templateType,lang);
         if(categoryTemplate==null){
             throw new ObjectException("categoryTemplate"+templateType.getName()+"不存在！");
         }
@@ -49,8 +50,8 @@ public abstract class AbstractBaseTemplateServiceImpl<BASETEMPLATE extends BaseT
         return basetemplate;
     }
     @Override
-    public BASETEMPLATE findByMainCategoryId(Integer id) {
+    public BASETEMPLATE findByMainCategoryId(Integer id, Lang lang) {
 
-        return findByMainCategoryId(id,TemplateType.CATEGORY);
+        return findByMainCategoryId(id,TemplateType.CATEGORY,lang);
     }
 }

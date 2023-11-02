@@ -14,6 +14,6 @@ public interface CategoryTemplateRepository  extends BaseRepository<CategoryTemp
 
     List<CategoryTemplate> deleteByCategoryId(int id);
     CategoryTemplate findByCategoryIdAndTemplateId(int categoryId, int templateId);
-    CategoryTemplate findByCategoryIdAndTemplateType(int categoryId, TemplateType templateType);
+//    CategoryTemplate findByCategoryIdAndTemplateType(int categoryId, TemplateType templateType);
 
 }

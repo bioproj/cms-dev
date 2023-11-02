@@ -175,7 +175,7 @@ public class TemplateController {
         List<Template> components = templateService.findAll();
         Set<String> templateValue = ServiceUtil.fetchProperty(components, Template::getTemplateValue);
         Set<String> filterFileNames = fileNames.stream().filter(item -> {
-            return !templateValue.contains("templates"+File.separator+item.split("\\.")[0]) && !item.endsWith("bak") && !item.contains(" ") && !item.endsWith(".en.html");
+            return !templateValue.contains(path+File.separator+item.split("\\.")[0]) && !item.endsWith("bak") && !item.contains(" ") && !item.endsWith(".en.html");
         }).collect(Collectors.toSet());
 
         if(filterFileNames.size()==0){
@@ -185,7 +185,7 @@ public class TemplateController {
         List<Template> templateList = new ArrayList<>();
         filterFileNames.forEach(item->{
             String name = item.replace("@", "").replace(".html", "").replace(" ","_");
-            String viewPath = "templates"+File.separator+item.replace(".html", "");
+            String viewPath = path+File.separator+item.replace(".html", "");
             templateList.add(new Template(name,name.replace("/","_"),viewPath, TemplateType.ARTICLE,false));
 
         });

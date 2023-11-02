@@ -2,6 +2,7 @@ package com.wangyang.web.controller.user;
 
 import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
+import com.wangyang.common.enums.Lang;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.pojo.annotation.Anonymous;
@@ -86,7 +87,7 @@ public class PreviewController {
         List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
 //        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
 
-        Template template = templateService.findByMainCategoryId(baseCategory.getId());
+        Template template = templateService.findByMainCategoryId(baseCategory.getId(), baseCategory.getLang());
         model.addAttribute("contents",contents);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
@@ -237,7 +238,7 @@ public class PreviewController {
 //    @ResponseBody
     public String previewCategory(@PathVariable("id") Integer id,Model model){
         Category category = categoryService.findById(id);
-        Template template = templateService.findByMainCategoryId(category.getId());
+        Template template = templateService.findByMainCategoryId(category.getId(),category.getLang());
 
         //预览
         CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),0);
