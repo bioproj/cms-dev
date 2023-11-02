@@ -4,6 +4,7 @@ import com.wangyang.pojo.dto.CategoryChild;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.params.CategoryQuery;
 import com.wangyang.pojo.vo.CategoryDetailVO;
 import com.wangyang.pojo.vo.CategoryVO;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -121,4 +123,6 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
     Category createCategoryLanguage(Category category, Lang lang);
 
     void addChildFilterRecursive(List<CategoryVO> domainvos, Integer id);
+
+    void addTemplatePath(Map<String, Object> map, List<CategoryVO> parentCategories ,List<Template> templates);
 }

@@ -25,6 +25,7 @@ import com.wangyang.service.base.IContentService;
 import com.wangyang.service.relation.IArticleTagsService;
 import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.templates.ITemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +44,7 @@ import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/preview")
+@Slf4j
 public class PreviewController {
     @Autowired
     IArticleService articleService;
@@ -150,11 +152,14 @@ public class PreviewController {
         List<CategoryVO> categoryVOS =new ArrayList<>();
         articleService.addParentCategory(categoryVOS,articleDetailVo.getCategory().getParentId());
 
-        articleDetailVo.setParentCategory(categoryVOS);
+        articleDetailVo.setParentCategories(categoryVOS);
 
 
 //        Template categoryTemplate = templateService.findByMainCategoryId(category.getId());
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, 0);
+        List<Template> templates = templateService.findByCategoryId(category.getId());
+        Map<String,Object> map = new HashMap<>();
+        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
         if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
             List<ContentVO> contents = categoryArticle.getContents();
@@ -191,6 +196,7 @@ public class PreviewController {
 
 //        ModelAndView modelAndView = new ModelAndView();
         model.addAttribute("view",articleDetailVo);
+        model.addAllAttributes(map);
 //        modelAndView.setViewName(template.getTemplateValue());
 //        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
 //        String convertHtml = FileUtils.convertByString(html);
@@ -242,9 +248,9 @@ public class PreviewController {
     public String previewCategoryTemplate(@PathVariable("id") Integer id,Integer templateId,Model model){
         Category category = categoryService.findById(id);
         Template template = templateService.findById(templateId);
-
+        CategoryVO categoryVO = categoryService.covertToVo(category);
         //预览
-        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryService.covertToVo(category),0);
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO,0);
 //        if(true){
         //是否生成力向图网络
         if(category.getNetworkType()!=null ){
@@ -264,6 +270,8 @@ public class PreviewController {
             }
         }
         Map<String,Object> map = new HashMap<>();
+        List<Template> templates = templateService.findByCategoryId(category.getId());
+        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
         if(template.getTemplateType().equals(TemplateType.CATEGORY)){
             map.put("view",categoryArticle);
 //        为了与按钮分页匹配 CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, page-1);
@@ -298,7 +306,7 @@ public class PreviewController {
                 // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
                 if(categoryArticle.getParentCategories()!=null && template.getParentOrder()!=null && template.getParentOrder() > -1){
                     List<CategoryVO> parentCategories = categoryArticle.getParentCategories();
-                    CategoryVO categoryVO = parentCategories.get(template.getParentOrder());
+//                    CategoryVO categoryVO = parentCategories.get(template.getParentOrder());
                     List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
                     categoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
 
@@ -312,7 +320,7 @@ public class PreviewController {
 //                        TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+template.getEnName(),parentCategory.getViewName(),newCategoryArticle, template);
                     }
                 }else {
-//                    log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
+                    log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
                 }
             }
             map.put(template.getEnName(),category.getPath()+File.separator+template.getEnName()+File.separator+categoryArticle.getViewName());
@@ -328,6 +336,7 @@ public class PreviewController {
         model.addAttribute("view", categoryArticle);
         String url = category.getPath()+File.separator+category.getViewName()+"-2-ajaxPage";
         model.addAttribute("url",url);
+        model.addAllAttributes(map);
 //        modelAndView.setViewName(template.getTemplateValue());
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }

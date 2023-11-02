@@ -6,6 +6,7 @@ import com.wangyang.common.exception.OptionException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryChild;
 import com.wangyang.pojo.dto.CategoryDto;
@@ -763,6 +764,22 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
             }
         }
 
+    }
+
+    @Override
+    public void addTemplatePath(Map<String, Object> map,List<CategoryVO> parentCategories , List<Template> templates) {
+        for (Template template : templates){
+            if(parentCategories!=null){
+                CategoryVO categoryVO;
+                if(template.getParentOrder()!=null && template.getParentOrder() > -1){
+                    categoryVO = parentCategories.get(template.getParentOrder());
+                }else {
+                    categoryVO = parentCategories.get(parentCategories.size() - 1);
+                }
+                map.put(template.getEnName(),categoryVO.getPath()+File.separator+template.getEnName()+File.separator+ categoryVO.getViewName() );
+
+            }
+        }
     }
 
     @Override

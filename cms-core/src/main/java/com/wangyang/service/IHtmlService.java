@@ -69,7 +69,7 @@ public interface IHtmlService {
 
     @Async
         //异步执行
-    void conventHtmlNoCategoryList(ArticleDetailVO articleVO);
+//    void conventHtmlNoCategoryList(ArticleDetailVO articleVO);
 
 //    void addOrRemoveArticleToCategoryListByCategoryId(int baseCategoryId);
 
@@ -92,7 +92,7 @@ public interface IHtmlService {
 
     void commonTemplate(String option);
 
-    CategoryContentListDao convertArticleListBy(CategoryVO category);
+    CategoryContentListDao convertArticleListBy(CategoryContentListDao categoryArticle ,List<Template> templates);
 
 
     String convertArticleListBy(Category category, int page);
