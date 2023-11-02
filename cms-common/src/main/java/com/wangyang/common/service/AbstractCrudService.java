@@ -601,4 +601,6 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     public boolean supportType(CrudType type) {
         return false;
     }
+
+
 }

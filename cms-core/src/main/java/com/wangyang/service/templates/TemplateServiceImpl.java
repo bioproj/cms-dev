@@ -17,6 +17,7 @@ import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.repository.template.TemplateChildRepository;
+import com.wangyang.service.ICategoryTemplateService;
 import com.wangyang.service.authorize.IArticleAttachmentService;
 import com.wangyang.repository.template.TemplateRepository;
 import com.wangyang.service.IAttachmentService;
@@ -66,6 +67,9 @@ public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Templa
 
     @Autowired
     TemplateChildRepository templateChildRepository;
+
+    @Autowired
+    ICategoryTemplateService categoryTemplateService;
 
     @Value("${cms.workDir}")
     private String workDir;
@@ -154,8 +158,14 @@ public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Templa
         if(template.getTemplateContent()!=null){
             createFile(template);
         }
+        Template saveTemplate  = save(template);
+        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByTemplateId(template.getId());
+        categoryTemplates.forEach(categoryTemplate -> {
+            categoryTemplate.setTemplateType(saveTemplate.getTemplateType());
+            categoryTemplateService.save(categoryTemplate);
+        });
 
-        return save(template);
+        return saveTemplate;
     }
     private void createFile(Template template) {
         File file = new File(workDir+"/"+template.getTemplateValue()+".html");
@@ -226,6 +236,10 @@ public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Templa
             if(file.exists()) ZipHelper.deleteFile(file);
         }
         articleAttachmentService.deleteAll(articleAttachments);
+
+
+        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByTemplateId(template.getId());
+        categoryTemplateService.deleteAll(categoryTemplates);
         return template;
     }
 

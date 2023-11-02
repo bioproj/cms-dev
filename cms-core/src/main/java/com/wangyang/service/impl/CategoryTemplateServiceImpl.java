@@ -66,4 +66,15 @@ public class CategoryTemplateServiceImpl extends AbstractCrudService<CategoryTem
         });
         return categoryTemplates;
     }
+
+    @Override
+    public List<CategoryTemplate> listByTemplateId(Integer id) {
+        List<CategoryTemplate> categoryTemplates = categoryTemplateRepository.findAll(new Specification<CategoryTemplate>() {
+            @Override
+            public Predicate toPredicate(Root<CategoryTemplate> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return query.where(criteriaBuilder.equal(root.get("templateId"),id)).getRestriction();
+            }
+        });
+        return categoryTemplates;
+    }
 }
