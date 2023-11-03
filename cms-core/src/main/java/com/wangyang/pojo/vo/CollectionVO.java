@@ -4,7 +4,7 @@ import com.wangyang.common.pojo.BaseVo;
 import lombok.Data;
 
 @Data
-public class CollectionVO extends BaseVo<CollectionVO> {
+public class CollectionVO extends BaseCategoryVo {
     private String name;
     private String key;
     private String parentKey;

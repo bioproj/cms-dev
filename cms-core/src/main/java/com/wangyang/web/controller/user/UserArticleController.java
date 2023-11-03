@@ -143,7 +143,7 @@ public class UserArticleController {
     public String editCategory(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
         Category category = categoryService.findById(id);
-        CategoryVO categoryVO = categoryService.covertToVo(category);
+        CategoryVO categoryVO = categoryService.convertToVo(category);
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         model.addAttribute("view",categoryVO);

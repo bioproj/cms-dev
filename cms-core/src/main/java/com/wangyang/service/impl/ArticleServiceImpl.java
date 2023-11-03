@@ -546,7 +546,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
         if(saveArticle.getCategoryId()!=null){
             Category category = categoryService.findById(saveArticle.getCategoryId());
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
 
             articleDetailVO.setCategory(categoryVO);
         }
@@ -607,7 +607,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //            articleDetailVo.setCategory(categoryService.covertToVo(optionalCategory.get()));
 //        }
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
-        articleDetailVO.setCategory(categoryService.covertToVo(category));
+        articleDetailVO.setCategory(categoryService.convertToVo(category));
 //        articleDetailVO.setUpdateChannelFirstName(true);
         BeanUtils.copyProperties(article,articleDetailVO);
         // 添加标签
@@ -1013,7 +1013,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         article.setParentId(0);
         Article saveArticle = articleRepository.save(article);
         ArticleDetailVO articleDetailVO = conventToAddTags(saveArticle);
-        articleDetailVO.setCategory(categoryService.covertToVo(category));
+        articleDetailVO.setCategory(categoryService.convertToVo(category));
         injectContent(article,category);
         return articleDetailVO;
     }
@@ -1045,7 +1045,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
     @Override
     public CategoryArticleListDao findCategoryArticleBy(Category category, Template template,int page){
-        return findCategoryArticleBy(categoryService.covertToVo(category),template,page);
+        return findCategoryArticleBy(categoryService.convertToVo(category),template,page);
     }
 
     @Override
@@ -1054,7 +1054,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             return;
         }
         Category category = categoryService.findById(parentId);
-        categoryVOS.add(0,categoryService.covertToVo(category));
+        categoryVOS.add(0,categoryService.convertToVo(category));
         if(category.getParentId()!=0){
             addParentCategory(categoryVOS,category.getParentId());
         }
@@ -1542,7 +1542,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         List<CategoryArticleList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
             CategoryArticleList categoryArticleList = new CategoryArticleList();
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryArticleList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();
             articleQuery.setCategoryId(category.getId());
@@ -1563,7 +1563,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         List<CategoryArticleList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
             CategoryArticleList categoryArticleList = new CategoryArticleList();
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryArticleList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();
             articleQuery.setCategoryId(category.getId());
@@ -1606,7 +1606,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         }
         List<CategoryVO> categoryVOS = new ArrayList<>();
         addChildIds(categoryVOS,category.getId());
-        categoryVOS.add(categoryService.covertToVo(category));
+        categoryVOS.add(categoryService.convertToVo(category));
         Set<Integer> ids = ServiceUtil.fetchProperty(categoryVOS, CategoryVO::getId);
         Page<Article> articles = articleRepository.findAll(articleSpecification(ids,category.getIsDesc(), ArticleList.NO_INCLUDE_TOP),PageRequest.of(0,size));
         Page<ArticleVO> articleVOS = convertToPageVo(articles);
@@ -1636,7 +1636,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         }
         List<CategoryVO> categoryVOS = new ArrayList<>();
         addChildIds(categoryVOS,category.getId());
-        categoryVOS.add(categoryService.covertToVo(category));
+        categoryVOS.add(categoryService.convertToVo(category));
         Set<Integer> ids = ServiceUtil.fetchProperty(categoryVOS, CategoryVO::getId);
         List<Article> articles = articleRepository.findAll(articleSpecification(ids, category.getIsDesc(), ArticleList.NO_INCLUDE_TOP));
         List<ArticleVO> articleVOS = convertToListVo(articles);

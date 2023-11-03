@@ -492,7 +492,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 //            BeanUtils.copyProperties(category, categoryVO);
 //            categoryVO.setLinkPath(FormatUtil.categoryListFormat(category));
 //            return categoryVO;
-            return covertToVo(category);
+            return convertToVo(category);
         }).collect(Collectors.toList());
         return super.listWithTree(collect);
     }
@@ -603,7 +603,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
     @Override
     public List<CategoryVO> convertToListVo(List<Category> categories) {
         return categories.stream().map(category -> {
-            return covertToVo(category);
+            return convertToVo(category);
         }).collect(Collectors.toList());
     }
     @Override
@@ -614,22 +614,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         return categoryDto;
     }
 
-    @Override
-    public CategoryVO covertToVo(Category category){
-        CategoryVO categoryVO = new CategoryVO();
-        if(category.getUserId()!=null){
-            Integer userId = category.getUserId();
-            User user = userService.findUserById(userId);
-            categoryVO.setUser(user);
-        }
-
-        BeanUtils.copyProperties(category, categoryVO);
-        categoryVO.setLinkPath(FormatUtil.categoryListFormat(category));
-        categoryVO.setRecommendPath(category.getPath()+CMSUtils.getArticleRecommendPath()+ File.separator+category.getViewName());
-        categoryVO.setRecentPath(category.getPath()+CMSUtils.getArticleRecentPath()+ File.separator+category.getViewName());
-        categoryVO.setFirstTitleList(category.getPath()+CMSUtils.getFirstArticleTitleList()+ File.separator+category.getViewName());
-        return categoryVO;
-    }
+ 
             @Override
     public List<CategoryVO> listChildByViewName(String viewName){
         Category category = findByViewName(viewName);

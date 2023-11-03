@@ -40,7 +40,7 @@ public class CategoryVO extends BaseCategoryVo {
     private Boolean parse;
     private String cssClass;
 
-    private User user;
+
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
-
+    private User user;
     private String name;
     private String icon;
     private String viewName;
@@ -37,7 +37,7 @@ public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
     private Boolean parse;
     private String cssClass;
 
-    private User user;
+//    private User user;
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;

@@ -248,7 +248,7 @@ public class PreviewController {
     public String previewCategoryTemplate(@PathVariable("id") Integer id,Integer templateId,Model model){
         Category category = categoryService.findById(id);
         Template template = templateService.findById(templateId);
-        CategoryVO categoryVO = categoryService.covertToVo(category);
+        CategoryVO categoryVO = categoryService.convertToVo(category);
         //预览
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO,0);
 //        if(true){
@@ -348,7 +348,7 @@ public class PreviewController {
         Template template = templateService.findByMainCategoryId(category.getId(),category.getLang());
 
         //预览
-        CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.covertToVo(category),0);
+        CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.convertToVo(category),0);
 //        if(true){
         //是否生成力向图网络
         if(category.getNetworkType()!=null ){

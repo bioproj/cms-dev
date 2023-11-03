@@ -30,7 +30,7 @@ public class Category extends BaseCategory{
     @Column(columnDefinition = "bit(1) default true")
     private Boolean haveHtml=true;
 
-    private Integer userId;
+
 
 
 

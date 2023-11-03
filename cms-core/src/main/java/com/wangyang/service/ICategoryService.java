@@ -106,7 +106,7 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
 
     CategoryDto covertToDto(Category category);
 
-    CategoryVO covertToVo(Category category);
+//    CategoryVO covertToVo(Category category);
 
     List<CategoryVO> listChildByViewName(String viewName);
 

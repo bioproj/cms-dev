@@ -20,4 +20,5 @@ public class BaseCategory extends BaseEntity {
     private Integer categoryInComponentOrder=0;
     @Column(name = "template_data_name")
     private TemplateData templateData;
+    private Integer userId;
 }

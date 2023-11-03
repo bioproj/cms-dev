@@ -438,7 +438,7 @@ public class HtmlServiceImpl implements IHtmlService {
                 Category parentCategory = categoryService.findById(category.getParentId());
 
 
-                convertArticleListBy(contentService.findCategoryContentBy(categoryService.covertToVo(parentCategory), 0),templates);
+                convertArticleListBy(contentService.findCategoryContentBy(categoryService.convertToVo(parentCategory), 0),templates);
 
             }
         }

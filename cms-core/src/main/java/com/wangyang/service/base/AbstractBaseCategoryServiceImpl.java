@@ -1,14 +1,20 @@
 package com.wangyang.service.base;
 
 import com.wangyang.common.service.AbstractCrudService;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryDto;
+import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsCategory;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.common.pojo.BaseVo;
+import com.wangyang.pojo.vo.BaseCategoryVo;
+import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.base.BaseCategoryRepository;
+import com.wangyang.service.authorize.IUserService;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +25,20 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCategory,CATEGORYDTO extends BaseEntity,CATEGORYVO extends BaseVo>  extends AbstractCrudService<CATEGORY,CATEGORYDTO,CATEGORYVO,Integer>
+public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCategory,CATEGORYDTO extends BaseEntity,CATEGORYVO extends BaseCategoryVo>  extends AbstractCrudService<CATEGORY,CATEGORYDTO,CATEGORYVO,Integer>
         implements IBaseCategoryService<CATEGORY,CATEGORYDTO,CATEGORYVO>{
     @Autowired
     ComponentsCategoryRepository componentsCategoryRepository;
     BaseCategoryRepository<CATEGORY> baseCategoryRepository;
+
+    @Autowired
+    IUserService userService;
     public AbstractBaseCategoryServiceImpl(BaseCategoryRepository<CATEGORY> baseCategoryRepository) {
         super(baseCategoryRepository);
         this.baseCategoryRepository=baseCategoryRepository;
@@ -51,7 +61,22 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
         categoryDto.setLinkPath(FormatUtil.categoryListFormat(category));
         return categoryDto;
     }
+    @Override
+    public CATEGORYVO convertToVo(CATEGORY category){
+        CATEGORYVO categoryVO =getVOInstance();
+        if(category.getUserId()!=null){
+            Integer userId = category.getUserId();
+            User user = userService.findUserById(userId);
+            categoryVO.setUser(user);
+        }
 
+        BeanUtils.copyProperties(category, categoryVO);
+        categoryVO.setLinkPath(FormatUtil.categoryListFormat(category));
+        categoryVO.setRecommendPath(category.getPath()+ CMSUtils.getArticleRecommendPath()+ File.separator+category.getViewName());
+        categoryVO.setRecentPath(category.getPath()+CMSUtils.getArticleRecentPath()+ File.separator+category.getViewName());
+        categoryVO.setFirstTitleList(category.getPath()+CMSUtils.getFirstArticleTitleList()+ File.separator+category.getViewName());
+        return categoryVO;
+    }
 
     @Override
     public List<CATEGORY> listByIdsOrderComponent(Set<Integer> categoryIds){

@@ -256,7 +256,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
             return;
         }
         Category category = categoryService.findById(parentId);
-        categoryVOS.add(0,categoryService.covertToVo(category));
+        categoryVOS.add(0,categoryService.convertToVo(category));
         if(category.getParentId()!=0){
             addParentCategory(categoryVOS,category.getParentId());
         }
@@ -318,7 +318,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         List<CategoryContentList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
             CategoryContentList categoryContentList = new CategoryContentList();
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryContentList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();
             articleQuery.setCategoryId(category.getId());
@@ -362,7 +362,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         List<CategoryContentList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
             CategoryContentList categoryContentList = new CategoryContentList();
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryContentList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();
             articleQuery.setCategoryId(category.getId());
@@ -387,7 +387,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         List<CategoryContentList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
             CategoryContentList categoryContentList = new CategoryContentList();
-            CategoryVO categoryVO = categoryService.covertToVo(category);
+            CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryContentList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();
             articleQuery.setCategoryId(category.getId());
