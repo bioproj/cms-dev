@@ -10,6 +10,7 @@ import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
+import com.wangyang.pojo.vo.GoodsDetailVO;
 
 import java.io.File;
 
@@ -115,7 +116,22 @@ public class FormatUtil {
 //        return File.separator+content.getPath().replace(File.separator,"_")+"_"+content.getViewName()+".html";
 
     }
-
+    public static String articleFormat(GoodsDetailVO goodsDetailVO) {
+//        if(goodsDetailVO!=null && (goodsDetailVO.getIsArticleDocLink()!=null && goodsDetailVO.getIsArticleDocLink())){
+//            String path = goodsDetailVO.getCategoryPath();
+//            if(path.startsWith("html")){
+//                path =  path.replace("html/","");
+//            }
+//
+//            return File.separator+path+File.separator+goodsDetailVO.getCategoryViewName()+".html#/"+goodsDetailVO.getViewName()+".html";
+//        }
+        return File.separator+goodsDetailVO.getPath().replace("html/","")+File.separator+goodsDetailVO.getViewName()+".html";
+//
+//        if(articleDetailVO.getPath().startsWith("html")){
+//            return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
+//        }
+//        return File.separator+articleDetailVO.getPath().replace(File.separator,"_")+"_"+articleDetailVO.getViewName()+".html";
+    }
     public static String articleFormat(ArticleDetailVO articleDetailVO) {
         if(articleDetailVO!=null && (articleDetailVO.getIsArticleDocLink()!=null && articleDetailVO.getIsArticleDocLink())){
             String path = articleDetailVO.getCategoryPath();

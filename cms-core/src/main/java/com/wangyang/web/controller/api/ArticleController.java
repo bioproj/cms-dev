@@ -86,7 +86,38 @@ public class ArticleController {
         htmlService.conventHtml(articleDetailVO);
         return articleDetailVO;
     }
+    @PostMapping("/update/{articleId}")
+    public ArticleDetailVO updateArticleDetailVO(@Valid @RequestBody ArticleParams articleParams,
+                                                 @PathVariable("articleId") Integer articleId,HttpServletRequest request){
+        int userId = AuthorizationUtil.getUserId(request);
+        Article article = articleService.findArticleById(articleId);
+        checkUser(userId,article);
 
+        Integer  oldCategoryId = article.getCategoryId();
+
+        BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
+
+
+
+        ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( article, articleParams.getTagIds());
+        //有可能更新文章的视图名称
+//        TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
+
+        //更新文章分类, 还需要重新生成老的分类
+        if(!articleParams.getCategoryId().equals(oldCategoryId) && oldCategoryId!=null){
+            Category oldCategory = categoryService.findById(oldCategoryId);
+            articleDetailVO.setOldCategory(oldCategory);
+            htmlService.convertArticleListBy(oldCategory);
+        }
+//        if(articleDetailVO.getHaveHtml()){
+//
+////            producerService.sendMessage(articleDetailVO);
+//        }
+        articleDetailVO.setIsPublisher(true);
+        htmlService.conventHtml(articleDetailVO);
+        log.info(article.getTitle()+"--->更新成功！");
+        return articleDetailVO;
+    }
     /**
      * 只保存文章内容, 不为文章添加分类标签生成HTML
      * @param articleParams
@@ -187,38 +218,7 @@ public class ArticleController {
     }
 
 
-    @PostMapping("/update/{articleId}")
-    public ArticleDetailVO updateArticleDetailVO(@Valid @RequestBody ArticleParams articleParams,
-                                         @PathVariable("articleId") Integer articleId,HttpServletRequest request){
-        int userId = AuthorizationUtil.getUserId(request);
-        Article article = articleService.findArticleById(articleId);
-        checkUser(userId,article);
 
-        Integer  oldCategoryId = article.getCategoryId();
-
-        BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
-
-
-
-        ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( article, articleParams.getTagIds());
-        //有可能更新文章的视图名称
-//        TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
-
-        //更新文章分类, 还需要重新生成老的分类
-        if(!articleParams.getCategoryId().equals(oldCategoryId) && oldCategoryId!=null){
-            Category oldCategory = categoryService.findById(oldCategoryId);
-            articleDetailVO.setOldCategory(oldCategory);
-            htmlService.convertArticleListBy(oldCategory);
-        }
-//        if(articleDetailVO.getHaveHtml()){
-//
-////            producerService.sendMessage(articleDetailVO);
-//        }
-        articleDetailVO.setIsPublisher(true);
-        htmlService.conventHtml(articleDetailVO);
-        log.info(article.getTitle()+"--->更新成功！");
-        return articleDetailVO;
-    }
     /**
      * 更新文章分类
      * @param articleId
