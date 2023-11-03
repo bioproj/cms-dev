@@ -172,7 +172,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     }
 
     @Override
-    public CategoryContentListDao findCategoryContentBy(CategoryVO category, int page) {
+    public CategoryContentListDao findCategoryContentBy(BaseCategoryVo category, int page) {
         return null;
     }
 
@@ -284,11 +284,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         ARTICLEVO domainvo = getVOInstance();
         List<Tags> tags = tagsRepository.findTagsByArticleId(domain.getId());
         if(!CollectionUtils.isEmpty(tags)){
-            domainvo.setTags(tags.stream().map(item->{
-                TagsDto tagsDto = new TagsDto();
-                BeanUtils.copyProperties(item,tagsDto);
-                return  tagsDto;
-            }).collect(Collectors.toList()));
+            domainvo.setTags(tags);
 
             domainvo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
         }
@@ -303,11 +299,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
             ARTICLEVO domainvo = getVOInstance();
             List<Tags> tags = tagsRepository.findTagsByArticleId(domain.getId());
             if(!CollectionUtils.isEmpty(tags)){
-                domainvo.setTags(tags.stream().map(item->{
-                    TagsDto tagsDto = new TagsDto();
-                    BeanUtils.copyProperties(item,tagsDto);
-                    return  tagsDto;
-                }).collect(Collectors.toList()));
+                domainvo.setTags(tags);
 
                 domainvo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
             }
@@ -325,10 +317,12 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
         List<ARTICLE> filterDomains = domains.stream().filter(item -> item.getCategoryId() != null).collect(Collectors.toList());
         Set<Integer> categories = ServiceUtil.fetchProperty(filterDomains, ARTICLE::getCategoryId);
-        List<CategoryDto> categoryDtos = baseCategoryService.listByIds(categories).stream().map(category -> {
-            return baseCategoryService.covertToDto(category);
-        }).collect(Collectors.toList());
-        Map<Integer, CategoryDto> categoryMap = ServiceUtil.convertToMap(categoryDtos, CategoryDto::getId);
+//        List<CategoryDto> categoryDtos = baseCategoryService.listByIds(categories).stream().map(category -> {
+//            return baseCategoryService.convertToListVo(category);
+//        }).collect(Collectors.toList());
+        List<BaseCategory> baseCategories = baseCategoryService.listByIds(categories);
+        List<BaseCategoryVo> baseCategoryVos = baseCategoryService.convertToListVo(baseCategories);
+        Map<Integer, BaseCategoryVo> categoryMap = ServiceUtil.convertToMap(baseCategoryVos, BaseCategoryVo::getId);
 
 
         return domains.stream().map(domain -> {
@@ -394,7 +388,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     }
 
     @Override
-    public CategoryContentListDao findCategoryContentBy(Category category, int page) {
+    public CategoryContentListDao findCategoryContentBy(BaseCategory category, int page) {
         return null;
     }
 

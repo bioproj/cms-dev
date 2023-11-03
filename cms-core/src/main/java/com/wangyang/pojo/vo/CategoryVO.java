@@ -7,7 +7,7 @@ import com.wangyang.pojo.enums.TemplateData;
 import lombok.Data;
 
 @Data
-public class CategoryVO extends BaseVo<CategoryVO> {
+public class CategoryVO extends BaseCategoryVo {
 
 //    private Integer id;
 //    private Integer parentId;
@@ -44,7 +44,7 @@ public class CategoryVO extends BaseVo<CategoryVO> {
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;
-    private TemplateData templateData;
+
 
     private NetworkType networkType;
 

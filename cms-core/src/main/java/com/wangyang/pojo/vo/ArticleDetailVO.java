@@ -13,15 +13,15 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class ArticleDetailVO extends ArticleDto implements Serializable {
+public class ArticleDetailVO extends ArticleVO {
     private String originalContent;
     private String formatContent;
-    private CategoryVO category;
-    private Set<Integer> tagIds;
+
+//    Set<Integer> tagIds;
     private String css;
     private String js;
-    private List<Tags> tags;
-    private List<CategoryVO> parentCategories;
+//    private List<Tags> tags;
+
 //    private List<CategoryVO> partnerCategory;
 
     //更新channel的文章视图名称,将html的更新从service转移controller
@@ -29,13 +29,11 @@ public class ArticleDetailVO extends ArticleDto implements Serializable {
     private Category oldCategory;
     private String cssClass;
     private String commentPath;
-    private Boolean isPublisher=false;
+
     private String bilibili;
     private String youtube;
     private String video;
     private Boolean isDivision;
-    private ContentVO forwardContentVO;
-    private  ContentVO nextcontentVO;
 
     private String categoryPath;
     private String categoryViewName;

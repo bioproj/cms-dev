@@ -106,20 +106,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Autowired
     IArticleTagsService articleTagsService;
-    @Override
-    public void conventHtml(ContentVO content) {
-        Template template = templateService.findOptionalByEnName(content.getTemplateName());
-        Map<String,Object> map = new HashMap<>();
-        map.put("view",content);
-        map.put("template",template);
-        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
-        if(content.getCategoryId()!=null){
-            BaseCategory baseCategory = baseCategoryService.findOptionalById(content.getCategoryId()).orElse(null);
-            if(baseCategory!=null){
-                conventHtml(baseCategory);
-            }
-        }
-    }
+
 
 
     @Override
@@ -160,16 +147,31 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
 
+//    @Override
+//    public void conventHtml(ContentVO content) {
+//        Template template = templateService.findOptionalByEnName(content.getTemplateName());
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("view",content);
+//        map.put("template",template);
+//        String html = TemplateUtil.convertHtmlAndSave(content.getPath(),content.getViewName(),map, template);
+//        if(content.getCategoryId()!=null){
+//            BaseCategory baseCategory = baseCategoryService.findOptionalById(content.getCategoryId()).orElse(null);
+//            if(baseCategory!=null){
+//                conventHtml(baseCategory);
+//            }
+//        }
+//    }
+
 
     @Override
     @Async //异步执行
-    public void conventHtml(ArticleDetailVO articleVO){
+    public void conventHtml(ContentVO articleVO){
         conventHtml(articleVO, true);
     }
 
     @Override
     @Async //异步执行
-    public void conventHtml(ArticleDetailVO articleVO,Boolean isCategory){
+    public void conventHtml(ContentVO articleVO,Boolean isCategory){
         if(articleVO.getStatus().equals(ArticleStatus.PUBLISHED)||articleVO.getStatus().equals(ArticleStatus.MODIFY)){
 //            CategoryVO categoryVO = articleVO.getCategory();
 //
@@ -186,7 +188,7 @@ public class HtmlServiceImpl implements IHtmlService {
 //            if(articleVO.getCategory().getArticleTemplateName().)
 
 //            Template template = templateService.findOptionalByEnName(articleVO.getCategory().getTemplateName());
-            CategoryVO categoryVO = articleVO.getCategory();
+            BaseCategoryVo categoryVO = articleVO.getCategory();
             Map<String,Object> map = new HashMap<>();
 
             CategoryContentListDao categoryContentListDao;
@@ -263,14 +265,26 @@ public class HtmlServiceImpl implements IHtmlService {
         }
     }
     @Override
-    public CategoryContentListDao convertArticleListBy(Category category) {
-        List<Template> templates = templateService.findByCategoryId(category.getId());
-        CategoryVO categoryVO = categoryService.covertToVo(category);
+    public CategoryContentListDao convertArticleListBy(BaseCategoryVo categoryVO) {
+        List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
+//        BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
         Map<String,Object> map = new HashMap<>();
         categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
         return convertArticleListBy(map,categoryArticle,templates);
+    }
+    @Override
+    public CategoryContentListDao convertArticleListBy(BaseCategory  category) {
+        BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
+        return convertArticleListBy(categoryVO);
+//        List<Template> templates = templateService.findByCategoryId(category.getId());
+//
+//        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
+//        Map<String,Object> map = new HashMap<>();
+//        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+//
+//        return convertArticleListBy(map,categoryArticle,templates);
     }
 
     @Override
@@ -286,7 +300,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
         categoryArticle.setPage(0);
-        CategoryVO category = categoryArticle.getCategory();
+        BaseCategoryVo category = categoryArticle.getCategory();
 
         //是否生成力向图网络
         if(category.getNetworkType()!=null ){

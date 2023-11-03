@@ -1,6 +1,7 @@
 package com.wangyang.pojo.dto;
 
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentVO;
 import lombok.Data;
@@ -13,7 +14,7 @@ public class CategoryContentListDao {
     //    private Page<ArticleVO> page;
     private List<ContentVO> contents;
     private List<CategoryContentList> categoryContentLists;
-    private CategoryVO category;
+    private BaseCategoryVo category;
     private CategoryVO parentCategory;
     private List<CategoryVO> parentCategories;
     private List<CategoryVO> children;

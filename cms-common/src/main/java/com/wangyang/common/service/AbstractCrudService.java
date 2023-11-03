@@ -487,7 +487,12 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     }
 
 
-
+    @Override
+    public DOMAINVO convertToVo(DOMAIN domain) {
+        DOMAINVO domainvo = getVOInstance();
+        BeanUtils.copyProperties(domain,domainvo);
+        return domainvo;
+    }
     @Override
     public List<DOMAINVO> convertToListVo(List<DOMAIN> domains) {
         return domains.stream().map(domain -> {

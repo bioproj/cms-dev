@@ -6,6 +6,7 @@ import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.pojo.entity.Template;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.params.ArticleQuery;
@@ -51,9 +52,9 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
 
     List<CategoryContentList> listCategoryContentByComponentsIdSize(int componentsId, Integer size);
 
-    CategoryContentListDao findCategoryContentBy(Category category,int page);
+    CategoryContentListDao findCategoryContentBy(BaseCategory category, int page);
 
-    CategoryContentListDao findCategoryContentBy(CategoryVO category,  int page);
+    CategoryContentListDao findCategoryContentBy(BaseCategoryVo category,  int page);
 
     List<ARTICLEVO> listVoTree(Integer categoryId);
 

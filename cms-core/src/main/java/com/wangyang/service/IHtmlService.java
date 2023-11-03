@@ -7,6 +7,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentVO;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public interface IHtmlService {
      * 生成文章的html
      * @param articleVO
      */
-    void conventHtml(ArticleDetailVO articleVO);
+//    void conventHtml(ArticleDetailVO articleVO);
 
     Set<BaseCategory> findAllCategoryPatent(Integer categoryParentId);
 
@@ -43,11 +44,13 @@ public interface IHtmlService {
 
     void generateComponentsByArticle(Integer articleId);
 
+    CategoryContentListDao convertArticleListBy(BaseCategoryVo categoryVO);
+
     /**
      * 生成该栏目下文章列表, 只展示文章列表
      * @param category
      */
-    CategoryContentListDao convertArticleListBy(Category category);
+    CategoryContentListDao convertArticleListBy(BaseCategory category);
 
 //    void generateCategoryArticleListByCategory(Category category);
 
@@ -58,7 +61,7 @@ public interface IHtmlService {
 //    void deleteTempFileByCategory(Category category);
 
     @Async //异步执行
-    void conventHtml(ArticleDetailVO articleVO, Boolean isCategory);
+    void conventHtml(ContentVO articleVO, Boolean isCategory);
 
     @Async
     void generateRecommendArticle(List<Category> categories);

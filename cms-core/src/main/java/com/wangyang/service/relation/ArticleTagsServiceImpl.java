@@ -115,7 +115,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
     @Override
     public ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent) {
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
-        Set<CategoryDto> firstCategory = ServiceUtil.fetchProperty(firstContent, ContentVO::getCategory);
+        Set<BaseCategoryVo> firstCategory = ServiceUtil.fetchProperty(firstContent, ContentVO::getCategory);
 
 
 
@@ -172,7 +172,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
         if(categoryTags.size()!=0){
             Set<Integer> categoryIds = ServiceUtil.fetchProperty(categoryTags, CategoryTags::getCategoryId);
             List<BaseCategory> categories = baseCategoryService.listByIds(categoryIds);
-            List<CategoryDto> categoryDtoList = baseCategoryService.covertToListDto(categories);
+            List<BaseCategoryVo> categoryDtoList = baseCategoryService.convertToListVo(categories);
             firstCategory.addAll(categoryDtoList);
             categoryTags.forEach(item->{
                 forceDirectedGraph.addEdges("t-"+String.valueOf(item.getTagsId()),"c-"+String.valueOf(item.getCategoryId()),300,2);
@@ -182,7 +182,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
 
 
 
-        Set<CategoryDto> otherCategory = ServiceUtil.fetchProperty(contentVOS, ContentVO::getCategory);
+        Set<BaseCategoryVo> otherCategory = ServiceUtil.fetchProperty(contentVOS, ContentVO::getCategory);
         firstCategory.addAll(otherCategory);
 
         firstCategory.forEach(item->{

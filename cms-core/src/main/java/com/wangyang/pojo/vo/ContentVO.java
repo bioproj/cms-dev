@@ -5,6 +5,7 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.dto.Toc;
+import com.wangyang.pojo.entity.Tags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import lombok.Data;
 
@@ -14,8 +15,9 @@ import java.util.Set;
 
 @Data
 public class ContentVO extends BaseVo<ContentVO> {
-    private List<TagsDto> tags;
-    private CategoryDto category;
+    private List<Tags> tags;
+    private BaseCategoryVo category;
+//    private CategoryDto category;
     private String formatContent;
     private Integer id;
     private Date createDate;
@@ -54,6 +56,10 @@ public class ContentVO extends BaseVo<ContentVO> {
     private Set<Integer> tagIds;
     private  List<Toc> tocList;
 
+    private Boolean isPublisher=false;
+    private List<CategoryVO> parentCategories;
+    private ContentVO forwardContentVO;
+    private  ContentVO nextcontentVO;
 
 //    public String getLinkPath() {
 //        return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";

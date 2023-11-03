@@ -87,6 +87,9 @@ public interface ICrudService<DOMAIN,DOMAINDTO,DOMAINVO,ID> {
     List<DOMAIN> listByIds(Set<ID> ids);
     Page<DOMAIN> pageByIds(Set<ID> ids, Integer page, Integer size, Sort sort);
     List<DOMAIN>  findByParentId(Integer parentId);
+
+    DOMAINVO convertToVo(DOMAIN domain);
+
     List<DOMAINVO> convertToListVo(List<DOMAIN> domains);
 
     void addChild(List<DOMAINVO> domainvos, Integer id);

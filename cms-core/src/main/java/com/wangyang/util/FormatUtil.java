@@ -8,6 +8,7 @@ import com.wangyang.pojo.entity.Sheet;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.ArticleDetailVO;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 
 import java.io.File;
@@ -30,7 +31,13 @@ public class FormatUtil {
 //        }
 //        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
     }
-
+    public static String categoryListFormat(BaseCategoryVo category){
+        return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+//        if(category.getPath().startsWith("html")){
+//            return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
+//        }
+//        return File.separator+category.getPath().replace(File.separator,"_")+"_"+category.getViewName()+".html";
+    }
     public static String categoryListFormat(CategoryVO category){
         return File.separator+category.getPath().replace("html/","")+File.separator+category.getViewName()+".html";
 

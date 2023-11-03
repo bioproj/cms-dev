@@ -546,7 +546,9 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
         if(saveArticle.getCategoryId()!=null){
             Category category = categoryService.findById(saveArticle.getCategoryId());
-            articleDetailVO.setCategory(categoryService.covertToVo(category));
+            CategoryVO categoryVO = categoryService.covertToVo(category);
+
+            articleDetailVO.setCategory(categoryVO);
         }
         articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
         return articleDetailVO;
@@ -786,11 +788,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                     .orElseGet(LinkedList::new)
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(tag->{
-                        TagsDto tagsDto = new TagsDto();
-                        BeanUtils.copyProperties(tag,tagsDto);
-                        return tagsDto;
-                    })
+//                    .map(tag->{
+//                        TagsDto tagsDto = new TagsDto();
+//                        BeanUtils.copyProperties(tag,tagsDto);
+//                        return tag;
+//                    })
                     .collect(Collectors.toList()));
 //            articleVO.setTags(tagsListMap.get(article.getId()));
             articleVO.setLinkPath(FormatUtil.articleListFormat(article));
@@ -823,12 +825,15 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
         Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
         Set<Integer> categories = ServiceUtil.fetchProperty(articles, Article::getCategoryId);
-        List<CategoryDto> categoryDtos = categoryService.findAllById(categories).stream().map(category -> {
-            CategoryDto categoryDto = new CategoryDto();
-            BeanUtils.copyProperties(category, categoryDto);
-            return categoryDto;
-        }).collect(Collectors.toList());
-        Map<Integer, CategoryDto> categoryMap = ServiceUtil.convertToMap(categoryDtos, CategoryDto::getId);
+        List<Category> categoryList = categoryService.findAllById(categories);
+        List<CategoryVO> categoryVOS = categoryService.convertToListVo(categoryList);
+//        .stream().map(category -> {
+//            CategoryDto categoryDto = new CategoryDto();
+//            BeanUtils.copyProperties(category, categoryDto);
+//            return categoryDto;
+//        }).collect(Collectors.toList());
+
+        Map<Integer, CategoryVO> categoryMap = ServiceUtil.convertToMap(categoryVOS, CategoryVO::getId);
 
 
         List<ArticleVO> articleVOS = articles.stream().map(article -> {
@@ -844,11 +849,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                     .orElseGet(LinkedList::new)
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(tag->{
-                        TagsDto tagsDto = new TagsDto();
-                        BeanUtils.copyProperties(tag,tagsDto);
-                        return tagsDto;
-                    })
+//                    .map(tag->{
+//                        TagsDto tagsDto = new TagsDto();
+//                        BeanUtils.copyProperties(tag,tagsDto);
+//                        return tag;
+//                    })
                     .collect(Collectors.toList()));
 //            articleVO.setTags(tagsListMap.get(article.getId()));
             articleVO.setLinkPath(FormatUtil.articleListFormat(article));

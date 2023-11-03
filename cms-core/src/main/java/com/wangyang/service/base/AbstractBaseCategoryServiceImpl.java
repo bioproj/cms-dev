@@ -51,6 +51,8 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
         categoryDto.setLinkPath(FormatUtil.categoryListFormat(category));
         return categoryDto;
     }
+
+
     @Override
     public List<CATEGORY> listByIdsOrderComponent(Set<Integer> categoryIds){
         if(categoryIds.size()==0){

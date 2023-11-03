@@ -4,12 +4,14 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
@@ -20,6 +22,7 @@ import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.AbstractContentServiceImpl;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +45,10 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     ArticleTagsRepository articleTagsRepository;
     @Autowired
     ComponentsCategoryRepository componentsCategoryRepository;
+
+
+    @Autowired
+    IBaseCategoryService<BaseCategory, BaseCategory, BaseCategoryVo> baseCategoryService;
 
 
     @Autowired
@@ -164,11 +171,11 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                     .orElseGet(LinkedList::new)
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(tag->{
-                        TagsDto tagsDto = new TagsDto();
-                        BeanUtils.copyProperties(tag,tagsDto);
-                        return tagsDto;
-                    })
+//                    .map(tag->{
+//                        TagsDto tagsDto = new TagsDto();
+//                        BeanUtils.copyProperties(tag,tagsDto);
+//                        return tag;
+//                    })
                     .collect(Collectors.toList()));
 //            articleVO.setTags(tagsListMap.get(article.getId()));
             contentVO.setLinkPath(FormatUtil.articleListFormat(content));
@@ -204,12 +211,14 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
         Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
         Set<Integer> categories = ServiceUtil.fetchProperty(contents, Content::getCategoryId);
-        List<CategoryDto> categoryDtos = categoryService.findAllById(categories).stream().map(category -> {
-            CategoryDto categoryDto = new CategoryDto();
-            BeanUtils.copyProperties(category, categoryDto);
-            return categoryDto;
-        }).collect(Collectors.toList());
-        Map<Integer, CategoryDto> categoryMap = ServiceUtil.convertToMap(categoryDtos, CategoryDto::getId);
+        List<Category> categoryDtoList = categoryService.findAllById(categories);
+//        .stream().map(category -> {
+//            CategoryDto categoryDto = new CategoryDto();
+//            BeanUtils.copyProperties(category, categoryDto);
+//            return categoryDto;
+//        }).collect(Collectors.toList());
+        List<CategoryVO> categoryVOS = categoryService.convertToListVo(categoryDtoList);
+        Map<Integer, CategoryVO> categoryMap = ServiceUtil.convertToMap(categoryVOS, CategoryVO::getId);
 
 
         Page<ContentVO> contentVOS = contentPage.map(content -> {
@@ -225,11 +234,11 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                     .orElseGet(LinkedList::new)
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(tag->{
-                        TagsDto tagsDto = new TagsDto();
-                        BeanUtils.copyProperties(tag,tagsDto);
-                        return tagsDto;
-                    })
+//                    .map(tag->{
+//                        TagsDto tagsDto = new TagsDto();
+//                        BeanUtils.copyProperties(tag,tagsDto);
+//                        return tag;
+//                    })
                     .collect(Collectors.toList()));
 //            articleVO.setTags(tagsListMap.get(article.getId()));
 
@@ -400,13 +409,13 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         return listCategoryContent(categories);
     }
     @Override
-    public CategoryContentListDao findCategoryContentBy(Category category, int page){
-        CategoryVO categoryVO = categoryService.covertToVo(category);
-        return findCategoryContentBy(categoryVO, page);
+    public CategoryContentListDao findCategoryContentBy(BaseCategory category, int page){
+        BaseCategoryVo baseCategoryVo = baseCategoryService.convertToVo(category);
+        return findCategoryContentBy(baseCategoryVo, page);
     }
 
     @Override
-    public CategoryContentListDao findCategoryContentBy(CategoryVO category, int page){
+    public CategoryContentListDao findCategoryContentBy(BaseCategoryVo category, int page){
         CategoryContentListDao articleListVo = new CategoryContentListDao();
 
         /**
@@ -567,19 +576,19 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
     @Override
     public ContentDetailVO updateCategory(Content content, Integer baseCategoryId) {
-        Optional<Category> category = categoryService.findOptionalById(baseCategoryId);
+        BaseCategory baseCategory = baseCategoryService.findById(baseCategoryId);
         ContentDetailVO contentDetailVO = new ContentDetailVO();
-        contentDetailVO.setContent(content);
+//        contentDetailVO.setContent(content);
         content.setParentId(0);
-        if(category.isPresent()){
-            content.setPath(category.get().getPath());
-            content.setCategoryId(category.get().getId());
-            contentDetailVO.setCategory(category.get());
-            content.setTemplateName(category.get().getArticleTemplateName());
-
-        }else {
-            content.setCategoryId(0);
-        }
+//        if(baseCategory.isPresent()){
+//            content.setPath(baseCategory.getPath());
+//            content.setCategoryId(baseCategory.getId());
+//            contentDetailVO.setCategory(baseCategory);
+//            content.setTemplateName(baseCategory.getArticleTemplateName());
+//
+//        }else {
+//            content.setCategoryId(0);
+//        }
         contentRepository.save(content);
         return contentDetailVO;
 

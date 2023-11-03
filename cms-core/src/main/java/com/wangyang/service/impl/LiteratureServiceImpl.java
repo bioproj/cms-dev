@@ -87,11 +87,7 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
             articleTagsRepository.saveAll(articleTagsList);
             literatureVo.setTagIds(tagsIds);
             List<Tags> tags = tagsRepository.findAllById(tagsIds);
-            literatureVo.setTags(tags.stream().map(item->{
-                TagsDto tagsDto = new TagsDto();
-                BeanUtils.copyProperties(item,tagsDto);
-                return  tagsDto;
-            }).collect(Collectors.toList()));
+            literatureVo.setTags(tags);
 
         }else {
             literatureVo = convertToTagVo(literature);

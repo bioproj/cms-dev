@@ -327,7 +327,7 @@ public class ArticleController {
 
 
     @GetMapping("/find/{articleId}")
-    public ArticleDto findById(@PathVariable("articleId") Integer articleId){
+    public ArticleDetailVO findById(@PathVariable("articleId") Integer articleId){
         return articleService.findArticleAOById(articleId);
     }
 

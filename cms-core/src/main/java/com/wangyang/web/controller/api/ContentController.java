@@ -5,6 +5,7 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.IArticleService;
@@ -71,7 +72,7 @@ public class ContentController {
      * @return
      */
     @GetMapping("/updateCategory/{articleId}")
-    public Category updateCategory(@PathVariable("articleId") Integer articleId, Integer baseCategoryId, HttpServletRequest request){
+    public BaseCategoryVo updateCategory(@PathVariable("articleId") Integer articleId, Integer baseCategoryId, HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Content content = contentService.findById(articleId);
 //        checkUser(userId,article);
