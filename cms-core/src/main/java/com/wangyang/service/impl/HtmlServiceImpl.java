@@ -357,7 +357,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
                         TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+template.getEnName(),categoryVO.getViewName(),newCategoryArticle, template);
-                    }else if ( newCategoryArticle.getParentCategories()!=null  && template.getParentOrder() !=-1  ){
+                    }else if ( newCategoryArticle.getParentCategories()!=null    ){
                         CategoryVO parentCategory = newCategoryArticle.getParentCategory();
                         if(parentCategory!=null){
                             List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
