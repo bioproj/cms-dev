@@ -10,7 +10,7 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER, columnDefinition = "int default 0")
 @Data
 public class Content extends BaseEntity {
-
+    private String summary;
     private String picPath;
     private String picThumbPath;
     @Column(name = "status", columnDefinition = "int default 1")

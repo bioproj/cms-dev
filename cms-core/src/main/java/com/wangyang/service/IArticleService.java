@@ -190,7 +190,7 @@ public interface IArticleService extends IContentService<Article,Article,Article
     Integer getLikesNumber(int id);
     int increaseVisits(int id);
     Integer getVisitsNumber(int id);
-    void generateSummary(Article article);
+//    void generateSummary(Article article);
 
 //    List<ArticleVO> listVoTree(Integer categoryId);
 

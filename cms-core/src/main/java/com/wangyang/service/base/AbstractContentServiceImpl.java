@@ -1,15 +1,16 @@
 package com.wangyang.service.base;
 
 import com.wangyang.common.CmsConst;
+import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.service.AbstractCrudService;
+import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.interfaces.IContentAop;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
-import com.wangyang.pojo.dto.CategoryDto;
-import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.entity.base.BaseCategory;
@@ -19,16 +20,14 @@ import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
-import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.pojo.vo.ContentDetailVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.template.ComponentsArticleRepository;
 import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.util.FormatUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,10 +38,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 //@Component
+@Slf4j
 public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLEDTO extends BaseEntity,ARTICLEVO extends ContentVO>  extends AbstractCrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer>
         implements IContentService<ARTICLE,ARTICLEDTO,ARTICLEVO> {
 
@@ -508,5 +509,104 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
 
         return forceDirectedGraph;
+    }
+
+    @Override
+    public void generateSummary(ARTICLE article){
+//        if(article.getSummary()==null||"".equals(article.getSummary())){
+//
+//        }
+        if(article.getSummary()==""){
+            String text = MarkdownUtils.getText(article.getFormatContent());
+            String summary ;
+            if(text.length()>100){
+                summary = text.substring(0,100);
+            }else {
+                summary = text;
+            }
+            article.setSummary(summary+"....");
+        }
+    }
+
+    public ARTICLEVO createOrUpdateArticle(ARTICLE article, Set<Integer> tagsIds) {
+        if(article.getUserId()==null){
+            throw new ArticleException("文章用户不能为空!!");
+        }
+        if(article.getCategoryId()==null){
+            throw new ArticleException("文章类别不能为空!!");
+        }
+        if(article.getStatus()!=ArticleStatus.INTIMATE){
+            article.setStatus(ArticleStatus.PUBLISHED);
+        }
+
+
+        String viewName = article.getViewName();
+        if(viewName==null||"".equals(viewName)){
+            viewName = CMSUtils.randomViewName();
+            log.debug("!!! view name not found, use "+viewName);
+            article.setViewName(viewName);
+        }
+//        article.setHaveHtml(true);
+
+        //设置评论模板
+        if(article.getCommentTemplateName()==null){
+            article.setCommentTemplateName(CmsConst.DEFAULT_COMMENT_TEMPLATE);
+        }
+        BaseCategory category = baseCategoryService.findById(article.getCategoryId());
+
+
+        article.setCategoryPath(category.getPath());
+        article.setCategoryViewName(category.getViewName());
+        article.setIsArticleDocLink(category.getIsArticleDocLink());
+
+//        if(article.getTemplateName()==null){
+//            //由分类管理文章的模板，这样设置可以让文章去维护自己的模板
+//
+//        }
+        article.setTemplateName(category.getArticleTemplateName());
+//        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
+//            Template template = templateService.findByEnName(category.getTemplateName());
+//            article.setPath(template.getPath());
+//        }
+
+        if(category.getArticleUseViewName()){
+            article.setPath(category.getPath()+ File.separator+category.getViewName());
+        }else {
+            article.setPath(category.getPath());
+        }
+
+
+
+
+
+//        if(article.getPath()==null || article.getPath().equals("")){
+//            article.setPath(CMSUtils.getArticlePath());
+//        }
+
+//        article.setPath(CMSUtils.getArticlePath());
+//        article.setPath(CMSUtils.getArticlePath());
+
+
+
+        article = createOrUpdate(article);
+        //图片展示
+        if(article.getPicPath()==null|| "".equals(article.getPicPath())){
+            String imgSrc = ImageUtils.getImgSrc(article.getOriginalContent());
+            article.setPicPath(imgSrc);
+        }
+//        generateSummary(article);
+        generateSummary(article);
+//        保存文章
+        ARTICLE saveArticle = contentRepository.save(article);
+        injectContent(article,category);
+        ARTICLEVO voInstance = getVOInstance();
+        BeanUtils.copyProperties(saveArticle,voInstance);
+        voInstance.setCategory(baseCategoryService.convertToVo(category));
+//        ArticleDetailVO articleDetailVO = convert(saveArticle, category, tagsIds);
+
+
+
+
+        return voInstance;
     }
 }

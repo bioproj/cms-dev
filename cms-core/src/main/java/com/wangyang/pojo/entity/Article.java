@@ -16,7 +16,7 @@ public class Article extends Content {
     @Column(name = "comment_num", columnDefinition = "int default 0")
     private Integer commentNum=0;
 //    private Boolean haveHtml=true;
-    private String summary;
+
     private String bilibili;
     private String youtube;
     private String video;

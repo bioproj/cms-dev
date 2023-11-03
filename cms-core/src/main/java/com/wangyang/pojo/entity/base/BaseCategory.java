@@ -21,4 +21,8 @@ public class BaseCategory extends BaseEntity {
     @Column(name = "template_data_name")
     private TemplateData templateData;
     private Integer userId;
+    private Boolean isArticleDocLink=false;
+    @Column(columnDefinition = "bit(1) default false")
+    private Boolean articleUseViewName=false;
+    private String articleTemplateName;
 }

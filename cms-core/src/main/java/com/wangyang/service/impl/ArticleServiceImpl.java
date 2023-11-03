@@ -19,6 +19,7 @@ import com.wangyang.pojo.enums.RelationType;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.ArticleVO;
+import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
@@ -431,78 +432,80 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //        return saveArticle;
 //    }
 
-    private ArticleDetailVO createOrUpdateArticle(Article article, Set<Integer> tagsIds) {
-        if(article.getUserId()==null){
-            throw new ArticleException("文章用户不能为空!!");
-        }
-        if(article.getCategoryId()==null){
-            throw new ArticleException("文章类别不能为空!!");
-        }
-        if(article.getStatus()!=ArticleStatus.INTIMATE){
-            article.setStatus(ArticleStatus.PUBLISHED);
-        }
-
-
-        String viewName = article.getViewName();
-        if(viewName==null||"".equals(viewName)){
-            viewName = CMSUtils.randomViewName();
-            log.debug("!!! view name not found, use "+viewName);
-            article.setViewName(viewName);
-        }
-//        article.setHaveHtml(true);
-
-        //设置评论模板
-        if(article.getCommentTemplateName()==null){
-            article.setCommentTemplateName(CmsConst.DEFAULT_COMMENT_TEMPLATE);
-        }
-        Category category = categoryService.findById(article.getCategoryId());
-
-
-        article.setCategoryPath(category.getPath());
-        article.setCategoryViewName(category.getViewName());
-        article.setIsArticleDocLink(category.getIsArticleDocLink());
-
-//        if(article.getTemplateName()==null){
-//            //由分类管理文章的模板，这样设置可以让文章去维护自己的模板
+    public ArticleDetailVO createOrUpdateArticle(Article article, Set<Integer> tagsIds) {
+//        if(article.getUserId()==null){
+//            throw new ArticleException("文章用户不能为空!!");
+//        }
+//        if(article.getCategoryId()==null){
+//            throw new ArticleException("文章类别不能为空!!");
+//        }
+//        if(article.getStatus()!=ArticleStatus.INTIMATE){
+//            article.setStatus(ArticleStatus.PUBLISHED);
+//        }
 //
+//
+//        String viewName = article.getViewName();
+//        if(viewName==null||"".equals(viewName)){
+//            viewName = CMSUtils.randomViewName();
+//            log.debug("!!! view name not found, use "+viewName);
+//            article.setViewName(viewName);
 //        }
-        article.setTemplateName(category.getArticleTemplateName());
-//        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
-//            Template template = templateService.findByEnName(category.getTemplateName());
-//            article.setPath(template.getPath());
+////        article.setHaveHtml(true);
+//
+//        //设置评论模板
+//        if(article.getCommentTemplateName()==null){
+//            article.setCommentTemplateName(CmsConst.DEFAULT_COMMENT_TEMPLATE);
 //        }
-
-        if(category.getArticleUseViewName()){
-            article.setPath(category.getPath()+File.separator+category.getViewName());
-        }else {
-            article.setPath(category.getPath());
-        }
-
-
-
-
-
-//        if(article.getPath()==null || article.getPath().equals("")){
-//            article.setPath(CMSUtils.getArticlePath());
+//        Category category = categoryService.findById(article.getCategoryId());
+//
+//
+//        article.setCategoryPath(category.getPath());
+//        article.setCategoryViewName(category.getViewName());
+//        article.setIsArticleDocLink(category.getIsArticleDocLink());
+//
+////        if(article.getTemplateName()==null){
+////            //由分类管理文章的模板，这样设置可以让文章去维护自己的模板
+////
+////        }
+//        article.setTemplateName(category.getArticleTemplateName());
+////        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
+////            Template template = templateService.findByEnName(category.getTemplateName());
+////            article.setPath(template.getPath());
+////        }
+//
+//        if(category.getArticleUseViewName()){
+//            article.setPath(category.getPath()+File.separator+category.getViewName());
+//        }else {
+//            article.setPath(category.getPath());
 //        }
+//
+//
+//
+//
+//
+////        if(article.getPath()==null || article.getPath().equals("")){
+////            article.setPath(CMSUtils.getArticlePath());
+////        }
+//
+////        article.setPath(CMSUtils.getArticlePath());
+////        article.setPath(CMSUtils.getArticlePath());
+//
+//
+//
+//        article = super.createOrUpdate(article);
+//        //图片展示
+//        if(article.getPicPath()==null|| "".equals(article.getPicPath())){
+//            String imgSrc = ImageUtils.getImgSrc(article.getOriginalContent());
+//            article.setPicPath(imgSrc);
+//        }
+//        generateSummary(article);
+//
+////        保存文章
+//        Article saveArticle = articleRepository.save(article);
+//        super.injectContent(article,category);
 
-//        article.setPath(CMSUtils.getArticlePath());
-//        article.setPath(CMSUtils.getArticlePath());
-
-
-
-        article = super.createOrUpdate(article);
-        //图片展示
-        if(article.getPicPath()==null|| "".equals(article.getPicPath())){
-            String imgSrc = ImageUtils.getImgSrc(article.getOriginalContent());
-            article.setPicPath(imgSrc);
-        }
-        generateSummary(article);
-
-//        保存文章
-        Article saveArticle = articleRepository.save(article);
-        super.injectContent(article,category);
-        ArticleDetailVO articleDetailVO = convert(saveArticle, category, tagsIds);
+        ArticleVO articleVO = super.createOrUpdateArticle(article, tagsIds);
+        ArticleDetailVO articleDetailVO = convert(articleVO, tagsIds);
 
 
 
@@ -584,16 +587,17 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     @Override
     public ArticleDetailVO convert(Article article) {
         Category category = categoryService.findById(article.getCategoryId());
-        return convert(article,category,null);
+        ArticleVO articleVO = convertToVo(article);
+        return convert(articleVO,null);
     }
-    public ArticleDetailVO convert(Article article,Category category,Set<Integer> tagsIds) {
+    public ArticleDetailVO convert(ArticleVO articleVO,Set<Integer> tagsIds) {
 //        ArticleDetailVO articleDetailVo = new ArticleDetailVO();
 //        BeanUtils.copyProperties(article,articleDetailVo);
 //
 //        //find tags
 
-        if(article.getCategoryId()==null){
-            throw  new ArticleException("文章["+article.getTitle()+"]的没有指定类别!!");
+        if(articleVO.getCategoryId()==null){
+            throw  new ArticleException("文章["+articleVO.getTitle()+"]的没有指定类别!!");
         }
 //
 //        User user = userService.findById(article.getUserId());
@@ -606,10 +610,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //            }
 //            articleDetailVo.setCategory(categoryService.covertToVo(optionalCategory.get()));
 //        }
+        BaseCategoryVo category = articleVO.getCategory();
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
-        articleDetailVO.setCategory(categoryService.convertToVo(category));
+        articleDetailVO.setCategory(category);
 //        articleDetailVO.setUpdateChannelFirstName(true);
-        BeanUtils.copyProperties(article,articleDetailVO);
+        BeanUtils.copyProperties(articleVO,articleDetailVO);
         // 添加标签
         if (tagsIds!=null && !CollectionUtils.isEmpty(tagsIds)) {
             // Get Article tags
@@ -617,7 +622,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                 ArticleTags articleTags = new ArticleTags();
                 articleTags.setRelationId(tagId);
                 articleTags.setRelationType(RelationType.ARTICLE);
-                articleTags.setArticleId(article.getId());
+                articleTags.setArticleId(articleVO.getId());
                 return articleTags;
             }).collect(Collectors.toList());
             //save article tags
@@ -627,7 +632,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             articleDetailVO.setTags(tags);
 
         }else {
-            List<Tags> tags = tagsRepository.findTagsByArticleId(article.getId());
+            List<Tags> tags = tagsRepository.findTagsByArticleId(articleVO.getId());
             if(!CollectionUtils.isEmpty(tags)){
                 articleDetailVO.setTags(tags);
                 articleDetailVO.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
@@ -637,13 +642,13 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
 
         //添加用户
-        User user = userService.findById(article.getUserId());
+        User user = userService.findById(articleVO.getUserId());
         articleDetailVO.setUser(user);
-        articleDetailVO.setCommentPath( article.getPath()+ CMSUtils.getComment()+ File.separator +article.getViewName());
+        articleDetailVO.setCommentPath( articleVO.getPath()+ CMSUtils.getComment()+ File.separator +articleVO.getViewName());
         articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
 
-        if(article.getToc()!=null){
-            List<Toc> toc = MarkdownUtils.getToc(article.getToc());
+        if(articleVO.getToc()!=null){
+            List<Toc> toc = MarkdownUtils.getToc(articleVO.getToc());
             articleDetailVO.setTocList(toc);
         }
 
@@ -957,22 +962,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     }
 
 
-    @Override
-    public void generateSummary(Article article){
-//        if(article.getSummary()==null||"".equals(article.getSummary())){
-//
-//        }
-        if(article.getSummary()==""){
-            String text = MarkdownUtils.getText(article.getFormatContent());
-            String summary ;
-            if(text.length()>100){
-                summary = text.substring(0,100);
-            }else {
-                summary = text;
-            }
-            article.setSummary(summary+"....");
-        }
-    }
+
 
     /**
      * 更改文章类别

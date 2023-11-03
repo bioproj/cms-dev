@@ -3,6 +3,7 @@ package com.wangyang.service.base;
 import com.wangyang.common.service.ICrudService;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsArticle;
 import com.wangyang.pojo.entity.Template;
@@ -73,6 +74,8 @@ public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  
     void checkContentTemplatePath(ARTICLE content);
 
     ForceDirectedGraph graph(List<ContentVO> contents);
+
+    void generateSummary(ARTICLE article);
 
 
 //    ARTICLE previewSave(ARTICLE article);
