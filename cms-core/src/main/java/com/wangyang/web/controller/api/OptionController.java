@@ -14,6 +14,7 @@ import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.pojo.vo.BaseCategoryVo;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.service.*;
@@ -55,7 +56,7 @@ public class OptionController {
 
 
     @Autowired
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
     @Autowired
     IBaseCategoryService<BaseCategory,BaseCategory,BaseCategoryVo> baseCategoryService;

@@ -8,4 +8,6 @@ import lombok.Data;
 public class ContentDetailVO extends ContentVO{
 //    private Category category;
 //    private Content content;
+    private String css;
+    private String js;
 }

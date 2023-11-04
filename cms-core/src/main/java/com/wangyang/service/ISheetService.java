@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface ISheetService extends IContentService<Sheet,Sheet, ContentVO> {
+public interface ISheetService extends IContentService<Sheet,SheetDetailVO, ContentVO> {
 
     List<Sheet> listAll();
     Sheet save(Sheet sheet);

@@ -18,6 +18,7 @@ import com.wangyang.config.ApplicationBean;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ComponentsVO;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsRepository;
@@ -62,7 +63,7 @@ public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Compo
 
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
 
     @Autowired

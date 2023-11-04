@@ -9,6 +9,7 @@ import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.interfaces.IContentAop;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
@@ -21,11 +22,13 @@ import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
+import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsArticleRepository;
 import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
+import com.wangyang.service.authorize.IUserService;
 import com.wangyang.util.FormatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,8 +47,8 @@ import java.util.stream.Collectors;
 
 //@Component
 @Slf4j
-public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLEDTO extends BaseEntity,ARTICLEVO extends ContentVO>  extends AbstractCrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer>
-        implements IContentService<ARTICLE,ARTICLEDTO,ARTICLEVO> {
+public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENTDETAILVO extends  ContentDetailVO,ARTICLEVO extends ContentVO>  extends AbstractCrudService<ARTICLE,CONTENTDETAILVO,ARTICLEVO,Integer>
+        implements IContentService<ARTICLE,CONTENTDETAILVO,ARTICLEVO> {
 
 //    @Autowired
 //    IOptionService optionService;
@@ -63,7 +66,10 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
     @Autowired
     ComponentsRepository componentsRepository;
 
-
+    @Autowired
+    ArticleTagsRepository articleTagsRepository;
+    @Autowired
+    IUserService userService;
     @Autowired
     IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 
@@ -164,8 +170,65 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
     @Override
     public Page<ARTICLEVO> convertToPageVo(Page<ARTICLE> contentPage) {
-        return null;
+        List<ARTICLE> contents = contentPage.getContent();
+        //Get article Ids
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(contents, Content::getId);
+
+        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
+
+        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+        List<Tags> tags = tagsRepository.findAllById(tagIds);
+        Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
+        Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
+        articleTags.forEach(
+                articleTag->{
+                    tagsListMap.computeIfAbsent(articleTag.getArticleId(),
+                                    tagsId->new LinkedList<>())
+                            .add(tagsMap.get(articleTag.getRelationId()));
+                }
+
+        );
+        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
+        List<User> users = userService.findAllById(userIds);
+
+        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+        Set<Integer> categories = ServiceUtil.fetchProperty(contents, Content::getCategoryId);
+        List<BaseCategory> categoryDtoList = baseCategoryService.listByIds(categories);
+//        .stream().map(category -> {
+//            CategoryDto categoryDto = new CategoryDto();
+//            BeanUtils.copyProperties(category, categoryDto);
+//            return categoryDto;
+//        }).collect(Collectors.toList());
+        List<BaseCategoryVo> categoryVOS = baseCategoryService.convertToListVo(categoryDtoList);
+        Map<Integer, BaseCategoryVo> categoryMap = ServiceUtil.convertToMap(categoryVOS, BaseCategoryVo::getId);
+
+
+        Page<ARTICLEVO> contentVOS = contentPage.map(content -> {
+            ARTICLEVO contentVO = getVOInstance();
+            BeanUtils.copyProperties(content,contentVO);
+            contentVO.setUser(userMap.get(content.getUserId()));
+            if(categoryMap.containsKey(content.getCategoryId())){
+                contentVO.setCategory( categoryMap.get(content.getCategoryId()));
+            }
+            contentVO.setLinkPath(FormatUtil.articleListFormat(content ));
+//            articleVO.setLinkPath(FormatUtil.articleListFormat(article));
+            contentVO.setTags(Optional.ofNullable(tagsListMap.get(content.getId()))
+                    .orElseGet(LinkedList::new)
+                    .stream()
+                    .filter(Objects::nonNull)
+//                    .map(tag->{
+//                        TagsDto tagsDto = new TagsDto();
+//                        BeanUtils.copyProperties(tag,tagsDto);
+//                        return tag;
+//                    })
+                    .collect(Collectors.toList()));
+//            articleVO.setTags(tagsListMap.get(article.getId()));
+
+            return contentVO;
+        });
+        return contentVOS;
     }
+
 
     @Override
     public void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId) {
@@ -359,6 +422,16 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
 
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public ARTICLEVO convertToVo(ARTICLE domain) {
+        ARTICLEVO domainvo = getVOInstance();
+        BeanUtils.copyProperties(domain,domainvo);
+        domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+        BaseCategory baseCategory = baseCategoryService.findById(domain.getCategoryId());
+        domainvo.setCategory(baseCategoryService.convertToVo(baseCategory));
+        return domainvo;
+    }
     @Override
     public ARTICLE findByViewName(String viewName, Lang lang) {
         List<ARTICLE> contents = contentRepository.findAll(new Specification<ARTICLE>() {
@@ -527,8 +600,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
             article.setSummary(summary+"....");
         }
     }
-
-    public ARTICLEVO createOrUpdateArticle(ARTICLE article, Set<Integer> tagsIds) {
+    public ARTICLEVO createOrUpdateArticleVO(ARTICLE article, Set<Integer> tagsIds) {
         if(article.getUserId()==null){
             throw new ArticleException("文章用户不能为空!!");
         }
@@ -600,6 +672,87 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,ARTICLE
         ARTICLE saveArticle = contentRepository.save(article);
         injectContent(article,category);
         ARTICLEVO voInstance = getVOInstance();
+        BeanUtils.copyProperties(saveArticle,voInstance);
+        voInstance.setCategory(baseCategoryService.convertToVo(category));
+//        ArticleDetailVO articleDetailVO = convert(saveArticle, category, tagsIds);
+
+
+
+
+        return voInstance;
+    }
+    public CONTENTDETAILVO createOrUpdateArticle(ARTICLE article, Set<Integer> tagsIds) {
+        if(article.getUserId()==null){
+            throw new ArticleException("文章用户不能为空!!");
+        }
+        if(article.getCategoryId()==null){
+            throw new ArticleException("文章类别不能为空!!");
+        }
+        if(article.getStatus()!=ArticleStatus.INTIMATE){
+            article.setStatus(ArticleStatus.PUBLISHED);
+        }
+
+
+        String viewName = article.getViewName();
+        if(viewName==null||"".equals(viewName)){
+            viewName = CMSUtils.randomViewName();
+            log.debug("!!! view name not found, use "+viewName);
+            article.setViewName(viewName);
+        }
+//        article.setHaveHtml(true);
+
+        //设置评论模板
+        if(article.getCommentTemplateName()==null){
+            article.setCommentTemplateName(CmsConst.DEFAULT_COMMENT_TEMPLATE);
+        }
+        BaseCategory category = baseCategoryService.findById(article.getCategoryId());
+
+
+        article.setCategoryPath(category.getPath());
+        article.setCategoryViewName(category.getViewName());
+        article.setIsArticleDocLink(category.getIsArticleDocLink());
+
+//        if(article.getTemplateName()==null){
+//            //由分类管理文章的模板，这样设置可以让文章去维护自己的模板
+//
+//        }
+        article.setTemplateName(category.getArticleTemplateName());
+//        if(article.getUseTemplatePath()!=null && article.getUseTemplatePath()){
+//            Template template = templateService.findByEnName(category.getTemplateName());
+//            article.setPath(template.getPath());
+//        }
+
+        if(category.getArticleUseViewName()){
+            article.setPath(category.getPath()+ File.separator+category.getViewName());
+        }else {
+            article.setPath(category.getPath());
+        }
+
+
+
+
+
+//        if(article.getPath()==null || article.getPath().equals("")){
+//            article.setPath(CMSUtils.getArticlePath());
+//        }
+
+//        article.setPath(CMSUtils.getArticlePath());
+//        article.setPath(CMSUtils.getArticlePath());
+
+
+
+        article = createOrUpdate(article);
+        //图片展示
+        if(article.getPicPath()==null|| "".equals(article.getPicPath())){
+            String imgSrc = ImageUtils.getImgSrc(article.getOriginalContent());
+            article.setPicPath(imgSrc);
+        }
+//        generateSummary(article);
+        generateSummary(article);
+//        保存文章
+        ARTICLE saveArticle = contentRepository.save(article);
+        injectContent(article,category);
+        CONTENTDETAILVO voInstance = getDetailVOInstance();
         BeanUtils.copyProperties(saveArticle,voInstance);
         voInstance.setCategory(baseCategoryService.convertToVo(category));
 //        ArticleDetailVO articleDetailVO = convert(saveArticle, category, tagsIds);

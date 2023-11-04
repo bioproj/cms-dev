@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class ArticleDetailVO extends ArticleVO {
+public class ArticleDetailVO extends ContentDetailVO {
     private String originalContent;
     private String formatContent;
 
@@ -29,7 +29,11 @@ public class ArticleDetailVO extends ArticleVO {
     private Category oldCategory;
     private String cssClass;
     private String commentPath;
-
+    private Integer articleInComponentOrder;
+//    private String bilibili;
+//    private String youtube;
+//    private String video;
+//    private Boolean isDivision;
     private String bilibili;
     private String youtube;
     private String video;

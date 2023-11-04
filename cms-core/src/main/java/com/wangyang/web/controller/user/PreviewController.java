@@ -3,6 +3,7 @@ package com.wangyang.web.controller.user;
 import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.TemplateUtil;
@@ -11,6 +12,7 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.entity.shop.Goods;
 import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
@@ -65,13 +67,15 @@ public class PreviewController {
     ICollectionService collectionService;
 
     @Autowired
+    IGoodsService goodsService;
+    @Autowired
     IHtmlService htmlService;
 
     @Autowired
     IArticleTagsService articleTagsService;
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content,ContentDetailVO, ContentVO> contentService;
 
     @Autowired
     @Qualifier("baseCategoryServiceImpl")
@@ -202,7 +206,84 @@ public class PreviewController {
 //        String convertHtml = FileUtils.convertByString(html);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
+    @GetMapping("/goods/{goodsId}")
+    public String previewGoods(@PathVariable("goodsId")Integer articleId, Model model){
+        Goods goods =goodsService.findById(articleId);
+        if(goods.getStatus()!= ArticleStatus.PUBLISHED){
+            goods = goodsService.createOrUpdate(goods);
+        }
+        GoodsDetailVO goodsDetailVO;
+        if(goods.getCategoryId()!=null){
+            goodsDetailVO= goodsService.convert(goods);
+//            goodsDetailVO = articleService.conventToAddTags(goods);
+        }
+        else {
+//            goodsDetailVO= goodsService.convert(goods);
+            throw new ObjectException("商品分类不存在！");
+        }
+//        Optional<Template> templateOptional = templateRepository.findById(articleDetailVo.getTemplateId());
+//        if(!templateOptional.isPresent()){
+//            throw new TemplateException("Template not found in preview !!");
+//        }
+        if(goodsDetailVO.getCategory()==null&&!goodsDetailVO.getStatus().equals(ArticleStatus.PUBLISHED)){
+            goodsDetailVO.setTemplateName(CmsConst.DEFAULT_ARTICLE_TEMPLATE);
+        }
+        Category category = categoryService.findById(goods.getCategoryId());
+        Template template = templateService.findByEnName(category.getArticleTemplateName());
+//        htmlService.addParentCategory(articleDetailVo);
+        List<CategoryVO> categoryVOS =new ArrayList<>();
+        articleService.addParentCategory(categoryVOS,goodsDetailVO.getCategory().getParentId());
 
+        goodsDetailVO.setParentCategories(categoryVOS);
+
+
+//        Template categoryTemplate = templateService.findByMainCategoryId(category.getId());
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, 0);
+        List<Template> templates = templateService.findByCategoryId(category.getId());
+        Map<String,Object> map = new HashMap<>();
+        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+
+        if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+            List<ContentVO> contents = categoryArticle.getContents();
+            List<ContentVO> contentVOList = new ArrayList<>();
+            CMSUtils.flattenContentVOTreeToList(contents,contentVOList);
+            List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
+            int index = IntStream.range(0, contentVOS.size())
+                    .filter(i -> contentVOS.get(i).getId().equals(articleId))
+                    .findFirst()
+                    .orElse(-1);
+            if(index!=-1){
+                int size = contentVOS.size();
+                if(index>0){
+                    ContentVO forwardContentVO = contentVOS.get(index - 1);
+                    goodsDetailVO.setForwardContentVO(forwardContentVO);
+                }
+                if(index<(size-1)){
+                    ContentVO nextcontentVO = contentVOS.get(index + 1);
+                    goodsDetailVO.setNextcontentVO(nextcontentVO);
+                }
+            }
+        }
+
+//        List<Category> partnerCategory = categoryService.findByParentId(articleDetailVo.getCategory().getParentId());
+//        articleDetailVo.setPartnerCategory(categoryService.convertToListVo(partnerCategory));
+
+
+//        Template categoryTemplate = templateService.findOptionalByEnName(category.getTemplateName());
+//        List<Template> templates = templateService.findByChild(categoryTemplate.getId());
+//        for (Template templateChild : templates){
+//            model.addAttribute(templateChild.getEnName(),CMSUtils.getCategoryPath()+File.separator+templateChild.getEnName()+File.separator+category.getViewName());
+//        }
+
+
+//        ModelAndView modelAndView = new ModelAndView();
+        model.addAttribute("view",goodsDetailVO);
+        model.addAllAttributes(map);
+//        modelAndView.setViewName(template.getTemplateValue());
+//        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
+//        String convertHtml = FileUtils.convertByString(html);
+        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
+    }
     @GetMapping("/sheet/{id}")
     @Anonymous
     public String previewSheet(@PathVariable("id") Integer id,Model model){

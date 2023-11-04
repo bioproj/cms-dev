@@ -8,6 +8,7 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
@@ -42,7 +43,7 @@ public class WebController {
 
 
     @Autowired
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
 
 //    @Autowired

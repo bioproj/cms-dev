@@ -10,8 +10,10 @@ import com.wangyang.service.base.IContentService;
 import java.util.Set;
 
 
-public interface IGoodsService extends IContentService<Goods,Goods, GoodsVO> {
+public interface IGoodsService extends IContentService<Goods,GoodsDetailVO, GoodsVO> {
     GoodsDetailVO createGoodsDetailVo(Goods goods, Set<Integer> tagIds);
 
     GoodsDetailVO updateGoodsDetailVo(Goods goods, Set<Integer> tagIds);
+
+    GoodsDetailVO convert(Goods goods);
 }

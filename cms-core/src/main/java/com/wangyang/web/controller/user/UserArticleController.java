@@ -7,8 +7,8 @@ import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.annotation.CommentRole;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.entity.shop.Goods;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.service.*;
 import com.wangyang.service.authorize.ICustomerService;
 import com.wangyang.service.authorize.ISubscribeService;
@@ -17,7 +17,6 @@ import com.wangyang.pojo.dto.ArticleAndCategoryMindDto;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.dto.UserDto;
 import com.wangyang.pojo.params.ArticleQuery;
-import com.wangyang.pojo.vo.ArticleDetailVO;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.templates.ITemplateService;
@@ -69,6 +68,9 @@ public class UserArticleController {
 
 
     @Autowired
+    IGoodsService goodsService;
+
+    @Autowired
     IComponentsService componentsService;
 
     @Autowired
@@ -76,7 +78,7 @@ public class UserArticleController {
 
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
     @GetMapping("/write")
     public String writeArticle(){
@@ -202,6 +204,37 @@ public class UserArticleController {
         FileUtils.remove(CmsConst.WORK_DIR+ File.separator+articleDetailVO.getCategory().getPath()+File.separator+articleDetailVO.getCategory().getViewName());
 
         return articleDetailVO;
+    }
+
+    // http://localhost:8080/user/goods/write/2?title=789
+
+    @GetMapping("/goods/write/{categoryId}")
+    public String fastGoodsArticle(@RequestParam(required = true) String title, HttpServletRequest request, @PathVariable("categoryId") Integer categoryId, Model model){
+        if(title==null||title.equals("")){
+            return "error";
+        }
+        int userId = AuthorizationUtil.getUserId(request);
+        GoodsDetailVO goodsDetailVO = fastWriteGoodsHtml(categoryId, title, userId);
+//        htmlService.generateComponentsByCategory(articleDetailVO.getCategory().getId(),articleDetailVO.getCategory().getParentId());
+//        model.addAttribute("view",articleDetailVO);
+        return "redirect:"+ FormatUtil.categoryListFormat(goodsDetailVO.getCategory());
+    }
+
+
+
+    public GoodsDetailVO fastWriteGoodsHtml(int categoryId,String title,int userId){
+        Category category = categoryService.findById(categoryId);
+        Goods goods = new Goods();
+        goods.setCategoryId(category.getId());
+        goods.setTitle(title);
+        goods.setOriginalContent("# 开始你的创作:"+title);
+        goods.setUserId(userId);
+        GoodsDetailVO goodsDetailVO = goodsService.createGoodsDetailVo(goods,null);
+
+        htmlService.conventHtml(goodsDetailVO);
+        FileUtils.remove(CmsConst.WORK_DIR+ File.separator+goodsDetailVO.getCategory().getPath()+File.separator+goodsDetailVO.getCategory().getViewName());
+
+        return goodsDetailVO;
     }
 
     @GetMapping("/writeDraft/{categoryId}")

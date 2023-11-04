@@ -5,6 +5,7 @@ import com.wangyang.interfaces.IComponentsData;
 import com.wangyang.pojo.entity.Components;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.support.ForceDirectedGraph;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.service.relation.IArticleTagsService;
@@ -24,7 +25,7 @@ public class ForceDirectedGraphData implements IComponentsData {
 
 
     @Autowired
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
     @Autowired
     IArticleTagsService articleTagsService;

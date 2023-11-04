@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SheetDetailVO extends SheetVo{
+public class SheetDetailVO extends ContentDetailVO{
 
     private List<ContentTab> contentTab;
 }

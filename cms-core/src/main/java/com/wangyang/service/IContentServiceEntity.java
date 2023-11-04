@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Set;
 
-public interface IContentServiceEntity extends com.wangyang.service.base.IContentService<Content,Content, ContentVO> {
+public interface IContentServiceEntity extends com.wangyang.service.base.IContentService<Content,ContentDetailVO, ContentVO> {
     Page<Content> pageContentByCategoryIds(Set<Integer> ids, Boolean isDesc, PageRequest pageRequest);
     List<Content> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc);
 

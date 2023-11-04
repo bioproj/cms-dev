@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Set;
 
-public interface IContentService<ARTICLE extends Content,ARTICLEDTO,ARTICLEVO>  extends ICrudService<ARTICLE,ARTICLEDTO,ARTICLEVO,Integer> {
+public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends  ContentDetailVO,ARTICLEVO>  extends ICrudService<ARTICLE,CONTENTDETAILVO,ARTICLEVO,Integer> {
     ComponentsArticle addComponentsArticle(int articleId, int componentsId);
 
     ComponentsArticle addComponentsArticle(String viewName, int componentsId);

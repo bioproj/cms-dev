@@ -2,6 +2,7 @@ package com.wangyang.web.controller.api;
 
 import com.wangyang.common.BaseResponse;
 import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.templates.IComponentsArticleService;
 import com.wangyang.pojo.entity.ComponentsArticle;
@@ -20,7 +21,7 @@ public class ComponentsArticleController {
     IComponentsArticleService componentsArticleService;
 
     @Autowired
-    IContentService<Content,Content,ContentVO> contentService;
+    IContentService<Content, ContentDetailVO,ContentVO> contentService;
 
     @GetMapping("/add")
     public ComponentsArticle add(Integer articleId,Integer componentsId){

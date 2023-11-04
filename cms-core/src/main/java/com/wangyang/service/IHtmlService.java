@@ -121,7 +121,7 @@ public interface IHtmlService {
     void generateCommentHtmlByArticleId(int articleId);
 
 
-    void generateCommentHtmlByArticleId(Article article);
+    void generateCommentHtmlByArticleId(Content content);
 
     void generateComponentsByViewName(String path, String viewName);
 

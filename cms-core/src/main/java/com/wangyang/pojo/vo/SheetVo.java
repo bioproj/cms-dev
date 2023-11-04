@@ -4,7 +4,7 @@ import com.wangyang.pojo.dto.SheetDto;
 import lombok.Data;
 
 @Data
-public class SheetVo extends SheetDto {
+public class SheetVo extends ContentVO {
     private String css;
     private String js;
 //    private String cssContent;

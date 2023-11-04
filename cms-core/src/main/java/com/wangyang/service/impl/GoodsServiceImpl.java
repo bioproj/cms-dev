@@ -1,12 +1,10 @@
 package com.wangyang.service.impl;
 
 import com.wangyang.common.exception.ArticleException;
-import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.Toc;
-import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Tags;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.entity.shop.Goods;
@@ -14,9 +12,7 @@ import com.wangyang.pojo.enums.RelationType;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.GoodsRepository;
 import com.wangyang.repository.TagsRepository;
-import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.repository.relation.ArticleTagsRepository;
-import com.wangyang.service.IArticleService;
 import com.wangyang.service.IGoodsService;
 import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.AbstractContentServiceImpl;
@@ -26,14 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class GoodsServiceImpl extends AbstractContentServiceImpl<Goods,Goods, GoodsVO> implements IGoodsService {
+public class GoodsServiceImpl extends AbstractContentServiceImpl<Goods,GoodsDetailVO, GoodsVO> implements IGoodsService {
     @Autowired
     ArticleTagsRepository articleTagsRepository;
     @Autowired
@@ -89,9 +84,15 @@ public class GoodsServiceImpl extends AbstractContentServiceImpl<Goods,Goods, Go
         return goodsDetailVO;
     }
     public GoodsDetailVO createOrUpdateGoods(Goods goods, Set<Integer> tagsIds) {
-        GoodsVO goodsVO = super.createOrUpdateArticle(goods, tagsIds);
+        GoodsVO goodsVO = super.createOrUpdateArticleVO(goods, tagsIds);
         GoodsDetailVO goodsDetailVO = convert(goodsVO, tagsIds);
         return goodsDetailVO;
+    }
+    @Override
+    public GoodsDetailVO convert(Goods goods) {
+//        Category category = categoryService.findById(article.getCategoryId());
+        GoodsVO goodsVO = convertToVo(goods);
+        return convert(goodsVO,null);
     }
     public GoodsDetailVO convert(GoodsVO goodsVO,Set<Integer> tagsIds) {
 //        ArticleDetailVO articleDetailVo = new ArticleDetailVO();

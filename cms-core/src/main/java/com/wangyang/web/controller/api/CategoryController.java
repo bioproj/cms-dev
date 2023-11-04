@@ -76,7 +76,7 @@ public class CategoryController {
 
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content,ContentDetailVO, ContentVO> contentService;
 
 
     @GetMapping

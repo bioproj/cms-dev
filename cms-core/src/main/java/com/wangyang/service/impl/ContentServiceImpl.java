@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Content, ContentVO>  implements IContentService<Content,Content, ContentVO>  {
+public class ContentServiceImpl extends AbstractContentServiceImpl<Content,ContentDetailVO, ContentVO>  implements IContentService<Content,ContentDetailVO, ContentVO>  {
     @Autowired
     TagsRepository tagsRepository;
     @Autowired
@@ -186,66 +186,6 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     }
 
 
-    @Override
-    public Page<ContentVO> convertToPageVo(Page<Content> contentPage) {
-        List<Content> contents = contentPage.getContent();
-        //Get article Ids
-        Set<Integer> articleIds = ServiceUtil.fetchProperty(contents, Content::getId);
-
-        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(articleIds);
-
-        Set<Integer> tagIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
-        List<Tags> tags = tagsRepository.findAllById(tagIds);
-        Map<Integer, Tags> tagsMap = ServiceUtil.convertToMap(tags, Tags::getId);
-        Map<Integer,List<Tags>> tagsListMap = new HashMap<>();
-        articleTags.forEach(
-                articleTag->{
-                    tagsListMap.computeIfAbsent(articleTag.getArticleId(),
-                                    tagsId->new LinkedList<>())
-                            .add(tagsMap.get(articleTag.getRelationId()));
-                }
-
-        );
-        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
-        List<User> users = userService.findAllById(userIds);
-
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
-        Set<Integer> categories = ServiceUtil.fetchProperty(contents, Content::getCategoryId);
-        List<Category> categoryDtoList = categoryService.findAllById(categories);
-//        .stream().map(category -> {
-//            CategoryDto categoryDto = new CategoryDto();
-//            BeanUtils.copyProperties(category, categoryDto);
-//            return categoryDto;
-//        }).collect(Collectors.toList());
-        List<CategoryVO> categoryVOS = categoryService.convertToListVo(categoryDtoList);
-        Map<Integer, CategoryVO> categoryMap = ServiceUtil.convertToMap(categoryVOS, CategoryVO::getId);
-
-
-        Page<ContentVO> contentVOS = contentPage.map(content -> {
-            ContentVO contentVO = new ContentVO();
-            BeanUtils.copyProperties(content,contentVO);
-            contentVO.setUser(userMap.get(content.getUserId()));
-            if(categoryMap.containsKey(content.getCategoryId())){
-                contentVO.setCategory( categoryMap.get(content.getCategoryId()));
-            }
-            contentVO.setLinkPath(FormatUtil.articleListFormat(content ));
-//            articleVO.setLinkPath(FormatUtil.articleListFormat(article));
-            contentVO.setTags(Optional.ofNullable(tagsListMap.get(content.getId()))
-                    .orElseGet(LinkedList::new)
-                    .stream()
-                    .filter(Objects::nonNull)
-//                    .map(tag->{
-//                        TagsDto tagsDto = new TagsDto();
-//                        BeanUtils.copyProperties(tag,tagsDto);
-//                        return tag;
-//                    })
-                    .collect(Collectors.toList()));
-//            articleVO.setTags(tagsListMap.get(article.getId()));
-
-            return contentVO;
-        });
-        return contentVOS;
-    }
 
 
 

@@ -37,7 +37,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class SheetServiceImpl extends AbstractContentServiceImpl<Sheet,Sheet, ContentVO> implements ISheetService {
+public class SheetServiceImpl extends AbstractContentServiceImpl<Sheet,SheetDetailVO, ContentVO> implements ISheetService {
 
 
 

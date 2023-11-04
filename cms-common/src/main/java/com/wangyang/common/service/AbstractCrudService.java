@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * @author wangyang
  * @date 2021/6/27
  */
-public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO extends BaseEntity,DOMAINVO extends BaseVo, ID extends Serializable> implements ICrudService<DOMAIN,DOMAINDTO,DOMAINVO, ID> {
+public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DETAILVO,DOMAINVO extends BaseVo, ID extends Serializable> implements ICrudService<DOMAIN,DETAILVO,DOMAINVO, ID> {
 
     @PersistenceContext
     private EntityManager em;
@@ -213,6 +213,20 @@ public abstract class AbstractCrudService<DOMAIN extends BaseEntity,DOMAINDTO ex
     {
         ParameterizedType superClass = (ParameterizedType) getClass().getGenericSuperclass();
         Class<DOMAIN> type = (Class<DOMAIN>) superClass.getActualTypeArguments()[0];
+        try
+        {
+            return type.newInstance();
+        }
+        catch (Exception e)
+        {
+            // Oops, no default constructor
+            throw new RuntimeException(e);
+        }
+    }
+    protected DETAILVO getDetailVOInstance()
+    {
+        ParameterizedType superClass = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<DETAILVO> type = (Class<DETAILVO>) superClass.getActualTypeArguments()[2];
         try
         {
             return type.newInstance();

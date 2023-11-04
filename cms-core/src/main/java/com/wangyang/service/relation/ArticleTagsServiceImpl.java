@@ -12,6 +12,7 @@ import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.BaseCategoryVo;
+import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.ICategoryTagsService;
@@ -37,7 +38,7 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
     @Autowired
     ICategoryTagsService categoryTagsService;
     @Autowired
-    IContentService<Content,Content,ContentVO> contentService;
+    IContentService<Content, ContentDetailVO,ContentVO> contentService;
     @Autowired
     IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 

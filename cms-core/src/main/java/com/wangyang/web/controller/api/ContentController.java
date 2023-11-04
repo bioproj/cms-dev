@@ -30,7 +30,7 @@ public class ContentController {
 
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content,ContentDetailVO, ContentVO> contentService;
     @Autowired
     ICategoryService categoryService;
     @Autowired

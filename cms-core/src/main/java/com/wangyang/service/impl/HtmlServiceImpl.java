@@ -88,7 +88,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Autowired
     @Qualifier("contentServiceImpl")
-    IContentService<Content,Content, ContentVO> contentService;
+    IContentService<Content,ContentDetailVO, ContentVO> contentService;
 
     @Autowired
     IComponentsArticleService componentsArticleService;
@@ -842,24 +842,24 @@ public class HtmlServiceImpl implements IHtmlService {
      */
     @Override
     public void generateCommentHtmlByArticleId(int articleId){
-        Article article = articleService.findArticleById(articleId);
-        generateCommentHtmlByArticleId(article);
+        Content content = contentService.findById(articleId);
+        generateCommentHtmlByArticleId(content);
     }
     @Override
-    public void generateCommentHtmlByArticleId(Article article){
+    public void generateCommentHtmlByArticleId(Content content){
         //只有在文章打开评论时才能生成评论
-        if(article.getOpenComment()){
-            List<CommentVo> commentVos = commentService.listVoBy(article.getId());
+        if(content.getOpenComment()){
+            List<CommentVo> commentVos = commentService.listVoBy(content.getId());
             //获取文章评论的模板
-            Template template = templateService.findByEnName(article.getCommentTemplateName());
+            Template template = templateService.findByEnName(content.getCommentTemplateName());
             Map<String,Object> map = new HashMap<>();
             map.put("comments",commentVos);
-            map.put("viewName",article.getViewName());
-            map.put("articleId",article.getId());
-            TemplateUtil.convertHtmlAndSave(article.getPath()+CMSUtils.getComment(),article.getViewName(),map,template);
+            map.put("viewName",content.getViewName());
+            map.put("articleId",content.getId());
+            TemplateUtil.convertHtmlAndSave(content.getPath()+CMSUtils.getComment(),content.getViewName(),map,template);
 
             String json = JSON.toJSON(commentVos).toString();
-            TemplateUtil.saveFile(article.getPath()+CMSUtils.getCommentJSON(),article.getViewName(),json,"json");
+            TemplateUtil.saveFile(content.getPath()+CMSUtils.getCommentJSON(),content.getViewName(),json,"json");
         }
 
     }

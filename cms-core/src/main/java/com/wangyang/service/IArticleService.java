@@ -22,7 +22,7 @@ import java.util.Set;
 
 
 @TemplateOption
-public interface IArticleService extends IContentService<Article,Article,ArticleVO> {
+public interface IArticleService extends IContentService<Article,ArticleDetailVO,ArticleVO> {
 
     /**
      * 为文章添加类别和标签

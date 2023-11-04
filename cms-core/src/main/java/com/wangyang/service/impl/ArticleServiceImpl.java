@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Article,ArticleVO> implements IArticleService {
+public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,ArticleDetailVO,ArticleVO> implements IArticleService {
 
     enum ArticleList{
         INCLUDE_TOP,
@@ -504,7 +504,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //        Article saveArticle = articleRepository.save(article);
 //        super.injectContent(article,category);
 
-        ArticleVO articleVO = super.createOrUpdateArticle(article, tagsIds);
+        ArticleVO articleVO = super.createOrUpdateArticleVO(article, tagsIds);
         ArticleDetailVO articleDetailVO = convert(articleVO, tagsIds);
 
 
@@ -586,7 +586,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
      */
     @Override
     public ArticleDetailVO convert(Article article) {
-        Category category = categoryService.findById(article.getCategoryId());
+//        Category category = categoryService.findById(article.getCategoryId());
         ArticleVO articleVO = convertToVo(article);
         return convert(articleVO,null);
     }

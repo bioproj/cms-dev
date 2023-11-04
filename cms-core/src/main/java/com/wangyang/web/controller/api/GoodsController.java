@@ -1,6 +1,8 @@
 package com.wangyang.web.controller.api;
 
+import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
@@ -16,16 +18,19 @@ import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IGoodsService;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.util.AuthorizationUtil;
+import com.wangyang.util.FormatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -133,6 +138,18 @@ public class GoodsController {
 
         return  goods;
     }
+
+    @GetMapping("/generateHtml/{id}")
+    public GoodsDetailVO generateHtml(@PathVariable("id") Integer id){
+
+//        TestStatic.test();
+        Goods goods = goodsService.findById(id);
+        GoodsDetailVO goodsDetailVO = goodsService.convert(goods);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        htmlService.conventHtml(goodsDetailVO);
+        return goodsDetailVO;
+    }
+
 
 
 }

@@ -7,6 +7,7 @@ import com.wangyang.pojo.entity.Collection;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.RelationType;
+import com.wangyang.pojo.vo.LiteratureDetailVO;
 import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.repository.LiteratureRepository;
 import com.wangyang.repository.TagsRepository;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literature, Literature, LiteratureVo> implements ILiteratureService {
+public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literature, LiteratureDetailVO, LiteratureVo> implements ILiteratureService {
 
     private LiteratureRepository literatureRepository;
     private ITaskService taskService;
