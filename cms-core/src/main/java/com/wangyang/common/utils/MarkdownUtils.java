@@ -13,6 +13,7 @@ import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiImageType;
 import com.vladsch.flexmark.ext.emoji.EmojiShortcutType;
 import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
+import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
 import com.vladsch.flexmark.ext.macros.MacrosExtension;
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
 
@@ -63,7 +64,8 @@ public class MarkdownUtils {
                     AdmonitionExtension.create(),
                     MacrosExtension.create(),
                     AttributesExtension.create(),
-                    EnumeratedReferenceExtension.create()
+                    EnumeratedReferenceExtension.create(),
+                    TaskListExtension.create()
 
 
 
@@ -173,7 +175,8 @@ public class MarkdownUtils {
                     MacrosExtension.create(),
                     AttributesExtension.create(),
 
-                    EnumeratedReferenceExtension.create()
+                    EnumeratedReferenceExtension.create(),
+                    TaskListExtension.create()
 
 
             )).set(GitLabExtension.IMAGE_SRC_TAG,"src")
