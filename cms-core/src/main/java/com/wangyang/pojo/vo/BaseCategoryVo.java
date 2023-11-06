@@ -29,7 +29,7 @@ public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
     private String picThumbPath;
     private String description;
     private Boolean isDesc=true;
-    private Integer articleListSize=20;
+    private Integer articleListSize=1000;
     private Integer categoryInComponentOrder;
     private String recommendTemplateName;
     private String originalContent;
