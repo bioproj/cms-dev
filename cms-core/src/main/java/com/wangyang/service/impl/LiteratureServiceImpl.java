@@ -159,7 +159,7 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
             if(literature1.getCategoryId()!=null && literature1.getCategoryId()!=-1){
                 LiteratureVo literatureVo1 = convertToVo(literature1);
                 LiteratureVo literatureVo = convertToTagVo(literatureVo1);
-                htmlService.conventHtml(literatureVo);
+                htmlService.conventHtml(literatureVo,false);
             }
 
         }

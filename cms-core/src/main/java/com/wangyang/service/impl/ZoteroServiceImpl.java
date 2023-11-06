@@ -375,7 +375,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                 collection.setPath("html/collections");
                 collection.setViewName(item.getData().getName());
                 collection.setTemplateData(TemplateData.OTHER);
-//                collection.setTemplateName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
+                collection.setTemplateName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
 
                 collections.add(collection);
 
@@ -401,13 +401,15 @@ public class ZoteroServiceImpl implements IZoteroService {
                     collection.setParentId(id);
                 }
             }
-            for (Collection collection : saveCollections) {
-                Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
-                Collection saveCollection = collectionService.save(collection);
-                CategoryTemplate categoryTemplate = new CategoryTemplate(saveCollection.getId(),template.getId(), TemplateType.CATEGORY);
-                categoryTemplateService.save(categoryTemplate);
-            }
-            
+//            for (Collection collection : saveCollections) {
+//                Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
+//                Collection saveCollection = collectionService.save(collection);
+//                CategoryTemplate categoryTemplate = new CategoryTemplate(saveCollection.getId(),template.getId(), TemplateType.CATEGORY);
+//                categoryTemplateService.save(categoryTemplate);
+//            }
+                collectionService.saveAll(saveCollections);
+
+//
 
 
 

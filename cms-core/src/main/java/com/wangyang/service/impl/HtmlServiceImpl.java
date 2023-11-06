@@ -10,6 +10,7 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
@@ -144,7 +145,18 @@ public class HtmlServiceImpl implements IHtmlService {
 
     }
 
+    @Override
+    public void conventHtml(Collection collection ) {
+        Template categoryTemplate = templateService.findByEnName(collection.getTemplateName());
+        List<Content> contents = contentService.listContentByCategoryId(collection.getId());
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("contents",contents);
+        map2.put("category",collection);
+        map2.put("template",categoryTemplate);
+        TemplateUtil.convertHtmlAndSave(collection.getPath(),collection.getViewName(),map2, categoryTemplate);
 
+
+    }
 
 
 //    @Override
