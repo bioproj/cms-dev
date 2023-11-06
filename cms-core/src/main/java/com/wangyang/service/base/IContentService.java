@@ -31,6 +31,8 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
     Page<ARTICLE> pageContentByCategoryIds(Set<Integer> ids, Boolean isDesc, PageRequest pageRequest);
     ARTICLE findByViewName(String viewName);
 
+    ARTICLEVO convertToTagVo(ARTICLEVO domainvo);
+
     ARTICLEVO convertToTagVo(ARTICLE domain);
 
     List<ARTICLEVO> convertToListTagVo(List<ARTICLE> domains);
@@ -45,7 +47,7 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
 
     Page<ARTICLEVO> convertToPageVo(Page<ARTICLE> contentPage);
 
-    void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);
+//    void addParentCategory(List<? extends BaseCategoryVo> categoryVOS, Integer parentId);
 
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId);
 

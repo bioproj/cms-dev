@@ -122,7 +122,6 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
 
     Category createCategoryLanguage(Category category, Lang lang);
 
-    List<CategoryVO> addChildFilterRecursive(List<CategoryVO> domainvos);
 
-    void addTemplatePath(Map<String, Object> map, List<CategoryVO> parentCategories ,List<Template> templates);
+
 }

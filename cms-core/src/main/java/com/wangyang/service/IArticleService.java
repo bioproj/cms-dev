@@ -107,7 +107,7 @@ public interface IArticleService extends IContentService<Article,ArticleDetailVO
      */
     List<Article>listByUserId(int userId);
 
-    void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);
+//    void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);
 
     Page<Article> pageArticleByCategoryIds(Set<Integer> ids, Boolean isDesc,  PageRequest pageRequest);
 

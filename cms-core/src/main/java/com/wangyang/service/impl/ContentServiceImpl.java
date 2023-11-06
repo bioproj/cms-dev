@@ -190,18 +190,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
 
 
-    @Override
-    public void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId){
-        if(parentId==0){
-            return;
-        }
-        Category category = categoryService.findById(parentId);
-        categoryVOS.add(0,categoryService.convertToVo(category));
-        if(category.getParentId()!=0){
-            addParentCategory(categoryVOS,category.getParentId());
-        }
 
-    }
     public List<CategoryContentList> listCategoryChild(String viewName,Integer page){
         Category parentCategory = categoryService.findByViewName(viewName);
         if(parentCategory==null){
@@ -365,10 +354,10 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         ids.add(category.getId());
 //        List<CategoryVO> categoryVOS = new ArrayList<>();
 
-        List<CategoryVO> categoryVOS1 = categoryService.listWithChildTree(category.getId());
+        List<BaseCategoryVo> categoryVOS1 = baseCategoryService.listWithChildTree(category.getId());
         articleListVo.setChildren(categoryVOS1);
-        List<CategoryVO> filterCategories = categoryService.addChildFilterRecursive(categoryVOS1);
-        ids.addAll(ServiceUtil.fetchProperty(filterCategories, CategoryVO::getId));
+        List<BaseCategoryVo> filterCategories = baseCategoryService.addChildFilterRecursive(categoryVOS1);
+        ids.addAll(ServiceUtil.fetchProperty(filterCategories, BaseCategoryVo::getId));
 
 
 //        List<Category> categoryPartner = categoryService.findByParentId(category.getParentId());
@@ -391,9 +380,9 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 //            addParentCategory(categoryVOSParent,parentCategoryVO.getParentId());
 
             // add first parent
-            List<CategoryVO> categoryVOSParent = new ArrayList<>();
-            addParentCategory(categoryVOSParent,category.getParentId());
-            CategoryVO categoryVO = categoryVOSParent.get(0);
+            List<BaseCategoryVo> categoryVOSParent = new ArrayList<>();
+            baseCategoryService.addParentCategory(categoryVOSParent,category.getParentId());
+            BaseCategoryVo categoryVO = categoryVOSParent.get(0);
             articleListVo.setParentCategory(categoryVO);
             articleListVo.setParentCategories(categoryVOSParent);
 

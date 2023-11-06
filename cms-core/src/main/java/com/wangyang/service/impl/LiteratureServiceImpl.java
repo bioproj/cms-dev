@@ -139,8 +139,11 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     public void generateHtml(List<Literature> literatures) {
 //        Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
         for (Literature literature: literatures){
-            LiteratureVo literatureVo = convertToTagVo(literature);
-            htmlService.conventHtml(literatureVo);
+            if(literature.getCategoryId()!=null && literature.getCategoryId()!=-1) {
+                LiteratureVo literatureVo1 = convertToVo(literature);
+                LiteratureVo literatureVo = convertToTagVo(literatureVo1);
+                htmlService.conventHtml(literatureVo);
+            }
 //            Map<String,Object> map = new HashMap<>();
 //            map = new HashMap<>();
 //            map.put("view",literature);
@@ -153,8 +156,12 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         List<Collection> collections = collectionService.listAll();
         List<Literature> literature = listAll();
         for (Literature literature1 : literature){
-            LiteratureVo literatureVo = convertToTagVo(literature1);
-            htmlService.conventHtml(literatureVo);
+            if(literature1.getCategoryId()!=null && literature1.getCategoryId()!=-1){
+                LiteratureVo literatureVo1 = convertToVo(literature1);
+                LiteratureVo literatureVo = convertToTagVo(literatureVo1);
+                htmlService.conventHtml(literatureVo);
+            }
+
         }
         for (Collection collection : collections){
             htmlService.conventHtml(collection);

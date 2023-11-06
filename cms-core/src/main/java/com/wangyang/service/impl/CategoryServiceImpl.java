@@ -735,41 +735,9 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         return save;
     }
 
-    @Override
-    public  List<CategoryVO> addChildFilterRecursive(List<CategoryVO> domainvos){
-        List<CategoryVO> saveCategories = new ArrayList<>();
-        addChildFilterRecursive(domainvos,saveCategories);
-        return saveCategories;
-    }
 
 
-    public  void addChildFilterRecursive(List<CategoryVO> domainvos,List<CategoryVO> saveCategories ){
-        List<CategoryVO> filterCategories = domainvos.stream().filter(item -> (item.getIsRecursive() != null && item.getIsRecursive())).collect(Collectors.toList());
-        saveCategories.addAll(filterCategories);
 
-        for (CategoryVO categoryVO : domainvos){
-            if(categoryVO.getChildren()!=null && categoryVO.getChildren().size()!=0){
-                addChildFilterRecursive(categoryVO.getChildren(),saveCategories);
-            }
-        }
-
-    }
-
-    @Override
-    public void addTemplatePath(Map<String, Object> map,List<CategoryVO> parentCategories , List<Template> templates) {
-        for (Template template : templates){
-            if(parentCategories!=null){
-                CategoryVO categoryVO;
-                if(template.getParentOrder()!=null && template.getParentOrder() > -1){
-                    categoryVO = parentCategories.get(template.getParentOrder());
-                }else {
-                    categoryVO = parentCategories.get(parentCategories.size() - 1);
-                }
-                map.put(template.getEnName(),categoryVO.getPath()+File.separator+template.getEnName()+File.separator+ categoryVO.getViewName() );
-
-            }
-        }
-    }
 
     @Override
     public boolean supportType(CrudType type) {

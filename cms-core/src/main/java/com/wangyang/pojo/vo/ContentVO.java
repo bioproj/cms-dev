@@ -57,7 +57,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private  List<Toc> tocList;
 
     private Boolean isPublisher=false;
-    private List<CategoryVO> parentCategories;
+    private List<? extends BaseCategoryVo> parentCategories;
     private ContentVO forwardContentVO;
     private  ContentVO nextcontentVO;
 

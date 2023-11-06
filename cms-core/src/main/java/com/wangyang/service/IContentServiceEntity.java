@@ -18,7 +18,7 @@ public interface IContentServiceEntity extends com.wangyang.service.base.IConten
 
     Page<ContentVO> convertToPageVo(Page<Content> contentPage);
 
-    void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);
+//    void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId);
 
     CategoryContentListDao findCategoryContentBy(CategoryVO category, Template template, int page);
 

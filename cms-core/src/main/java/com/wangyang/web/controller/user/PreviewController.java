@@ -154,7 +154,7 @@ public class PreviewController {
         Template template = templateService.findByEnName(category.getArticleTemplateName());
 //        htmlService.addParentCategory(articleDetailVo);
         List<CategoryVO> categoryVOS =new ArrayList<>();
-        articleService.addParentCategory(categoryVOS,articleDetailVo.getCategory().getParentId());
+        categoryService.addParentCategory(categoryVOS,articleDetailVo.getCategory().getParentId());
 
         articleDetailVo.setParentCategories(categoryVOS);
 
@@ -163,7 +163,7 @@ public class PreviewController {
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, 0);
         List<Template> templates = templateService.findByCategoryId(category.getId());
         Map<String,Object> map = new HashMap<>();
-        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+        baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
         if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
             List<ContentVO> contents = categoryArticle.getContents();
@@ -232,7 +232,7 @@ public class PreviewController {
         Template template = templateService.findByEnName(category.getArticleTemplateName());
 //        htmlService.addParentCategory(articleDetailVo);
         List<CategoryVO> categoryVOS =new ArrayList<>();
-        articleService.addParentCategory(categoryVOS,goodsDetailVO.getCategory().getParentId());
+        categoryService.addParentCategory(categoryVOS,goodsDetailVO.getCategory().getParentId());
 
         goodsDetailVO.setParentCategories(categoryVOS);
 
@@ -241,7 +241,7 @@ public class PreviewController {
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category, 0);
         List<Template> templates = templateService.findByCategoryId(category.getId());
         Map<String,Object> map = new HashMap<>();
-        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+        baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
         if(category.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
             List<ContentVO> contents = categoryArticle.getContents();
@@ -352,7 +352,7 @@ public class PreviewController {
         }
         Map<String,Object> map = new HashMap<>();
         List<Template> templates = templateService.findByCategoryId(category.getId());
-        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+        baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
         if(template.getTemplateType().equals(TemplateType.CATEGORY)){
             map.put("view",categoryArticle);
 //        为了与按钮分页匹配 CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(category,template, page-1);
@@ -386,18 +386,18 @@ public class PreviewController {
                 // https://bioinfo.online/articleList/202381024113.html
                 // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
                 if(categoryArticle.getParentCategories()!=null && template.getParentOrder()!=null && template.getParentOrder() > -1){
-                    List<CategoryVO> parentCategories = categoryArticle.getParentCategories();
+                    List<BaseCategoryVo> parentCategories = categoryArticle.getParentCategories();
 //                    CategoryVO categoryVO = parentCategories.get(template.getParentOrder());
-                    List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                    categoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                    List<BaseCategory> partnerCategory = baseCategoryService.findByParentId(category.getParentId());
+                    categoryArticle.setPartner(baseCategoryService.convertToListVo(partnerCategory));
 
 
 //                    TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+template.getEnName(),categoryVO.getViewName(),newCategoryArticle, template);
                 }else if ( categoryArticle.getParentCategories()!=null ){
-                    CategoryVO parentCategory = categoryArticle.getParentCategory();
+                    BaseCategoryVo parentCategory = categoryArticle.getParentCategory();
                     if(parentCategory!=null){
-                        List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                        categoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                        List<BaseCategory> partnerCategory = baseCategoryService.findByParentId(category.getParentId());
+                        categoryArticle.setPartner(baseCategoryService.convertToListVo(partnerCategory));
 //                        TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+template.getEnName(),parentCategory.getViewName(),newCategoryArticle, template);
                     }
                 }else {

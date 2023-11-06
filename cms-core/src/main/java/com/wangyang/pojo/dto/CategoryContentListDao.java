@@ -15,10 +15,10 @@ public class CategoryContentListDao {
     private List<ContentVO> contents;
     private List<CategoryContentList> categoryContentLists;
     private BaseCategoryVo category;
-    private CategoryVO parentCategory;
-    private List<CategoryVO> parentCategories;
-    private List<CategoryVO> children;
-    private List<CategoryVO> partner;
+    private BaseCategoryVo parentCategory;
+    private List<BaseCategoryVo> parentCategories;
+    private List<BaseCategoryVo> children;
+    private List<BaseCategoryVo> partner;
     private Category parent;
     /**
      * 第一个category文章列表的路径,

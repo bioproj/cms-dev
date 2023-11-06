@@ -1038,18 +1038,18 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         return findCategoryArticleBy(categoryService.convertToVo(category),template,page);
     }
 
-    @Override
-    public void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId){
-        if(parentId==0){
-            return;
-        }
-        Category category = categoryService.findById(parentId);
-        categoryVOS.add(0,categoryService.convertToVo(category));
-        if(category.getParentId()!=0){
-            addParentCategory(categoryVOS,category.getParentId());
-        }
-
-    }
+//    @Override
+//    public void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId){
+//        if(parentId==0){
+//            return;
+//        }
+//        Category category = categoryService.findById(parentId);
+//        categoryVOS.add(0,categoryService.convertToVo(category));
+//        if(category.getParentId()!=0){
+//            addParentCategory(categoryVOS,category.getParentId());
+//        }
+//
+//    }
 
 
     public void addChildIds( List<CategoryVO> categoryVOS, Integer id){
@@ -1105,7 +1105,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
             // add first parent
             List<CategoryVO> categoryVOSParent = new ArrayList<>();
-            addParentCategory(categoryVOSParent,category.getParentId());
+            categoryService.addParentCategory(categoryVOSParent,category.getParentId());
             CategoryVO categoryVO = categoryVOSParent.get(0);
             articleListVo.setParentCategory(categoryVO);
             articleListVo.setParentCategories(categoryVOSParent);

@@ -164,7 +164,7 @@ public class HtmlServiceImpl implements IHtmlService {
 
 
     @Override
-    @Async //异步执行
+//    @Async //异步执行
     public void conventHtml(ContentVO articleVO){
         conventHtml(articleVO, true);
     }
@@ -192,19 +192,22 @@ public class HtmlServiceImpl implements IHtmlService {
             Map<String,Object> map = new HashMap<>();
 
             CategoryContentListDao categoryContentListDao;
-            if(isCategory){
+            if(isCategory  && categoryVO!=null&&categoryVO.getId()!=null&& categoryVO.getId()!=-1){
                 List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
                 CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
 
-                categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+                baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
                 //设置文章的面包屑
                 articleVO.setParentCategories(categoryArticle.getParentCategories());
 
                 categoryContentListDao = convertArticleListBy(categoryArticle,templates);
             }else {
-                List<CategoryVO> categoryVOS =new ArrayList<>();
-                articleService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
-                articleVO.setParentCategories(categoryVOS);
+               if(articleVO.getCategory()!=null){
+                   List<BaseCategoryVo> categoryVOS =new ArrayList<>();
+                   baseCategoryService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
+                   articleVO.setParentCategories(categoryVOS);
+               }
+
                 categoryContentListDao = contentService.findCategoryContentBy(categoryVO, 0);
             }
 
@@ -270,7 +273,7 @@ public class HtmlServiceImpl implements IHtmlService {
 //        BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
         CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
         Map<String,Object> map = new HashMap<>();
-        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+        baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
         return convertArticleListBy(map,categoryArticle,templates);
     }
@@ -364,18 +367,18 @@ public class HtmlServiceImpl implements IHtmlService {
                     // https://bioinfo.online/articleList/202381024113.html
                     // 如果是顶级分类没有父类 newCategoryArticle.getParentCategories() 为空
                     if(newCategoryArticle.getParentCategories()!=null && template.getParentOrder()!=null && template.getParentOrder() > -1){
-                        List<CategoryVO> parentCategories = newCategoryArticle.getParentCategories();
-                        CategoryVO categoryVO = parentCategories.get(template.getParentOrder());
-                        List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                        newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                        List<BaseCategoryVo> parentCategories = newCategoryArticle.getParentCategories();
+                        BaseCategoryVo categoryVO = parentCategories.get(template.getParentOrder());
+                        List<BaseCategory> partnerCategory = baseCategoryService.findByParentId(category.getParentId());
+                        newCategoryArticle.setPartner(baseCategoryService.convertToListVo(partnerCategory));
 
 
                         TemplateUtil.convertHtmlAndSave(categoryVO.getPath()+File.separator+template.getEnName(),categoryVO.getViewName(),newCategoryArticle, template);
                     }else if ( newCategoryArticle.getParentCategories()!=null    ){
-                        CategoryVO parentCategory = newCategoryArticle.getParentCategory();
+                        BaseCategoryVo parentCategory = newCategoryArticle.getParentCategory();
                         if(parentCategory!=null){
-                            List<Category> partnerCategory = categoryService.findByParentId(category.getParentId());
-                            newCategoryArticle.setPartner(categoryService.convertToListVo(partnerCategory));
+                            List<BaseCategory> partnerCategory = baseCategoryService.findByParentId(category.getParentId());
+                            newCategoryArticle.setPartner(baseCategoryService.convertToListVo(partnerCategory));
                             TemplateUtil.convertHtmlAndSave(parentCategory.getPath()+File.separator+template.getEnName(),parentCategory.getViewName(),newCategoryArticle, template);
                         }
                     }else {
@@ -850,16 +853,19 @@ public class HtmlServiceImpl implements IHtmlService {
         //只有在文章打开评论时才能生成评论
         if(content.getOpenComment()){
             List<CommentVo> commentVos = commentService.listVoBy(content.getId());
-            //获取文章评论的模板
-            Template template = templateService.findByEnName(content.getCommentTemplateName());
-            Map<String,Object> map = new HashMap<>();
-            map.put("comments",commentVos);
-            map.put("viewName",content.getViewName());
-            map.put("articleId",content.getId());
-            TemplateUtil.convertHtmlAndSave(content.getPath()+CMSUtils.getComment(),content.getViewName(),map,template);
+            if(content.getCommentTemplateName()!=null){
+                //获取文章评论的模板
+                Template template = templateService.findByEnName(content.getCommentTemplateName());
+                Map<String,Object> map = new HashMap<>();
+                map.put("comments",commentVos);
+                map.put("viewName",content.getViewName());
+                map.put("articleId",content.getId());
+                TemplateUtil.convertHtmlAndSave(content.getPath()+CMSUtils.getComment(),content.getViewName(),map,template);
 
-            String json = JSON.toJSON(commentVos).toString();
-            TemplateUtil.saveFile(content.getPath()+CMSUtils.getCommentJSON(),content.getViewName(),json,"json");
+                String json = JSON.toJSON(commentVos).toString();
+                TemplateUtil.saveFile(content.getPath()+CMSUtils.getCommentJSON(),content.getViewName(),json,"json");
+            }
+
         }
 
     }

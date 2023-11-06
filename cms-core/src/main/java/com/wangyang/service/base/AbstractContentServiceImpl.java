@@ -13,7 +13,6 @@ import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
@@ -230,10 +229,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
     }
 
 
-    @Override
-    public void addParentCategory(List<CategoryVO> categoryVOS, Integer parentId) {
 
-    }
 
     @Override
     public CategoryContentListDao findCategoryContentBy(BaseCategoryVo category, int page) {
@@ -341,8 +337,41 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         return contents.get(0);
     }
 
+    @Override
+    public List<ARTICLEVO> convertToListVo(List<ARTICLE> domains) {
+        return domains.stream().map(domain -> {
+            ARTICLEVO domainvo = getVOInstance();
+            BeanUtils.copyProperties(domain,domainvo);
+            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            return domainvo;
 
+        }).collect(Collectors.toList());
+    }
 
+    @Override
+    public ARTICLEVO convertToVo(ARTICLE domain) {
+        ARTICLEVO domainvo = getVOInstance();
+        BeanUtils.copyProperties(domain,domainvo);
+        domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+        if(domain.getCategoryId()!=null &&domain.getCategoryId()!=-1 ){
+            BaseCategory baseCategory = baseCategoryService.findById(domain.getCategoryId());
+            domainvo.setCategory(baseCategoryService.convertToVo(baseCategory));
+        }
+
+        return domainvo;
+    }
+    @Override
+    public ARTICLEVO convertToTagVo(ARTICLEVO domainvo) {
+        List<Tags> tags = tagsRepository.findTagsByArticleId(domainvo.getId());
+        if(!CollectionUtils.isEmpty(tags)){
+            domainvo.setTags(tags);
+
+            domainvo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
+        }
+
+//        domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+        return domainvo;
+    }
     @Override
     public ARTICLEVO convertToTagVo(ARTICLE domain) {
         ARTICLEVO domainvo = getVOInstance();
@@ -412,26 +441,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
 
         }).collect(Collectors.toList());
     }
-    @Override
-    public List<ARTICLEVO> convertToListVo(List<ARTICLE> domains) {
-        return domains.stream().map(domain -> {
-            ARTICLEVO domainvo = getVOInstance();
-            BeanUtils.copyProperties(domain,domainvo);
-            domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
-            return domainvo;
 
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public ARTICLEVO convertToVo(ARTICLE domain) {
-        ARTICLEVO domainvo = getVOInstance();
-        BeanUtils.copyProperties(domain,domainvo);
-        domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
-        BaseCategory baseCategory = baseCategoryService.findById(domain.getCategoryId());
-        domainvo.setCategory(baseCategoryService.convertToVo(baseCategory));
-        return domainvo;
-    }
     @Override
     public ARTICLE findByViewName(String viewName, Lang lang) {
         List<ARTICLE> contents = contentRepository.findAll(new Specification<ARTICLE>() {
@@ -762,4 +772,6 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
 
         return voInstance;
     }
+
+
 }

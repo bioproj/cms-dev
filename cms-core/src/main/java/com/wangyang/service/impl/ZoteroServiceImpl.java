@@ -14,18 +14,16 @@ import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.ArticleTagsDto;
+import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
-import com.wangyang.pojo.entity.Literature;
-import com.wangyang.pojo.entity.Tags;
-import com.wangyang.pojo.entity.Task;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.enums.TaskStatus;
 import com.wangyang.pojo.enums.TaskType;
+import com.wangyang.pojo.enums.TemplateData;
+import com.wangyang.pojo.enums.TemplateType;
 import com.wangyang.repository.base.ContentRepository;
-import com.wangyang.service.ICollectionService;
-import com.wangyang.service.ILiteratureService;
-import com.wangyang.service.ITaskService;
-import com.wangyang.service.IZoteroService;
+import com.wangyang.service.*;
+import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -63,12 +61,17 @@ public class ZoteroServiceImpl implements IZoteroService {
     ICollectionService collectionService;
 
     @Autowired
+    ITemplateService templateService;
+    @Autowired
     ITaskService taskService;
     @Autowired
     private  ThreadPoolTaskExecutor executorService;
 
     @Autowired
     ContentRepository<Content> contentContentRepository;
+
+    @Autowired
+    ICategoryTemplateService categoryTemplateService;
 
     @Override
     public Task importLiterature(int userId) {
@@ -371,7 +374,9 @@ public class ZoteroServiceImpl implements IZoteroService {
                 collection.setParentKey(item.getData().getParentCollection());
                 collection.setPath("html/collections");
                 collection.setViewName(item.getData().getName());
-                collection.setTemplateName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
+                collection.setTemplateData(TemplateData.OTHER);
+//                collection.setTemplateName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
+
                 collections.add(collection);
 
             }
@@ -396,7 +401,14 @@ public class ZoteroServiceImpl implements IZoteroService {
                     collection.setParentId(id);
                 }
             }
-            collectionService.saveAll(saveCollections);
+            for (Collection collection : saveCollections) {
+                Template template = templateService.findByEnName(CmsConst.DEFAULT_LITERATURE_CATEGORY_TEMPLATE);
+                Collection saveCollection = collectionService.save(collection);
+                CategoryTemplate categoryTemplate = new CategoryTemplate(saveCollection.getId(),template.getId(), TemplateType.CATEGORY);
+                categoryTemplateService.save(categoryTemplate);
+            }
+            
+
 
 
             dbCollections.removeAll(findCollections2);

@@ -28,8 +28,8 @@ public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
     private String picPath;
     private String picThumbPath;
     private String description;
-    private Boolean isDesc;
-    private Integer articleListSize;
+    private Boolean isDesc=true;
+    private Integer articleListSize=20;
     private Integer categoryInComponentOrder;
     private String recommendTemplateName;
     private String originalContent;
@@ -41,7 +41,7 @@ public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
     private Boolean isRecursive;
     private Boolean isDivision;
     private Boolean articleUseViewName;
-    private TemplateData templateData;
+    private TemplateData templateData=TemplateData.OTHER;
 
     private NetworkType networkType;
 }

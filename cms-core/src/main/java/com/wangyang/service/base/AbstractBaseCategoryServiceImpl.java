@@ -5,13 +5,11 @@ import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryDto;
-import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.ComponentsCategory;
+import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.common.pojo.BaseEntity;
-import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.base.BaseCategoryRepository;
 import com.wangyang.service.authorize.IUserService;
@@ -26,9 +24,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCategory,CATEGORYDTO extends BaseEntity,CATEGORYVO extends BaseCategoryVo>  extends AbstractCrudService<CATEGORY,CATEGORYDTO,CATEGORYVO,Integer>
@@ -117,5 +113,53 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
                 return query.where(criteriaBuilder.equal(root.get("parentId"),i)).getRestriction();
             }
         });
+    }
+
+    @Override
+    public  List<CATEGORYVO> addChildFilterRecursive(List<CATEGORYVO> domainvos){
+        List<CATEGORYVO> saveCategories = new ArrayList<>();
+        addChildFilterRecursive(domainvos,saveCategories);
+        return saveCategories;
+    }
+
+
+    public  void addChildFilterRecursive(List<CATEGORYVO> domainvos,List<CATEGORYVO> saveCategories ){
+        List<CATEGORYVO> filterCategories = domainvos.stream().filter(item -> (item.getIsRecursive() != null && item.getIsRecursive())).collect(Collectors.toList());
+        saveCategories.addAll(filterCategories);
+
+        for (CATEGORYVO categoryVO : domainvos){
+            if(categoryVO.getChildren()!=null && categoryVO.getChildren().size()!=0){
+                addChildFilterRecursive(categoryVO.getChildren(),saveCategories);
+            }
+        }
+
+    }
+
+    @Override
+    public void addParentCategory(List<CATEGORYVO> categoryVOS, Integer parentId){
+        if(parentId==0){
+            return;
+        }
+        CATEGORY category = findById(parentId);
+        categoryVOS.add(0,convertToVo(category));
+        if(category.getParentId()!=0){
+            addParentCategory(categoryVOS,category.getParentId());
+        }
+
+    }
+    @Override
+    public void addTemplatePath(Map<String, Object> map, List<CATEGORYVO> parentCategories , List<Template> templates) {
+        for (Template template : templates){
+            if(parentCategories!=null){
+                CATEGORYVO categoryVO;
+                if(template.getParentOrder()!=null && template.getParentOrder() > -1){
+                    categoryVO = parentCategories.get(template.getParentOrder());
+                }else {
+                    categoryVO = parentCategories.get(parentCategories.size() - 1);
+                }
+                map.put(template.getEnName(),categoryVO.getPath()+File.separator+template.getEnName()+File.separator+ categoryVO.getViewName() );
+
+            }
+        }
     }
 }
