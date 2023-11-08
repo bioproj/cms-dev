@@ -33,8 +33,7 @@ public class BioInterceptor implements HandlerInterceptor {
     @Autowired
     IPermissionService permissionService;
 
-    @Value("${cms.isAuth}")
-    Boolean isAuth;
+
 
 
 
