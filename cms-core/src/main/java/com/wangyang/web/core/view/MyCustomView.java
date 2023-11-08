@@ -65,13 +65,13 @@ public class MyCustomView implements View {
 
         Object status = map.get("status");
 
-        if(status!=null &&status.equals(401)){
-            AuthRedirect authRedirect = authRedirectService.findByCurrentUrl(requestURI);
-            if(authRedirect!=null){
-                response.sendRedirect(authRedirect.getAuthUrl()+"?state="+requestURI);
-            }
-
-        }
+//        if(status!=null &&status.equals(401)){
+//            AuthRedirect authRedirect = authRedirectService.findByCurrentUrl(requestURI);
+//            if(authRedirect!=null){
+//                response.sendRedirect(authRedirect.getAuthUrl()+"?state="+requestURI);
+//            }
+//
+//        }
 
         String authUrl = request.getParameter("authUrl");
 

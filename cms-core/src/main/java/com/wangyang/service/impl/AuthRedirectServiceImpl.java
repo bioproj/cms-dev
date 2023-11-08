@@ -77,7 +77,7 @@ public class AuthRedirectServiceImpl extends AbstractCrudService<AuthRedirect,Au
         authRedirectInput.setId(null);
         BeanUtils.copyProperties(authRedirectInput, authRedirect,CMSUtils.getNullPropertyNames(authRedirectInput));
 
-        htmlGenerate(authRedirect);
+//        htmlGenerate(authRedirect);
         return super.update(integer, authRedirect);
     }
     @Override
@@ -105,7 +105,7 @@ public class AuthRedirectServiceImpl extends AbstractCrudService<AuthRedirect,Au
 //        TemplateUtil.convertHtmlAndSave(authRedirect.getPath(),authRedirect.getViewName(),authRedirect,template);
 //        String loginPage = authRedirect.getPath()+ File.separator + authRedirect.getViewName() + ".html";
 //        authRedirect.setLoginPage(loginPage);
-        htmlGenerate(authRedirect);
+//        htmlGenerate(authRedirect);
         return super.add(authRedirect);
     }
 

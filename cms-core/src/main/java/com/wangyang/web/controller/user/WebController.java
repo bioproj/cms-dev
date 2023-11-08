@@ -121,10 +121,17 @@ public class WebController {
     }
 
 
+    @GetMapping("/html/auth/{path}/{viewName}.html")
+    @Anonymous
+    public String showArticle3(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {
+        return "html" + File.separator+path+File.separator+viewName;
+    }
+
+
     @GetMapping("/html/{path}/{viewName}.html")
     @Anonymous
     public String showArticle(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {
-        return "html" + File.separator+path+File.separator+viewName;
+        return "redirect:" + File.separator+path+File.separator+viewName+".html";
     }
 //    @GetMapping("/html_{path}_{method}_{arg1}_{arg2}.html")
     public String show(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {

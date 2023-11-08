@@ -12,6 +12,7 @@ import com.wangyang.service.authorize.IPermissionService;
 import com.wangyang.util.AuthorizationException;
 import com.wangyang.util.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -32,6 +33,9 @@ public class BioInterceptor implements HandlerInterceptor {
     @Autowired
     IPermissionService permissionService;
 
+    @Value("${cms.isAuth}")
+    Boolean isAuth;
+
 
 
     @Override
@@ -40,6 +44,7 @@ public class BioInterceptor implements HandlerInterceptor {
             return true;
         }
         String uri = request.getRequestURI();
+
         String method = request.getMethod();
         Set<Role> needsRoles = permissionService.findRolesByResource(method+uri);
         Set<String> needRoleStr = ServiceUtil.fetchProperty(needsRoles, Role::getEnName);

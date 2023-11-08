@@ -201,7 +201,7 @@ public class UserArticleController {
         ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(userId,article,null);
 
         htmlService.conventHtml(articleDetailVO);
-        FileUtils.remove(CmsConst.WORK_DIR+ File.separator+articleDetailVO.getCategory().getPath()+File.separator+articleDetailVO.getCategory().getViewName());
+//        FileUtils.remove(CmsConst.WORK_DIR+ File.separator+articleDetailVO.getCategory().getPath()+File.separator+articleDetailVO.getCategory().getViewName());
 
         return articleDetailVO;
     }
