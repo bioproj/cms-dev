@@ -162,4 +162,14 @@ public abstract class AbstractBaseCategoryServiceImpl <CATEGORY extends BaseCate
             }
         }
     }
+    @Override
+    public List<CATEGORYVO> convertToListVo(List<CATEGORY> baseCategories) {
+        return baseCategories.stream().map(domain -> {
+            CATEGORYVO domainvo = getVOInstance();
+            BeanUtils.copyProperties(domain,domainvo);
+            domainvo.setLinkPath(FormatUtil.categoryListFormat(domainvo));
+            return domainvo;
+        }).collect(Collectors.toList());
+
+    }
 }

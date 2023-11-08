@@ -15,6 +15,9 @@ import com.wangyang.util.FormatUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class BaseCategoryServiceImpl extends AbstractBaseCategoryServiceImpl<BaseCategory,BaseCategory, BaseCategoryVo> implements IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> {
 
