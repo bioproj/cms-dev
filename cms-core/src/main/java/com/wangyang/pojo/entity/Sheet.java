@@ -15,7 +15,7 @@ public class Sheet extends Content {
 //    private String cssContent;
 //    @Column(columnDefinition = "longtext")
 //    private String jsContent;
-
+    private Integer userId;
     @Column(columnDefinition = "bit(1) default false")
     private Boolean recommend=false;
     @Column(columnDefinition = "bit(1) default false")

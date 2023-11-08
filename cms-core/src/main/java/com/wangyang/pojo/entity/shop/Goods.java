@@ -10,5 +10,5 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "3")
 @Data
 public class Goods extends Content {
-
+    private Integer userId;
 }

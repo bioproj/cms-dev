@@ -194,18 +194,19 @@ public class MailServiceImpl implements MailService {
         Template template = templateService.findByEnName(CmsConst.DEFAULT_EMAIL);
         String emailContent = TemplateUtil.getHtml(template.getTemplateValue(), context);
 //        String emailContent = templateEngine.process("emailTeplate", context);
-        if(!currentUser.getId().equals(article.getUserId())){
-            User userArticle = userService.findById(article.getUserId());
-            sendSimpleMail(userArticle.getEmail(),currentUser.getUsername()+"在文章["+article.getTitle()+"]中回复:",emailContent);
-        }
-        if(comment.getParentId()!=0){
-            Comment replyComment = commentService.findById(comment.getParentId());
-            Integer replyUserId = replyComment.getUserId();
-            if(replyUserId!=comment.getUserId() && article.getUserId()!=replyUserId){
-                User replyUser = userService.findById(replyUserId);
-                sendSimpleMail(replyUser.getEmail(),currentUser.getUsername()+"在文章["+article.getTitle()+"]中回复:",emailContent);
-            }
-        }
+        //TODO
+//        if(!currentUser.getId().equals(article.getUserId())){
+//            User userArticle = userService.findById(article.getUserId());
+//            sendSimpleMail(userArticle.getEmail(),currentUser.getUsername()+"在文章["+article.getTitle()+"]中回复:",emailContent);
+//        }
+//        if(comment.getParentId()!=0){
+//            Comment replyComment = commentService.findById(comment.getParentId());
+//            Integer replyUserId = replyComment.getUserId();
+//            if(replyUserId!=comment.getUserId() && article.getUserId()!=replyUserId){
+//                User replyUser = userService.findById(replyUserId);
+//                sendSimpleMail(replyUser.getEmail(),currentUser.getUsername()+"在文章["+article.getTitle()+"]中回复:",emailContent);
+//            }
+//        }
     }
 
 

@@ -187,10 +187,10 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
                 }
 
         );
-        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
-        List<User> users = userService.findAllById(userIds);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
+//        List<User> users = userService.findAllById(userIds);
 
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+//        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
         Set<Integer> categories = ServiceUtil.fetchProperty(contents, Content::getCategoryId);
         List<BaseCategory> categoryDtoList = baseCategoryService.listByIds(categories);
 //        .stream().map(category -> {
@@ -205,7 +205,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         Page<ARTICLEVO> contentVOS = contentPage.map(content -> {
             ARTICLEVO contentVO = getVOInstance();
             BeanUtils.copyProperties(content,contentVO);
-            contentVO.setUser(userMap.get(content.getUserId()));
+//            contentVO.setUser(userMap.get(content.getUserId()));
             if(categoryMap.containsKey(content.getCategoryId())){
                 contentVO.setCategory( categoryMap.get(content.getCategoryId()));
             }
@@ -611,9 +611,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         }
     }
     public ARTICLEVO createOrUpdateArticleVO(ARTICLE article, Set<Integer> tagsIds) {
-        if(article.getUserId()==null){
-            throw new ArticleException("文章用户不能为空!!");
-        }
+//        if(article.getUserId()==null){
+//            throw new ArticleException("文章用户不能为空!!");
+//        }
         if(article.getCategoryId()==null){
             throw new ArticleException("文章类别不能为空!!");
         }
@@ -692,9 +692,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         return voInstance;
     }
     public CONTENTDETAILVO createOrUpdateArticle(ARTICLE article, Set<Integer> tagsIds) {
-        if(article.getUserId()==null){
-            throw new ArticleException("文章用户不能为空!!");
-        }
+//        if(article.getUserId()==null){
+//            throw new ArticleException("文章用户不能为空!!");
+//        }
         if(article.getCategoryId()==null){
             throw new ArticleException("文章类别不能为空!!");
         }

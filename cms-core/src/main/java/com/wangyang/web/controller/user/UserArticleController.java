@@ -197,8 +197,8 @@ public class UserArticleController {
         article.setCategoryId(categoryId);
         article.setTitle(title);
         article.setOriginalContent("# 开始你的创作:"+title);
-        article.setUserId(userId);
-        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(article,null);
+//        article.setUserId(userId);
+        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(userId,article,null);
 
         htmlService.conventHtml(articleDetailVO);
         FileUtils.remove(CmsConst.WORK_DIR+ File.separator+articleDetailVO.getCategory().getPath()+File.separator+articleDetailVO.getCategory().getViewName());
@@ -253,8 +253,8 @@ public class UserArticleController {
         article.setCategoryId(categoryId);
         article.setTitle(title);
         article.setOriginalContent("# 开始你的创作:"+title);
-        article.setUserId(userId);
-        Article saveArticle = articleService.saveArticleDraft(article,false);
+//        article.setUserId(userId);
+        Article saveArticle = articleService.saveArticleDraft(userId,article,false);
 
 
         return saveArticle;

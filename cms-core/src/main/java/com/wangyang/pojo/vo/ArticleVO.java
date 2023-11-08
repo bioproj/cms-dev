@@ -56,6 +56,7 @@ public class ArticleVO extends ContentVO {
     private String video;
     private Boolean isDivision;
 
+    private List<User> users;
 //    public String getLinkPath() {
 //      return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";
 //    }

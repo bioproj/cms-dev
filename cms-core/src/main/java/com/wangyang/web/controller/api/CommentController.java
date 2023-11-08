@@ -2,19 +2,19 @@ package com.wangyang.web.controller.api;
 
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.MarkdownUtils;
+import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.annotation.CommentRole;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.entity.Article;
-import com.wangyang.service.IArticleService;
-import com.wangyang.service.ICommentService;
-import com.wangyang.service.IHtmlService;
+import com.wangyang.pojo.entity.UserArticle;
+import com.wangyang.service.*;
 import com.wangyang.pojo.entity.Comment;
 import com.wangyang.pojo.params.CommentLoginUserParam;
 import com.wangyang.pojo.params.CommentParam;
 import com.wangyang.pojo.vo.CommentVo;
-import com.wangyang.service.MailService;
 import com.wangyang.service.authorize.IUserService;
 import com.wangyang.util.AuthorizationUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -48,6 +49,9 @@ public class CommentController {
 
     @Autowired
     IArticleService articleService;
+
+    @Autowired
+    IUserArticleService userArticleService;
 
     @PostMapping
     @CommentRole
@@ -112,7 +116,9 @@ public class CommentController {
         User user = userService.findById(userId);
         if(comment.getUserId()!=user.getId()){
             Article article = articleService.findById(comment.getArticleId());
-            if(article.getUserId()!=user.getId()){
+            List<UserArticle> userArticles = userArticleService.listByArticleId(article.getId());
+            Set<Integer> userIds = ServiceUtil.fetchProperty(userArticles, UserArticle::getUserId);
+            if(userIds.contains(user.getId())){
                 throw new ObjectException("Can't delete, not your!!");
             }
         }

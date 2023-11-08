@@ -1,11 +1,14 @@
 package com.wangyang.pojo.vo;
 
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.SheetDto;
 import lombok.Data;
 
 @Data
 public class SheetVo extends ContentVO {
     private String css;
+    private User user;
+    private Integer userId;
     private String js;
 //    private String cssContent;
 //

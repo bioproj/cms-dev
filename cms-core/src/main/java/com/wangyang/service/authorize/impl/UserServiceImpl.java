@@ -288,6 +288,8 @@ public class UserServiceImpl extends AbstractAuthorizeServiceImpl<User>
         return userDetailDTO;
     }
 
+
+
     @Override
     public boolean supportType(CrudType type) {
         return false;

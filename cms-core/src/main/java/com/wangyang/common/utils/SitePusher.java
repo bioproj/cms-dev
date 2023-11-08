@@ -104,7 +104,9 @@ public class SitePusher {
             //打印响应结果
 //            System.out.println();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
 
     }

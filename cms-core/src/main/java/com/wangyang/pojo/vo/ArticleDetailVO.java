@@ -1,6 +1,7 @@
 package com.wangyang.pojo.vo;
 
 import com.wangyang.common.utils.CMSUtils;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.Toc;
 import com.wangyang.pojo.entity.Category;
@@ -42,7 +43,7 @@ public class ArticleDetailVO extends ContentDetailVO {
     private String categoryPath;
     private String categoryViewName;
     private Boolean isArticleDocLink;
-
+    private List<User> users;
     private  List<Toc> tocList;
 //    private String linkPath ;
 

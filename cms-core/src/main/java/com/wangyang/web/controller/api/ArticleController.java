@@ -80,8 +80,8 @@ public class ArticleController {
         int userId = AuthorizationUtil.getUserId(request);
         Article article = new Article();
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
-        article.setUserId(userId);
-        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(article, articleParams.getTagIds());
+//        article.setUserId(userId);
+        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(userId,article, articleParams.getTagIds());
         articleDetailVO.setIsPublisher(true);
         htmlService.conventHtml(articleDetailVO);
         return articleDetailVO;
@@ -91,7 +91,7 @@ public class ArticleController {
                                                  @PathVariable("articleId") Integer articleId,HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Article article = articleService.findArticleById(articleId);
-        checkUser(userId,article);
+//        checkUser(userId,article);
 
         Integer  oldCategoryId = article.getCategoryId();
 
@@ -99,7 +99,7 @@ public class ArticleController {
 
 
 
-        ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( article, articleParams.getTagIds());
+        ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( userId,article, articleParams.getTagIds());
         //有可能更新文章的视图名称
 //        TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
 
@@ -128,9 +128,9 @@ public class ArticleController {
         int userId = AuthorizationUtil.getUserId(request);
         Article article = new Article();
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
-        article.setUserId(userId);
+//        article.setUserId(userId);
 //        article.setStatus(ArticleStatus.DRAFT);
-        return  articleService.saveArticleDraft(article,more);
+        return  articleService.saveArticleDraft(userId,article,more);
     }
 
     @GetMapping("/simpleCreate/{categoryId}")
@@ -141,8 +141,8 @@ public class ArticleController {
         article.setCategoryId(categoryId);
         article.setTitle(title);
         article.setOriginalContent("# 开始写文章["+title+"]...");
-        article.setUserId(userId);
-        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(article,null);
+//        article.setUserId(userId);
+        ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(userId,article,null);
 
         htmlService.conventHtml(articleDetailVO);
         return articleDetailVO;
@@ -173,7 +173,7 @@ public class ArticleController {
     public BaseResponse updateArticle(@PathVariable("id") Integer id,@RequestParam(value = "more", defaultValue = "false") Boolean more,@Valid @RequestBody ArticleParams articleParams,HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Article article = articleService.findArticleById(id);
-        checkUser(userId,article);
+//        checkUser(userId,article);
         if(article.getCss()==null){
             article.setCss("");
         }
@@ -198,7 +198,7 @@ public class ArticleController {
         }else {
             article.setStatus(ArticleStatus.DRAFT);
         }
-        Article updateArticleDraft = articleService.updateArticleDraft(article, more);
+        Article updateArticleDraft = articleService.updateArticleDraft(userId,article, more);
         return BaseResponse.ok("更新成功!!",updateArticleDraft);
     }
 
@@ -229,7 +229,7 @@ public class ArticleController {
     public ArticleDetailVO updateCategory(@PathVariable("articleId") Integer articleId, Integer baseCategoryId,HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Article article = articleService.findArticleById(articleId);
-        checkUser(userId,article);
+//        checkUser(userId,article);
 //        String  viewName = article.getViewName();
 //        String path = article.getPath();
 
@@ -237,7 +237,7 @@ public class ArticleController {
         if(article.getCategoryId()!=null){
             categoryId = article.getCategoryId();
         }
-        ArticleDetailVO articleDetailVO = articleService.updateArticleCategory(article, baseCategoryId);
+        ArticleDetailVO articleDetailVO = articleService.updateArticleCategory(userId,article, baseCategoryId);
         //删除旧文章
 //        TemplateUtil.deleteTemplateHtml(viewName,path);
         //更新旧的文章列表
@@ -627,11 +627,11 @@ public class ArticleController {
         return article;
     }
 
-    public void checkUser(int userId,Article article){
-        if(article.getUserId()!=userId){
-            throw new ArticleException("您并非文章的发布者不能修改！");
-        }
-    }
+//    public void checkUser(int userId,Article article){
+//        if(article.getUserId()!=userId){
+//            throw new ArticleException("您并非文章的发布者不能修改！");
+//        }
+//    }
 
 
 

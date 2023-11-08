@@ -28,7 +28,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private ArticleStatus status;
     private Integer likes;
     private Integer visits;
-    private Integer userId;
+//    private Integer userId;
     private Integer commentNum;
     //    private Boolean haveHtml=false;
     private String summary;
@@ -39,7 +39,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private String picThumbPath;
     private String pdfPath;
     private String toc;
-    private User user;
+
     private Integer categoryId;
     private String tocJSON;
     private String commentTemplateName;

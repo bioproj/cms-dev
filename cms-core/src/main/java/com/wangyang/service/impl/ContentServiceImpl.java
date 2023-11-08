@@ -140,10 +140,10 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
                 }
 
         );
-        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
-        List<User> users = userService.findAllById(userIds);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(contents, Content::getUserId);
+//        List<User> users = userService.findAllById(userIds);
 
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+//        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
 //        Set<Integer> categories = ServiceUtil.fetchProperty(articles, Article::getCategoryId);
 //        List<CategoryDto> categoryDtos = categoryService.findAllById(categories).stream().map(category -> {
 //            CategoryDto categoryDto = new CategoryDto();
@@ -156,7 +156,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         List<ContentVO> contentVOS  = contents.stream().map(content -> {
             ContentVO contentVO = new ContentVO();
             BeanUtils.copyProperties(content,contentVO);
-            contentVO.setUser(userMap.get(content.getUserId()));
+//            contentVO.setUser(userMap.get(content.getUserId()));
 
             if(content.getOrder()==null){
                 contentVO.setOrder(0);

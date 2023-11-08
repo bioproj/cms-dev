@@ -12,6 +12,7 @@ import java.util.Date;
 public class Literature extends Content {
     @Column(name = "literature_key")
     private String key;
+    private Integer userId;
     private String zoteroKey;
     private String author;
     @Column(name = "url_")

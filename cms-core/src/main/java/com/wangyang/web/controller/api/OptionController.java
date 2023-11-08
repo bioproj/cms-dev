@@ -6,6 +6,7 @@ import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.TemplateUtil;
+import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.BaseTemplate;
@@ -18,6 +19,7 @@ import com.wangyang.pojo.vo.ContentDetailVO;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.service.*;
+import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.templates.IBaseTemplateService;
 import com.wangyang.service.base.IContentService;
@@ -70,6 +72,11 @@ public class OptionController {
     CategoryTemplateRepository categoryTemplateRepository;
 
 
+    @Autowired
+    IUserArticleService userArticleService;
+    @Autowired
+    IUserService userService;
+
     @PostMapping
     public List<Option> addOption(@RequestBody List<Option> options){
         return optionService.saveUpdateOptionList(options);
@@ -114,22 +121,35 @@ public class OptionController {
 
         List<Category> categories = categoryService.listAll();
         categories.forEach(item->{
-            Template template = templateService.findByEnName(item.getTemplateName());
-            CategoryTemplate findCategoryTemplate = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), template.getId());
-            if(findCategoryTemplate==null){
-                CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),template.getId(),template.getTemplateType());
-                categoryTemplateRepository.save(categoryTemplate);
-            }
-            List<Template> templates = templateService.findByChild(template.getId());
-            templates.forEach(templateChild->{
-                CategoryTemplate findCategoryTemplate2 = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), templateChild.getId());
-                if(findCategoryTemplate2==null){
-                    CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),templateChild.getId(),templateChild.getTemplateType());
+            if(item.getTemplateName()!=null){
+                Template template = templateService.findByEnName(item.getTemplateName());
+                CategoryTemplate findCategoryTemplate = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), template.getId());
+                if(findCategoryTemplate==null){
+                    CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),template.getId(),template.getTemplateType());
                     categoryTemplateRepository.save(categoryTemplate);
                 }
-            });
+                List<Template> templates = templateService.findByChild(template.getId());
+                templates.forEach(templateChild->{
+                    CategoryTemplate findCategoryTemplate2 = categoryTemplateRepository.findByCategoryIdAndTemplateId(item.getId(), templateChild.getId());
+                    if(findCategoryTemplate2==null){
+                        CategoryTemplate categoryTemplate = new CategoryTemplate(item.getId(),templateChild.getId(),templateChild.getTemplateType());
+                        categoryTemplateRepository.save(categoryTemplate);
+                    }
+                });
+            }
 
         });
+
+
+        List<Article> articles = articleService.listAll();
+        for (Article article : articles) {
+            List<UserArticle> userArticles = userArticleService.listByArticleId(article.getId());
+            if(userArticles.size()==0){
+                User user = userService.findUserByUsername("admin");
+                UserArticle userArticle = new UserArticle(user.getId(),article.getId());
+                userArticleService.save(userArticle);
+            }
+        }
 
 
         return "success!";

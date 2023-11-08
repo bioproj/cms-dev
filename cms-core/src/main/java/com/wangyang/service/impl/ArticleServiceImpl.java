@@ -9,7 +9,9 @@ import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.pojo.authorize.Role;
 import com.wangyang.pojo.authorize.User;
+import com.wangyang.pojo.authorize.UserRole;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.relation.ArticleTags;
@@ -25,6 +27,9 @@ import com.wangyang.repository.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsArticleRepository;
 import com.wangyang.repository.template.ComponentsCategoryRepository;
+import com.wangyang.service.IUserArticleService;
+import com.wangyang.service.authorize.IRoleService;
+import com.wangyang.service.authorize.IUserRoleService;
 import com.wangyang.service.templates.IComponentsArticleService;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.service.authorize.IUserService;
@@ -88,6 +93,16 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
     @Autowired
     ComponentsCategoryRepository componentsCategoryRepository;
+
+
+    @Autowired
+    IUserRoleService userRoleService;
+
+    @Autowired
+    IRoleService roleService;
+
+    @Autowired
+    IUserArticleService userArticleService;
 
     private  ArticleRepository articleRepository;
     public ArticleServiceImpl(ArticleRepository articleRepository) {
@@ -269,7 +284,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
      * @return
      */
     @Override
-    public ArticleDetailVO createArticleDetailVo(Article article, Set<Integer> tagsIds) {
+    public ArticleDetailVO createArticleDetailVo(Integer userId,Article article, Set<Integer> tagsIds) {
         if(article.getOrder()==null){
             int count = articleRepository.countBycategoryId(article.getCategoryId());
             article.setOrder(count+1);
@@ -287,14 +302,14 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //        article.setStatus(ArticleStatus.PUBLISHED);
 //        article.setHaveHtml(true);
         article.setTop(false);
-        ArticleDetailVO articleDetailVO = createOrUpdateArticle(article, tagsIds);
+        ArticleDetailVO articleDetailVO = createOrUpdateArticle(userId,article, tagsIds);
         return articleDetailVO;
     }
 
 
 
     @Override
-    public ArticleDetailVO updateArticleDetailVo(Article article,  Set<Integer> tagsIds) {
+    public ArticleDetailVO updateArticleDetailVo(Integer userId,Article article,  Set<Integer> tagsIds) {
         if(article.getOrder()==null){
             int count = articleRepository.countBycategoryId(article.getCategoryId());
             article.setOrder(count+1);
@@ -308,22 +323,22 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         //TODO temp delete all tags and category before update
         articleTagsRepository.deleteByArticleId(article.getId());
 
-        ArticleDetailVO articleDetailVO = createOrUpdateArticle(article, tagsIds);
+        ArticleDetailVO articleDetailVO = createOrUpdateArticle(userId,article, tagsIds);
         return articleDetailVO;
     }
 
 
-    @Override
-    public ArticleDetailVO updateArticleDetailVo(Article article) {
-        article.setPdfPath(null);
-//        article.setStatus(ArticleStatus.PUBLISHED);
-        // 文章发布默认生成HTML
-//        if(article.getHaveHtml()==null){
-//            article.setHaveHtml(true);
-//        }
-        ArticleDetailVO articleDetailVO = createOrUpdateArticle(article, null);
-        return articleDetailVO;
-    }
+//    @Override
+//    public ArticleDetailVO updateArticleDetailVo(Article article) {
+//        article.setPdfPath(null);
+////        article.setStatus(ArticleStatus.PUBLISHED);
+//        // 文章发布默认生成HTML
+////        if(article.getHaveHtml()==null){
+////            article.setHaveHtml(true);
+////        }
+//        ArticleDetailVO articleDetailVO = createOrUpdateArticle(article, null);
+//        return articleDetailVO;
+//    }
 
 
     @Override
@@ -337,9 +352,9 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
      * @return
      */
     @Override
-    public Article updateArticleDraft(Article article,boolean more){
+    public Article updateArticleDraft(Integer userId,Article article,boolean more){
 
-        if(article.getUserId()==null){
+        if(userId==null){
             throw new ArticleException("文章用户不能为空!!");
         }
 
@@ -357,7 +372,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     }
 
     @Override
-    public Article saveArticleDraft(Article article,boolean more){
+    public Article saveArticleDraft(Integer userId,Article article,boolean more){
 
 
 
@@ -375,7 +390,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             article.setExpanded(false);// 脑图默认不展开
         }
 
-        if(article.getUserId()==null){
+        if(userId==null){
             throw new ArticleException("文章用户不能为空!!");
         }
         article.setTop(false);
@@ -432,7 +447,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //        return saveArticle;
 //    }
 
-    public ArticleDetailVO createOrUpdateArticle(Article article, Set<Integer> tagsIds) {
+    public ArticleDetailVO createOrUpdateArticle(Integer userId,Article article, Set<Integer> tagsIds) {
 //        if(article.getUserId()==null){
 //            throw new ArticleException("文章用户不能为空!!");
 //        }
@@ -505,7 +520,14 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 //        super.injectContent(article,category);
 
         ArticleVO articleVO = super.createOrUpdateArticleVO(article, tagsIds);
-        ArticleDetailVO articleDetailVO = convert(articleVO, tagsIds);
+        UserArticle findUserArticle = userArticleService.findByUserIdAndArticleId(userId, articleVO.getId());
+        if(findUserArticle==null){
+            UserArticle userArticle = new UserArticle(userId,articleVO.getId());
+            userArticleService.save(userArticle);
+        }
+        List<UserArticle> userArticles = userArticleService.listByArticleId(articleVO.getId());
+        Set<Integer> userIds = ServiceUtil.fetchProperty(userArticles, UserArticle::getUserId);
+        ArticleDetailVO articleDetailVO = convert(userIds,articleVO, tagsIds);
 
 
 
@@ -573,8 +595,8 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             articleDetailVo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
         }
         //添加用户
-        User user = userService.findById(article.getUserId());
-        articleDetailVo.setUser(user);
+//        User user = userService.findById(article.getUserId());
+//        articleDetailVo.setUser(user);
         articleDetailVo.setLinkPath( FormatUtil.articleFormat(articleDetailVo));
         return articleDetailVo;
     }
@@ -588,9 +610,11 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     public ArticleDetailVO convert(Article article) {
 //        Category category = categoryService.findById(article.getCategoryId());
         ArticleVO articleVO = convertToVo(article);
-        return convert(articleVO,null);
+        List<UserArticle> userArticles = userArticleService.listByArticleId(articleVO.getId());
+        Set<Integer> userIds = ServiceUtil.fetchProperty(userArticles, UserArticle::getUserId);
+        return convert(userIds,articleVO,null);
     }
-    public ArticleDetailVO convert(ArticleVO articleVO,Set<Integer> tagsIds) {
+    public ArticleDetailVO convert(Set<Integer> userIds,ArticleVO articleVO,Set<Integer> tagsIds) {
 //        ArticleDetailVO articleDetailVo = new ArticleDetailVO();
 //        BeanUtils.copyProperties(article,articleDetailVo);
 //
@@ -639,11 +663,15 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             }
         }
 
+        if(userIds!=null && !CollectionUtils.isEmpty(userIds)){
+            List<User> users = userService.listByIds(userIds);
+            articleDetailVO.setUsers(users);
+        }
 
 
         //添加用户
-        User user = userService.findById(articleVO.getUserId());
-        articleDetailVO.setUser(user);
+//        User user = userService.findById(articleVO.getUserId());
+//        articleDetailVO.setUser(user);
         articleDetailVO.setCommentPath( articleVO.getPath()+ CMSUtils.getComment()+ File.separator +articleVO.getViewName());
         articleDetailVO.setLinkPath( FormatUtil.articleFormat(articleDetailVO));
 
@@ -691,10 +719,18 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
     @Override
     public Article findByIdAndUserId(int id, int userId){
-        Article article = articleRepository.findByIdAndUserId(id, userId);
-        if(article==null){
+//        List<UserArticle> userArticles = userArticleService.listByArticleId(id);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(userArticles, UserArticle::getUserId);
+        List<UserRole> userRoles = userRoleService.findByUserId(userId);
+        Set<Integer> roleIds = ServiceUtil.fetchProperty(userRoles, UserRole::getRoleId);
+        List<Role> roles = roleService.listByIds(roleIds);
+        Set<String> roleNames = ServiceUtil.fetchProperty(roles, Role::getEnName);
+        if(!roleNames.contains("ADMIN")){
+
             throw new ObjectException("用户为"+userId+"的文章不存在！");
         }
+        Article article = findById(id);
+
         return article;
     }
 
@@ -703,14 +739,14 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
     @Override
     public Page<ArticleDto> convertToSimple(Page<Article> articlePage) {
         List<Article> articles = articlePage.getContent();
-        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
-        List<User> users = userService.findAllById(userIds);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
+//        List<User> users = userService.findAllById(userIds);
 
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+//        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
 
         return  articlePage.map(article -> {
             ArticleDto articleDto = new ArticleDto();
-            articleDto.setUser(userMap.get(article.getUserId()));
+//            articleDto.setUser(userMap.get(article.getUserId()));
             BeanUtils.copyProperties(article,articleDto);
             articleDto.setLinkPath(FormatUtil.articleListFormat(article));
             return articleDto;
@@ -767,10 +803,10 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                 }
 
         );
-        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
-        List<User> users = userService.findAllById(userIds);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
+//        List<User> users = userService.findAllById(userIds);
 
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+//        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
 //        Set<Integer> categories = ServiceUtil.fetchProperty(articles, Article::getCategoryId);
 //        List<CategoryDto> categoryDtos = categoryService.findAllById(categories).stream().map(category -> {
 //            CategoryDto categoryDto = new CategoryDto();
@@ -783,7 +819,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         Page<ArticleVO> articleVOS = articlePage.map(article -> {
             ArticleVO articleVO = new ArticleVO();
             BeanUtils.copyProperties(article,articleVO);
-            articleVO.setUser(userMap.get(article.getUserId()));
+//            articleVO.setUser(userMap.get(article.getUserId()));
 //            if(categoryMap.containsKey(article.getCategoryId())){
 //                articleVO.setCategory( categoryMap.get(article.getCategoryId()));
 //
@@ -825,10 +861,10 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
                 }
 
         );
-        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
-        List<User> users = userService.findAllById(userIds);
+//        Set<Integer> userIds = ServiceUtil.fetchProperty(articles, Article::getUserId);
+//        List<User> users = userService.findAllById(userIds);
 
-        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
+//        Map<Integer, User> userMap = ServiceUtil.convertToMap(users, User::getId);
         Set<Integer> categories = ServiceUtil.fetchProperty(articles, Article::getCategoryId);
         List<Category> categoryList = categoryService.findAllById(categories);
         List<CategoryVO> categoryVOS = categoryService.convertToListVo(categoryList);
@@ -844,7 +880,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
         List<ArticleVO> articleVOS = articles.stream().map(article -> {
             ArticleVO articleVO = new ArticleVO();
             BeanUtils.copyProperties(article,articleVO);
-            articleVO.setUser(userMap.get(article.getUserId()));
+//            articleVO.setUser(userMap.get(article.getUserId()));
             if(categoryMap.containsKey(article.getCategoryId())){
                 articleVO.setCategory( categoryMap.get(article.getCategoryId()));
 
@@ -971,8 +1007,8 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
      * @return
      */
     @Override
-    public ArticleDetailVO updateArticleCategory(Article article, int categoryId){
-        if(article.getUserId()==null){
+    public ArticleDetailVO updateArticleCategory(Integer userId,Article article, int categoryId){
+        if(userId==null){
             throw new ArticleException("文章用户不能为空!!");
         }
         if(article.getCategoryId()==null){

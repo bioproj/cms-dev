@@ -42,10 +42,10 @@ public interface IArticleService extends IContentService<Article,ArticleDetailVO
      * @return
      */
     ArticleDetailVO findArticleAOById(int id);
-    ArticleDetailVO updateArticleDetailVo(Article article, Set<Integer> tagsIds);
-    ArticleDetailVO createArticleDetailVo(Article article, Set<Integer> tagsIds);
-    ArticleDetailVO updateArticleDetailVo(Article article);
-    ArticleDetailVO updateArticleCategory(Article article, int categoryId);
+    ArticleDetailVO updateArticleDetailVo(Integer userId,Article article, Set<Integer> tagsIds);
+    ArticleDetailVO createArticleDetailVo(Integer userId,Article article, Set<Integer> tagsIds);
+//    ArticleDetailVO updateArticleDetailVo(Article article);
+    ArticleDetailVO updateArticleCategory(Integer userId,Article article, int categoryId);
 
 
     /**
@@ -62,8 +62,8 @@ public interface IArticleService extends IContentService<Article,ArticleDetailVO
      * @param article
      * @return
      */
-    Article updateArticleDraft(Article article,boolean more);
-    Article saveArticleDraft(Article article,boolean more);
+    Article updateArticleDraft(Integer userId,Article article,boolean more);
+    Article saveArticleDraft(Integer userId,Article article,boolean more);
 
     Article recycle(int id);
 

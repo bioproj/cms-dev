@@ -83,7 +83,7 @@ public abstract class AbstractServiceTest {
         //类别不能为空
         articleParams.setCategoryId(category.getId());
         //用户不能为空
-        articleParams.setUserId(user.getId());
+//        articleParams.setUserId(user.getId());
         articleParams.setOriginalContent("test_test");
         return articleParams;
     }

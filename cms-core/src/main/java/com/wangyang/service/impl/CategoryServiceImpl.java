@@ -531,7 +531,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 
         return  categories.stream().map(category -> {
             CategoryDto categoryDto = new CategoryDto();
-            categoryDto.setResource(templateMap.get(category.getArticleTemplateName()).getResource());
+//            categoryDto.setResource(templateMap.get(category.getArticleTemplateName()).getResource());
             BeanUtils.copyProperties(category, categoryDto);
             return categoryDto;
         }).collect(Collectors.toList());
