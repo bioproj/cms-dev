@@ -8,6 +8,7 @@ cms:
   proxy_url: "http://w66h994817.zicp.fun/"
   site-map: "http://www.bioinfo.online"
   wxRedirectUri: http://192.168.10.30:8080
+  role: COMMENT
 #  templateId: eWxvdckUFTUjSfmzOollw_uMcqCI2cMFPrkiOeImARg
   templateId:
   subscribeTemplateId: XHVMe68IcNmg950kg8TEL1tsVnkL3vWgjL-uZc7x--E

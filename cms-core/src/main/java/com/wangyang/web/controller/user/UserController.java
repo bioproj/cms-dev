@@ -13,6 +13,7 @@ import com.wangyang.util.TokenProvider;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -45,6 +46,9 @@ public class UserController {
 
     @Autowired
     IUserRoleService userRoleService;
+
+    @Value("${cms.role}")
+    String role;
 
 
 
@@ -89,7 +93,8 @@ public class UserController {
         User user = new User();
         BeanUtils.copyProperties(userParam,user);
 
-        Role commentRole = roleService.findByEnName("COMMENT");
+//        Role commentRole = roleService.findByEnName("COMMENT");
+        Role commentRole = roleService.findByEnName(role);
         User saveUser = userService.save(user);
         UserRole userRole = new UserRole(saveUser.getId(),commentRole.getId());
         userRoleService.save(userRole);
