@@ -132,7 +132,9 @@ public class CategoryController {
             }
         }
 
-        if(category.getLang()!=template.getLang()){
+        if( !template.getTemplateType().equals(TemplateType.ARTICLE_LIST)  &&
+                !template.getTemplateType().equals(TemplateType.CATEGORY_LIST)  &&
+                category.getLang()!=template.getLang()){
             throw new ObjectException("分类和模板的语言不一致！");
         }
         CategoryTemplate categoryTemplates = new CategoryTemplate(category.getId(),template.getId(),template.getTemplateType());
