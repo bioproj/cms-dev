@@ -212,7 +212,7 @@ public class HtmlServiceImpl implements IHtmlService {
                 //设置文章的面包屑
                 articleVO.setParentCategories(categoryArticle.getParentCategories());
 
-                categoryContentListDao = convertArticleListBy(categoryArticle,templates);
+                categoryContentListDao = convertArticleListBy(map,categoryArticle,templates);
             }else {
                if(articleVO.getCategory()!=null){
                    List<BaseCategoryVo> categoryVOS =new ArrayList<>();
@@ -453,7 +453,7 @@ public class HtmlServiceImpl implements IHtmlService {
                 Category parentCategory = categoryService.findById(category.getParentId());
 
 
-                convertArticleListBy(contentService.findCategoryContentBy(categoryService.convertToVo(parentCategory), 0),templates);
+                convertArticleListBy(map,contentService.findCategoryContentBy(categoryService.convertToVo(parentCategory), 0),templates);
 
             }
         }
