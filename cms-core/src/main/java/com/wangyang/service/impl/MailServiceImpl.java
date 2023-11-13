@@ -107,16 +107,20 @@ public class MailServiceImpl implements MailService {
      * @throws MessagingException
      */
     @Override
-    public void sendHtmlMail(String to, String subject, String content) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
+    public void sendHtmlMail(String to, String subject, String content) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
 
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(content, true);
-        helper.setFrom(from);
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+            helper.setFrom(from);
 
-        mailSender.send(message);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -225,7 +229,7 @@ public class MailServiceImpl implements MailService {
         List<UserRole> userRoles = userRoleService.findByRoleId(role.getId());
         Set<Integer> userIds = ServiceUtil.fetchProperty(userRoles, UserRole::getUserId);
         List<User> users = userService.findAllById(userIds);
-        sendSimpleMail(customer.getEmail(),"老师感谢您的咨询",emailContent);
+        sendHtmlMail(customer.getEmail(),"老师感谢您的咨询",emailContent);
         for (User user:users){
             if(user.getEmail()==null){
                 throw new ObjectException("管理员"+user.getUsername()+"没有配置邮箱！！");
@@ -234,7 +238,7 @@ public class MailServiceImpl implements MailService {
 
             String ownerEmailContent = TemplateUtil.getHtml(ownerTemplate.getTemplateValue(), context);
 
-            sendSimpleMail(user.getEmail(),"客户["+customer.getUsername()+"]发来需求，请尽快回复！",ownerEmailContent);
+            sendHtmlMail(user.getEmail(),"客户["+customer.getUsername()+"]发来需求，请尽快回复！",ownerEmailContent);
         }
     }
 
