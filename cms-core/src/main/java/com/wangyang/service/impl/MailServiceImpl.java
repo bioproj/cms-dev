@@ -217,7 +217,6 @@ public class MailServiceImpl implements MailService {
         Context context = new Context();
         context.setVariable("customer",customer);
         context.setVariable("proxyUrl",CMSUtils.getProxyUrl());
-
         Template template = templateService.findByEnName(CmsConst.FOR_CUSTOMER);
         String emailContent = TemplateUtil.getHtml(template.getTemplateValue(), context);
 
@@ -231,7 +230,11 @@ public class MailServiceImpl implements MailService {
             if(user.getEmail()==null){
                 throw new ObjectException("管理员"+user.getUsername()+"没有配置邮箱！！");
             }
-            sendSimpleMail(user.getEmail(),"客户["+customer.getUsername()+"]发来需求，请尽快回复！",customer.getContent());
+            Template ownerTemplate = templateService.findByEnName(CmsConst.FOR_OWNER);
+
+            String ownerEmailContent = TemplateUtil.getHtml(ownerTemplate.getTemplateValue(), context);
+
+            sendSimpleMail(user.getEmail(),"客户["+customer.getUsername()+"]发来需求，请尽快回复！",ownerEmailContent);
         }
     }
 

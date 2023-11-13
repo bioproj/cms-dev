@@ -47,6 +47,7 @@ public class SystemTemplates {
 
                 new Template("Email模板",CmsConst.DEFAULT_EMAIL, "@email", TemplateType.EMAIL,7),
                 new Template("Email模板",CmsConst.FOR_CUSTOMER, "@forCustomer", TemplateType.EMAIL,7),
+                new Template("Email模板管理员",CmsConst.FOR_OWNER, "@forOwner", TemplateType.EMAIL,7),
 
 
 

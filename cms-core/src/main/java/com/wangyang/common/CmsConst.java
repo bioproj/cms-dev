@@ -96,6 +96,7 @@ public class CmsConst {
     public final static String DEFAULT_REVEAL_TEMPLATE = "DEFAULT_REVEAL";
     public final static String DEFAULT_EMAIL = "DEFAULT_EMAIL";
     public static final String FOR_CUSTOMER = "FOR_CUSTOMER";
+    public static final String FOR_OWNER = "FOR_OWNER";
 
     public final static String DEFAULT_SHEET_TEMPLATE = "DEFAULT_SHEET";
     public final static String COMPANY_INTRODUCTION  = "COMPANY_INTRODUCTION";
