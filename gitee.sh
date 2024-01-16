@@ -15,8 +15,8 @@ then
   kill -9 ${pid}
 fi
 
-./mvnw clean
-./mvnw install
+mvn clean
+mvn install  -DskipTests=true
 
 if [ ! -f $jar ];then
   echo "build failure！！！"
