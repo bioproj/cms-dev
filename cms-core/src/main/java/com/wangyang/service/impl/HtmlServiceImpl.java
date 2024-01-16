@@ -204,46 +204,50 @@ public class HtmlServiceImpl implements IHtmlService {
             Map<String,Object> map = new HashMap<>();
 
             CategoryContentListDao categoryContentListDao;
-            if(isCategory  && categoryVO!=null&&categoryVO.getId()!=null&& categoryVO.getId()!=-1){
-                List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
-                CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
+            if(categoryVO!=null){
+                if(isCategory &&categoryVO.getId()!=null&& categoryVO.getId()!=-1){
+                    List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
+                    CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
 
-                baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
-                //设置文章的面包屑
-                articleVO.setParentCategories(categoryArticle.getParentCategories());
+                    baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
+                    //设置文章的面包屑
+                    articleVO.setParentCategories(categoryArticle.getParentCategories());
 
-                categoryContentListDao = convertArticleListBy(map,categoryArticle,templates);
-            }else {
-               if(articleVO.getCategory()!=null){
-                   List<BaseCategoryVo> categoryVOS =new ArrayList<>();
-                   baseCategoryService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
-                   articleVO.setParentCategories(categoryVOS);
-               }
-
-                categoryContentListDao = contentService.findCategoryContentBy(categoryVO, 0);
-            }
-
-
-            if(categoryVO.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
-                List<ContentVO> contents = categoryContentListDao.getContents();
-                List<ContentVO> contentVOList = CMSUtils.flattenContentVOTreeToList(contents);
-                List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
-                int index = IntStream.range(0, contentVOS.size())
-                        .filter(i -> contentVOS.get(i).getId().equals(articleVO.getId()))
-                        .findFirst()
-                        .orElse(-1);
-                if(index!=-1){
-                    int size = contentVOS.size();
-                    if(index>0){
-                        ContentVO forwardContentVO = contentVOS.get(index - 1);
-                        articleVO.setForwardContentVO(forwardContentVO);
+                    categoryContentListDao = convertArticleListBy(map,categoryArticle,templates);
+                }else {
+                    if(articleVO.getCategory()!=null){
+                        List<BaseCategoryVo> categoryVOS =new ArrayList<>();
+                        baseCategoryService.addParentCategory(categoryVOS,articleVO.getCategory().getParentId());
+                        articleVO.setParentCategories(categoryVOS);
                     }
-                    if(index<(size-1)){
-                        ContentVO nextcontentVO = contentVOS.get(index + 1);
-                        articleVO.setNextcontentVO(nextcontentVO);
+
+                    categoryContentListDao = contentService.findCategoryContentBy(categoryVO, 0);
+                }
+
+
+                if(categoryVO.getTemplateData().equals(TemplateData.ARTICLE_TREE)){
+                    List<ContentVO> contents = categoryContentListDao.getContents();
+                    List<ContentVO> contentVOList = CMSUtils.flattenContentVOTreeToList(contents);
+                    List<ContentVO> contentVOS = contentVOList.stream().filter(item -> item.getIsDivision()==null || (item.getIsDivision()!=null && !item.getIsDivision()) ).collect(Collectors.toList());
+                    int index = IntStream.range(0, contentVOS.size())
+                            .filter(i -> contentVOS.get(i).getId().equals(articleVO.getId()))
+                            .findFirst()
+                            .orElse(-1);
+                    if(index!=-1){
+                        int size = contentVOS.size();
+                        if(index>0){
+                            ContentVO forwardContentVO = contentVOS.get(index - 1);
+                            articleVO.setForwardContentVO(forwardContentVO);
+                        }
+                        if(index<(size-1)){
+                            ContentVO nextcontentVO = contentVOS.get(index + 1);
+                            articleVO.setNextcontentVO(nextcontentVO);
+                        }
                     }
                 }
             }
+
+
 
 
             //判断评论文件是否存在
