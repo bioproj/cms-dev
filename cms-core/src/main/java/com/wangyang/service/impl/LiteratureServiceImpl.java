@@ -163,18 +163,18 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
             }
 
         }
-        for (Collection collection : collections){
-            htmlService.conventHtml(collection);
-//            Template template = templateService.findByEnName(collection.getTemplateName());
-//            List<Literature> subLiterature = literatureList.stream().filter(literature ->
-//                    literature.getCategoryId().equals(collection.getId())
-//            ).collect(Collectors.toList());
-//            Map<String,Object> map = new HashMap<>();
-//            map = new HashMap<>();
-//            map.put("view",subLiterature);
-//            map.put("template",template);
-//            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
-        }
+//        for (Collection collection : collections){
+//            htmlService.conventHtml(collection);
+////            Template template = templateService.findByEnName(collection.getTemplateName());
+////            List<Literature> subLiterature = literatureList.stream().filter(literature ->
+////                    literature.getCategoryId().equals(collection.getId())
+////            ).collect(Collectors.toList());
+////            Map<String,Object> map = new HashMap<>();
+////            map = new HashMap<>();
+////            map.put("view",subLiterature);
+////            map.put("template",template);
+////            String html = TemplateUtil.convertHtmlAndSave(CMSUtils.getLiteraturePath(),collection.getKey(),map, template);
+//        }
 
         Components components = componentsService.findByViewName("collectionTree");
         Object o = componentsService.getModel(components);

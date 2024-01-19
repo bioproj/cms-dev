@@ -33,6 +33,7 @@ import static com.gimranov.libzotero.HttpHeaders.IF_MODIFIED_SINCE_VERSION;
 public interface ZoteroService {
 
     public static final String TYPE = "type";
+    public static final String SINCE = "since";
     public static final String ID = "id";
     public static final String START = "start";
 
@@ -217,4 +218,16 @@ public interface ZoteroService {
     @GET("/users/{id}/keys/{key}")
     Observable<Key> getPrivileges(@Path(ID) long id,
                                         @Path("key") String key);
+
+
+    /**
+     * The set of all items in the library
+     *
+     * @param searchQuery Search parameters for the result set. May be null to apply no search parameters
+     */
+    @GET("/{type}/{id}/deleted")
+    Call<ZoteroKeys> getDeleted(@Path(TYPE) LibraryType type,
+                              @Path(ID) long id,
+                              @Nullable @QueryMap SearchQuery searchQuery,
+                              @Nullable @Header(IF_MODIFIED_SINCE_VERSION) String libraryVersion);
 }

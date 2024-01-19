@@ -127,16 +127,27 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Override
     public void conventHtml(BaseCategory baseCategory ) {
-        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
-        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByCategoryId(baseCategory.getId());
-        Set<Integer> templateIds = ServiceUtil.fetchProperty(categoryTemplates, CategoryTemplate::getTemplateId);
+//        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(baseCategory, 0);
+//        List<CategoryTemplate> categoryTemplates = categoryTemplateService.listByCategoryId(baseCategory.getId());
+//        Set<Integer> templateIds = ServiceUtil.fetchProperty(categoryTemplates, CategoryTemplate::getTemplateId);
+//
+//        List<Template> templates = templateService.listByIds(templateIds);
 
-        List<Template> templates = templateService.listByIds(templateIds);
+        List<Template> templates  = templateService.findByCategoryId(baseCategory.getId());
+//        if(baseCategory instanceof  Collection){
+//            templates = new ArrayList<>();
+//            Template template = templateService.findOptionalByEnName(((Collection) baseCategory).getTemplateName());
+//            templates.add(template);
+//        }else {
+//            templates
+//        }
+
         for (Template categoryTemplate: templates){
 //            Template categoryTemplate = templateService.findByEnName(baseCategory.getTemplateName());
 
             Map<String,Object> map2 = new HashMap<>();
-            map2.put("contents",contents);
+            map2.put("view",categoryArticle);
             map2.put("category",baseCategory);
             map2.put("template",categoryTemplate);
             TemplateUtil.convertHtmlAndSave(baseCategory.getPath(),baseCategory.getViewName(),map2, categoryTemplate);
@@ -145,18 +156,18 @@ public class HtmlServiceImpl implements IHtmlService {
 
     }
 
-    @Override
-    public void conventHtml(Collection collection ) {
-        Template categoryTemplate = templateService.findByEnName(collection.getTemplateName());
-        List<Content> contents = contentService.listContentByCategoryId(collection.getId());
-        Map<String,Object> map2 = new HashMap<>();
-        map2.put("contents",contents);
-        map2.put("category",collection);
-        map2.put("template",categoryTemplate);
-        TemplateUtil.convertHtmlAndSave(collection.getPath(),collection.getViewName(),map2, categoryTemplate);
-
-
-    }
+//    @Override
+//    public void conventHtml(Collection collection ) {
+//        Template categoryTemplate = templateService.findByEnName(collection.getTemplateName());
+//        List<Content> contents = contentService.listContentByCategoryId(collection.getId());
+//        Map<String,Object> map2 = new HashMap<>();
+//        map2.put("contents",contents);
+//        map2.put("category",collection);
+//        map2.put("template",categoryTemplate);
+//        TemplateUtil.convertHtmlAndSave(collection.getPath(),collection.getViewName(),map2, categoryTemplate);
+//
+//
+//    }
 
 
 //    @Override
@@ -206,7 +217,15 @@ public class HtmlServiceImpl implements IHtmlService {
             CategoryContentListDao categoryContentListDao;
             if(categoryVO!=null){
                 if(isCategory &&categoryVO.getId()!=null&& categoryVO.getId()!=-1){
-                    List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
+                    List<Template> templates;
+                    if(articleVO instanceof  LiteratureVo){
+                        templates = new ArrayList<>();
+                        Template categoryTemplate = templateService.findByEnName(categoryVO.getTemplateName());
+                        templates.add(categoryTemplate);
+                    }else {
+                        templates = templateService.findByCategoryId(categoryVO.getId());
+                    }
+
                     CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
 
                     baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);

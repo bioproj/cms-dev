@@ -19,7 +19,7 @@ import java.util.Set;
 
 public interface IHtmlService {
 
-    void conventHtml(Collection collection);
+//    void conventHtml(Collection collection);
 
     void conventHtml(ContentVO content);
 

@@ -4,10 +4,7 @@ import com.gimranov.libzotero.HttpHeaders;
 import com.gimranov.libzotero.LibraryType;
 import com.gimranov.libzotero.SearchQuery;
 import com.gimranov.libzotero.ZoteroService;
-import com.gimranov.libzotero.model.Creator;
-import com.gimranov.libzotero.model.Item;
-import com.gimranov.libzotero.model.ObjectVersions;
-import com.gimranov.libzotero.model.Tag;
+import com.gimranov.libzotero.model.*;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
@@ -25,10 +22,7 @@ import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
@@ -54,6 +48,8 @@ import java.util.stream.Collectors;
 @Service
 public class ZoteroServiceImpl implements IZoteroService {
 
+
+    private static  final String ZOTERO_VERSION ="ZOTERO_VERSION";
     @Autowired
     ILiteratureService literatureService;
 
@@ -72,6 +68,10 @@ public class ZoteroServiceImpl implements IZoteroService {
 
     @Autowired
     ICategoryTemplateService categoryTemplateService;
+
+
+    @Autowired
+    IOptionService optionService;
 
     @Override
     public Task importLiterature(int userId) {
@@ -148,8 +148,7 @@ public class ZoteroServiceImpl implements IZoteroService {
         });
         return task;
     }
-
-    public List<Item> listByItemType(String itemType) throws IOException {
+    public ZoteroService getZoteroService(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -173,11 +172,26 @@ public class ZoteroServiceImpl implements IZoteroService {
                 .build();
 
         ZoteroService zoteroService = retrofit.create(ZoteroService.class);
-        SearchQuery searchQueryVersion = new SearchQuery();
-        searchQueryVersion.put("itemType",itemType);
-        Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQueryVersion,null);
-        ObjectVersions objectVersions = itemVersions.execute().body();
-        int size = objectVersions.size();
+        return zoteroService;
+    }
+//    public ObjectVersions listVersion( ZoteroService zoteroService,SearchQuery searchQuery,String since) throws IOException {
+//        if(searchQuery==null){
+//            searchQuery = new SearchQuery();
+//        }
+////         = new SearchQuery();
+////        searchQueryVersion.put("itemType",itemType);
+//        Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQuery,since);
+//        ObjectVersions objectVersions = itemVersions.execute().body();
+//        return objectVersions;
+//    }
+    public List<Item> listByItemType(ZoteroService zoteroService, int size,SearchQuery searchQuery,String since) throws IOException {
+
+//        = objectVersions.size();
+
+        if(searchQuery==null){
+            searchQuery = new SearchQuery();
+        }
+
         int num;
         if(size%100==0){
             num = size/100;
@@ -186,132 +200,186 @@ public class ZoteroServiceImpl implements IZoteroService {
         }
         List<Item> allItem = new ArrayList<>();
         for (int i=0;i<num;i++){
-            SearchQuery searchQuery = new SearchQuery();
+//             = new SearchQuery();
             searchQuery.put("limit",100);
             searchQuery.put("start",i*100);
             searchQuery.put("sort","title");
-
-            searchQuery.put("itemType",itemType);
-            Call<List<Item>> items = zoteroService.getItems(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
+            searchQuery.put("since",since);
+//            searchQuery.put("itemType",itemType);
+            Call<List<Item>> items = zoteroService.getItems(LibraryType.USER, Long.valueOf("8927145"),searchQuery,null);
             List<Item> itemList = items.execute().body();
             allItem.addAll(itemList);
         }
         return allItem;
     }
+
+    public ZoteroKeys getDeleted(ZoteroService zoteroService ,String since){
+
+        try {
+//            = getZoteroService();
+            SearchQuery searchQuery = new SearchQuery();
+            searchQuery.put("since",since);
+            Call<ZoteroKeys> serviceDeleted = zoteroService.getDeleted(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
+            ZoteroKeys  zoteroKeys = serviceDeleted.execute().body();
+            return zoteroKeys;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+
+
     @Async
     @Override
     public void importLiterature(Integer userId, Task task)  {
+        Option option = optionService.findByOptionalKey(ZOTERO_VERSION).orElse(Option.builder().key(ZOTERO_VERSION).value("0").build());
+        ZoteroService zoteroService = getZoteroService();
+
+
+
+
         List<Collection> collections = collectionService.listAll();
         if(collections.size()==0){
             throw new ObjectException("请先导入分类！！！");
         }
+
         try {
+            String since = option.getValue();
+            if(since== null || since.equals("0")){
+                since = String.valueOf(0);
+                List<Literature> delLiterature = literatureService.listAll();
+                literatureService.deleteAll(delLiterature);
+            }
 
 //        Map map = new HashMap<>();
 //        retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
 //        Map<String, String> stringMap = collectionsVersion.execute().body();
-            List<Item> allItem = listByItemType("journalArticle");
-//            allItem.addAll(listByItemType("thesis"));
-            List<Item> thesis = listByItemType("thesis");
-            allItem.addAll(thesis);
+            SearchQuery searchQuery = new SearchQuery();
+            searchQuery.put("itemType","thesis || journalArticle"); //journalArticle
+            searchQuery.put("since",since);
+//            ObjectVersions objectVersions = listVersion(zoteroService, searchQuery, since);
+            Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
+            retrofit2.Response<ObjectVersions> objectVersionsResponse = itemVersions.execute();
+            ObjectVersions objectVersions = objectVersionsResponse.body();
+            if(objectVersions!=null || objectVersions.size()!=0){
+                List<Item> allItem = listByItemType(zoteroService,objectVersions.size(),searchQuery,since);
+//            allItem.addAll(listByItemType("thesis",since));
+
+//            List<Item> thesis = listByItemType("thesis");
+//            allItem.addAll(thesis);
 //            searchQueryVersion.put("itemType","thesis");
 //            itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQueryVersion,null);
 
 
 
 
-            Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
+                Map<String, Collection> collectionMap = ServiceUtil.convertToMap(collections, Collection::getKey);
 
-            Set<String> findTags = new HashSet<>();
-            List<ArticleTagsDto> articleTagsDtos = new ArrayList<>();
-            List<Literature> literatureList = new ArrayList<>();
-            for (int i=0;i<allItem.size();i++){
-                Item item = allItem.get(i);
+                Set<String> findTags = new HashSet<>();
+                List<ArticleTagsDto> articleTagsDtos = new ArrayList<>();
+                List<Literature> literatureList = new ArrayList<>();
+                for (int i=0;i<allItem.size();i++){
+                    Item item = allItem.get(i);
 
-                List<String> collectionNames = item.getData().getCollections();
-                if(collectionNames.size()>0){
+                    List<String> collectionNames = item.getData().getCollections();
+                    if(collectionNames.size()>0){
 //                    String name = collectionNames.get(0);
-                    for (String name :collectionNames){
+                        for (String name :collectionNames){
+                            Literature literature= new Literature();
+                            literature.setTitle(item.getData().getTitle());
+                            literature.setKey(item.getKey());
+                            literature.setZoteroKey(item.getKey());
+                            literature.setItemType(item.getData().getItemType());
+                            literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+                            literature.setUserId(userId);
+                            if(item.getData().getUrl().startsWith("http")){
+                                literature.setUrl(item.getData().getUrl());
+                            }else {
+                                literature.setUrl(null);
+                            }
+
+                            literature.setOriginalContent(item.getData().getAbstractNote());
+                            String dateStr = item.getData().getDate();
+                            Date date = null;
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                date = sdf.parse(dateStr);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            literature.setPublishDate(date);
+                            List<Creator> creators = item.getData().getCreators();
+
+                            List<Tag> zoteroTags = item.getData().getTags();
+                            for(Tag tag :zoteroTags){
+                                findTags.add(tag.getTag());
+                                articleTagsDtos.add(new ArticleTagsDto(tag.getTag(),literature.getKey()));
+                            }
+
+                            if(collectionMap.containsKey(name)){
+                                Collection collection = collectionMap.get(name);
+                                literature.setCategoryId(collection.getId());
+
+                            }else {
+                                literature.setCategoryId(-1);
+                            }
+                            literature.setPath("html/literature");
+                            literature.setViewName(item.getKey());
+                            literatureList.add(literature);
+                        }
+                    }else {
                         Literature literature= new Literature();
                         literature.setTitle(item.getData().getTitle());
                         literature.setKey(item.getKey());
                         literature.setZoteroKey(item.getKey());
-                        literature.setItemType(item.getData().getItemType());
+                        literature.setUrl(item.getData().getUrl());
                         literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
                         literature.setUserId(userId);
-                        if(item.getData().getUrl().startsWith("http")){
-                            literature.setUrl(item.getData().getUrl());
-                        }else {
-                            literature.setUrl(null);
-                        }
-
+                        literature.setItemType(item.getData().getItemType());
                         literature.setOriginalContent(item.getData().getAbstractNote());
-                        String dateStr = item.getData().getDate();
-                        Date date = null;
-                        try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                            date = sdf.parse(dateStr);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        literature.setPublishDate(date);
-                        List<Creator> creators = item.getData().getCreators();
-
-                        List<Tag> zoteroTags = item.getData().getTags();
-                        for(Tag tag :zoteroTags){
-                            findTags.add(tag.getTag());
-                            articleTagsDtos.add(new ArticleTagsDto(tag.getTag(),literature.getKey()));
-                        }
-
-                        if(collectionMap.containsKey(name)){
-                            Collection collection = collectionMap.get(name);
-                            literature.setCategoryId(collection.getId());
-
-                        }else {
-                            literature.setCategoryId(-1);
-                        }
+                        literature.setCategoryId(-1);
                         literature.setPath("html/literature");
                         literature.setViewName(item.getKey());
                         literatureList.add(literature);
                     }
-                }else {
-                    Literature literature= new Literature();
-                    literature.setTitle(item.getData().getTitle());
-                    literature.setKey(item.getKey());
-                    literature.setZoteroKey(item.getKey());
-                    literature.setUrl(item.getData().getUrl());
-                    literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
-                    literature.setUserId(userId);
-                    literature.setItemType(item.getData().getItemType());
-                    literature.setOriginalContent(item.getData().getAbstractNote());
-                    literature.setCategoryId(-1);
-                    literature.setPath("html/literature");
-                    literature.setViewName(item.getKey());
-                    literatureList.add(literature);
+
+
+
                 }
 
+//            List<Literature> literature = literatureService.listAll();
+//            Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
+//            Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
+////            Set<String> findLiterature2 = new HashSet<>(findLiterature);
+//            findLiterature.removeAll(dbLiterature);
+//
+//            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
+                List<Literature> literatures = literatureService.saveAll(literatureList);
+                literatureService.generateHtml(literatures);
+
+//            dbLiterature.removeAll(findLiterature2);
+//            List<Literature> needRemove = literature.stream().filter(item -> dbLiterature.contains(item.getTitle())).collect(Collectors.toList());
+//
+//            literatureService.deleteAll(needRemove);
 
 
+
+//                if(option.getValue().equals("0")){
+                String lastVersion = objectVersionsResponse.headers().get("Last-Modified-Version");
+                option.setValue(lastVersion);
+                optionService.saveUpdateOption(option);
+//                }else{
+                ZoteroKeys zoteroKeys = getDeleted(zoteroService,option.getValue());
+                List<Literature> delLiterature = literatureService.listByKeys(zoteroKeys.getItems());
+                List<Literature> filteredList = delLiterature.stream()
+                        .filter(element -> element != null)
+                        .collect(Collectors.toList());
+
+                literatureService.deleteAll(filteredList);
+//                }
             }
-
-
-
-//            literatureService.deleteAll();
-            List<Literature> literature = literatureService.listAll();
-            Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
-            Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
-            Set<String> findLiterature2 = new HashSet<>(findLiterature);
-            findLiterature.removeAll(dbLiterature);
-
-            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
-            List<Literature> literatures = literatureService.saveAll(needSave);
-            literatureService.generateHtml(literatures);
-
-            dbLiterature.removeAll(findLiterature2);
-            List<Literature> needRemove = literature.stream().filter(item -> dbLiterature.contains(item.getTitle())).collect(Collectors.toList());
-
-            literatureService.deleteAll(needRemove);
-
 
 
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import com.wangyang.pojo.enums.PropertyEnum;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface IOptionService {
     Option save(Option option);
@@ -25,6 +26,8 @@ public interface IOptionService {
     Option saveUpdateOption(Option updateOption);
 
     Option findByKey(String key);
+
+    Optional<Option > findByOptionalKey(String key);
 
     List<Option> list();
 }

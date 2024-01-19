@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,6 +96,11 @@ public class OptionService implements IOptionService {
         return option;
     }
 
+    @Override
+    public Optional<Option >findByOptionalKey(String key){
+        Option option = optionRepository.findByKey(key);
+        return Optional.ofNullable(option);
+    }
     @Override
     public List<Option> list(){
         return optionRepository.findAll();

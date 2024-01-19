@@ -16,7 +16,14 @@
 
 package com.gimranov.libzotero;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.util.HashMap;
 
+@Builder
+
+@NoArgsConstructor
 public class SearchQuery extends HashMap<String, Object> {
 }

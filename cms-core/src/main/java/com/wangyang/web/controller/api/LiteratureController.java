@@ -3,6 +3,7 @@ package com.wangyang.web.controller.api;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.params.LiteratureParam;
 import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.service.*;
@@ -124,4 +125,22 @@ public class LiteratureController {
         return BaseResponse.ok("success!!");
 
     }
+
+
+    @GetMapping("/generateHtml/{id}")
+    public Content generateHtml(@PathVariable("id") Integer id){
+
+//        TestStatic.test();
+        Literature literature = literatureService.findById(id);
+        // 需要判断文章模板路径
+//        contentService.checkContentTemplatePath(content);
+
+//        ArticleDetailVO articleDetailVO = contentService.convert(content);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        LiteratureVo literatureVo1 = literatureService.convertToVo(literature);
+        LiteratureVo literatureVo = literatureService.convertToTagVo(literatureVo1);
+        htmlService.conventHtml(literatureVo);
+        return literature;
+    }
+
 }
