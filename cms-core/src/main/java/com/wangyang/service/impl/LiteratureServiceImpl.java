@@ -1,7 +1,6 @@
 package com.wangyang.service.impl;
 
 import com.wangyang.common.utils.TemplateUtil;
-import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
 import com.wangyang.common.enums.CrudType;
@@ -125,6 +124,21 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         return literatures;
     }
 
+    @Override
+    public Literature findByKeys(String key) {
+//        List<Literature> literatures = new ArrayList<>();
+
+
+        List<Literature> literatures = literatureRepository.findAll(new Specification<Literature>() {
+            @Override
+            public Predicate toPredicate(Root<Literature> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return criteriaQuery.where(criteriaBuilder.equal(root.get("key"),key)).getRestriction();
+            }
+        });
+
+        if(literatures.size()>0) return literatures.get(0);
+        return null;
+    }
 
     @Override
     public List<Literature> listByCollectionId(Integer collectionId) {
@@ -134,6 +148,12 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
                 return criteriaQuery.where(criteriaBuilder.equal(root.get("categoryId"),collectionId)).getRestriction();
             }
         });
+    }
+    @Override
+    public void generateHtml(Literature  literatures) {
+        LiteratureVo literatureVo1 = convertToVo(literatures);
+        LiteratureVo literatureVo = convertToTagVo(literatureVo1);
+        htmlService.conventHtml(literatureVo);
     }
     @Override
     public void generateHtml(List<Literature> literatures) {

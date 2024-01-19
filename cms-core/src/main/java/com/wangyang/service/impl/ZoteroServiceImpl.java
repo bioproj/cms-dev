@@ -23,6 +23,7 @@ import com.wangyang.service.*;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
 import okhttp3.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
@@ -356,8 +357,16 @@ public class ZoteroServiceImpl implements IZoteroService {
 //            findLiterature.removeAll(dbLiterature);
 //
 //            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
-                List<Literature> literatures = literatureService.saveAll(literatureList);
-                literatureService.generateHtml(literatures);
+                for (Literature literature : literatureList){
+                    Literature literatureServiceByKeys = literatureService.findByKeys(literature.getKey());
+                    if(literatureServiceByKeys!=null){
+//                        literature.setId(literatureServiceByKeys.getId());
+                        continue;
+                    }
+                    Literature save = literatureService.save(literature);
+                    literatureService.generateHtml(save);
+                }
+
 
 //            dbLiterature.removeAll(findLiterature2);
 //            List<Literature> needRemove = literature.stream().filter(item -> dbLiterature.contains(item.getTitle())).collect(Collectors.toList());

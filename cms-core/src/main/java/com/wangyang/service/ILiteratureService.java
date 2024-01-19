@@ -14,7 +14,11 @@ public interface ILiteratureService  extends IContentService<Literature, Literat
 
     List<Literature> listByKeys(Set<String> literatureStrIds);
 
+    Literature findByKeys(String key);
+
     List<Literature> listByCollectionId(Integer collectionId);
+
+    void generateHtml(Literature literatures);
 
     void generateHtml(List<Literature> literatures);
 
