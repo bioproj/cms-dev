@@ -73,7 +73,13 @@ public class TagsServiceImpl extends AbstractCrudService<Tags,Tags, BaseVo,Integ
     public Tags addUniqueByKey(Tags tags) {
         Optional<Tags> tagsOptional = findByKey(tags.getKey());
         if(tagsOptional.isPresent()){
-            return tagsOptional.get();
+            Tags findTags = tagsOptional.get();
+            if(!findTags.getName().equals(tags.getName()) || !findTags.getUrl().equals(tags.getUrl())){
+                findTags.setName(tags.getName());
+                findTags.setUrl(tags.getUrl());
+                findTags = tagsRepository.save(findTags);
+            }
+            return findTags;
         }
         if(tags.getEnName()==null){
             tags.setEnName(CMSUtils.randomViewName());
