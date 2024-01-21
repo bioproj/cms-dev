@@ -1,6 +1,7 @@
 package com.wangyang.service;
 
 import com.wangyang.pojo.entity.Literature;
+import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.pojo.vo.LiteratureDetailVO;
 import com.wangyang.pojo.vo.LiteratureVo;
@@ -23,4 +24,8 @@ public interface ILiteratureService  extends IContentService<Literature, Literat
     void generateHtml(List<Literature> literatures);
 
     void generateListHtml(int userId);
+
+    ArticleTags addAttachmentTags(Integer literatureId, Integer id);
+
+//    Literature save(Literature literature, Integer id);
 }

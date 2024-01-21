@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Slf4j
 public class FileUtils {
@@ -283,6 +285,39 @@ public class FileUtils {
             }
         }
         return fileNames;
+    }
+
+    public static void unzip(String zipFilePath, String destDirectory) throws IOException {
+        File destDir = new File(destDirectory);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+
+        byte[] buffer = new byte[1024];
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath));
+        ZipEntry entry = zipInputStream.getNextEntry();
+
+        while (entry != null) {
+            String filePath = destDirectory + File.separator + entry.getName();
+            if (!entry.isDirectory()) {
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
+
+                int bytesRead;
+                while ((bytesRead = zipInputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.close();
+            } else {
+                File dir = new File(filePath);
+                dir.mkdir();
+            }
+
+            zipInputStream.closeEntry();
+            entry = zipInputStream.getNextEntry();
+        }
+
+        zipInputStream.close();
     }
 
 }

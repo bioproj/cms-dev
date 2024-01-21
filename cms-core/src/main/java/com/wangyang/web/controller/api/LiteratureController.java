@@ -86,6 +86,7 @@ public class LiteratureController {
 
         return saveLiterature;
     }
+
     @GetMapping("/delAll")
     public BaseResponse delAll(){
          literatureService.deleteAll();

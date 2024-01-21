@@ -69,7 +69,18 @@ public class TagsServiceImpl extends AbstractCrudService<Tags,Tags, BaseVo,Integ
         log.info("添加 Tags"+tags.getName());
         return tagsRepository.save(tags);
     }
-
+    @Override
+    public Tags addUniqueByKey(Tags tags) {
+        Optional<Tags> tagsOptional = findByKey(tags.getKey());
+        if(tagsOptional.isPresent()){
+            return tagsOptional.get();
+        }
+        if(tags.getEnName()==null){
+            tags.setEnName(CMSUtils.randomViewName());
+        }
+        log.info("添加 Tags"+tags.getName());
+        return tagsRepository.save(tags);
+    }
     @Override
     public boolean supportType(CrudType type) {
         return false;
@@ -97,6 +108,9 @@ public class TagsServiceImpl extends AbstractCrudService<Tags,Tags, BaseVo,Integ
     }
 
 
+    public Optional<Tags> findByKey(String key){
+        return  Optional.ofNullable(tagsRepository.findTagsByKey(key));
+    }
     @Override
     public Optional<Tags> findBy(String tagName){
         return  Optional.ofNullable(tagsRepository.findTagsByName(tagName));

@@ -12,6 +12,7 @@ public interface TagsRepository extends BaseRepository<Tags,Integer> {
     List<Tags> findTagsByArticleId(int aid);
 
     Tags findTagsByName(String name);
+    Tags findTagsByKey(String key);
     Tags findTagsBySlugName(String name);
 
     @Query("select a.relationId from ArticleTags a where a.id=?1")

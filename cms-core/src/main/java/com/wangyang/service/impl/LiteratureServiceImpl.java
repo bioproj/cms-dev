@@ -13,6 +13,7 @@ import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.base.AbstractContentServiceImpl;
+import com.wangyang.service.relation.IArticleTagsService;
 import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.templates.ITemplateService;
 import org.springframework.beans.BeanUtils;
@@ -39,7 +40,11 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     private ITemplateService templateService;
     private IComponentsService componentsService;
     @Autowired
-    ArticleTagsRepository articleTagsRepository;
+    private ArticleTagsRepository articleTagsRepository;
+
+
+    @Autowired
+    private IArticleTagsService articleTagsService;
 
     @Autowired
     IHtmlService htmlService;
@@ -212,6 +217,15 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     }
 
 
+    @Override
+    public ArticleTags addAttachmentTags(Integer literatureId, Integer id) {
+        ArticleTags articleTags =  new ArticleTags();
+        articleTags.setArticleId(literatureId);
+        articleTags.setRelationType(RelationType.LITERATURE_ATTACHMENT);
+        articleTags.setRelationId(id);
+        articleTagsService.save(articleTags);
+        return articleTags;
+    }
 
     @Override
     public boolean supportType(CrudType type) {

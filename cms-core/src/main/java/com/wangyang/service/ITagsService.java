@@ -26,6 +26,8 @@ public interface ITagsService extends ICrudService<Tags, Tags, BaseVo,Integer> {
      */
     Tags add(Tags tags);
 
+    Tags addUniqueByKey(Tags tags);
+
     /**
      * update tags by Id
      * @param id

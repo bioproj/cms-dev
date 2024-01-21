@@ -1,5 +1,5 @@
 package com.wangyang.pojo.enums;
 
 public enum RelationType {
-    LITERATURE,ARTICLE
+    LITERATURE,ARTICLE,LITERATURE_ATTACHMENT
 }

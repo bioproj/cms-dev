@@ -31,7 +31,7 @@ public class ItemData implements Identifiable {
     private String itemType;
 
     private int version;
-
+    private  String parentItem;
     private String title;
     
     private List<Creator> creators = new ArrayList<>();

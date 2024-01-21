@@ -1,13 +1,18 @@
 package com.wangyang.pojo.entity;
 
 import com.wangyang.common.pojo.BaseEntity;
-import lombok.Data;
+import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.io.Serializable;
 
 @Entity
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Tags extends BaseEntity  implements Serializable {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +21,11 @@ public class Tags extends BaseEntity  implements Serializable {
     private String description;
     private String slugName;
     private String enName;
+    @Column(name = "tags_key")
+    private String key;
+    private String url;
 
-    public Tags(){}
+
     public Tags(String name,String slugName){
         this.name = name;
         this.slugName = slugName;
