@@ -270,7 +270,7 @@ public class ZoteroServiceImpl implements IZoteroService {
             Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
             retrofit2.Response<ObjectVersions> objectVersionsResponse = itemVersions.execute();
             ObjectVersions objectVersions = objectVersionsResponse.body();
-            if(objectVersions!=null || objectVersions.size()!=0){
+            if(objectVersions!=null &&  objectVersions.size()!=0){
                 List<Item> allItem = listByItemType(zoteroService,objectVersions.size(),searchQuery,since);
 //            allItem.addAll(listByItemType("thesis",since));
 
@@ -435,20 +435,19 @@ public class ZoteroServiceImpl implements IZoteroService {
 //                if(option.getValue().equals("0")){
 
 //                }else{
-                ZoteroKeys zoteroKeys = getDeleted(zoteroService,option.getValue());
-                List<Literature> delLiterature = literatureService.listByKeys(zoteroKeys.getItems());
-                List<Literature> filteredList = delLiterature.stream()
-                        .filter(element -> element != null)
-                        .collect(Collectors.toList());
 
-                literatureService.deleteAll(filteredList);
-//                }
-                String lastVersion = objectVersionsResponse.headers().get("Last-Modified-Version");
-                option.setValue(lastVersion);
-                optionService.saveUpdateOption(option);
             }
 
 
+            ZoteroKeys zoteroKeys = getDeleted(zoteroService,option.getValue());
+            List<Literature> delLiterature = literatureService.listByKeys(zoteroKeys.getItems());
+            List<Literature> filteredList = delLiterature.stream()
+                    .filter(element -> element != null)
+                    .collect(Collectors.toList());
+//            literatureService.deleteAll(filteredList);
+            String lastVersion = objectVersionsResponse.headers().get("Last-Modified-Version");
+            option.setValue(lastVersion);
+            optionService.saveUpdateOption(option);
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
