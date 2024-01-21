@@ -266,7 +266,7 @@ public class ZoteroServiceImpl implements IZoteroService {
 //        retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
 //        Map<String, String> stringMap = collectionsVersion.execute().body();
             SearchQuery searchQuery = new SearchQuery();
-            searchQuery.put("itemType","thesis || journalArticle || attachment"); //journalArticle
+            searchQuery.put("itemType","thesis || journalArticle || attachment || preprint || conferencePaper"); //journalArticle
             searchQuery.put("since",since);
 //            ObjectVersions objectVersions = listVersion(zoteroService, searchQuery, since);
             Call<ObjectVersions> itemVersions = zoteroService.getItemVersions(LibraryType.USER, Long.valueOf("8927145"), searchQuery,null);
