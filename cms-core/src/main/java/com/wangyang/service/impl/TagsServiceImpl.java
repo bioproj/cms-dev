@@ -78,7 +78,7 @@ public class TagsServiceImpl extends AbstractCrudService<Tags,Tags, BaseVo,Integ
         if(tags.getEnName()==null){
             tags.setEnName(CMSUtils.randomViewName());
         }
-        log.info("添加 Tags"+tags.getName());
+        log.info("add Tags {}",tags.getName());
         return tagsRepository.save(tags);
     }
     @Override

@@ -23,6 +23,7 @@ import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ZoteroServiceImpl implements IZoteroService {
 
 
@@ -391,6 +393,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                         Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
                         if(zipFilePath.toFile().exists()){
                             FileUtils.unzip(zipFilePath.toString(),dir);
+                            log.info("unzip file:{}", zipFilePath);
                         }
                         itemAttachmentList.remove(itemAttachment);
                         Tags tags = Tags.builder()
@@ -398,6 +401,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                                 .key(itemAttachment.getKey())
                                 .url("/html/webdav/zotero/"+itemAttachment.getTitle())
                                 .build();
+
                         Tags addedTags = tagsService.addUniqueByKey(tags);
                         literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
 
@@ -410,6 +414,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                     Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
                     if(zipFilePath.toFile().exists()){
                         FileUtils.unzip(zipFilePath.toString(),dir);
+                        log.info("unzip file:{}", zipFilePath);
                     }
                     Literature literature = literatureService.findByKeys(itemAttachment.getParentItem());
                     if(literature!=null){
