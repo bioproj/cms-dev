@@ -396,7 +396,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                         Tags tags = Tags.builder()
                                 .name(itemAttachment.getTitle())
                                 .key(itemAttachment.getKey())
-                                .url("/webdav/zotero/"+itemAttachment.getTitle())
+                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
                                 .build();
                         Tags addedTags = tagsService.addUniqueByKey(tags);
                         literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
@@ -416,7 +416,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                         Tags tags = Tags.builder()
                                 .name(itemAttachment.getTitle())
                                 .key(itemAttachment.getKey())
-                                .url("/webdav/zotero/"+itemAttachment.getTitle())
+                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
                                 .build();
                       Tags addedTags = tagsService.addUniqueByKey(tags);
                        literatureService.addAttachmentTags(literature.getId(),addedTags.getId());

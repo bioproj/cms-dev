@@ -102,7 +102,6 @@ public class LiteratureController {
     public BaseResponse delete(@PathVariable("id") Integer id){
         Literature literature = literatureService.findById(id);
         literatureService.delete(literature);
-
         return BaseResponse.ok("Delete id "+id+" menu success!!");
     }
 
