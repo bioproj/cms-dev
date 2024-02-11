@@ -16,4 +16,5 @@ public class Goods extends Content {
     private Double cost;
     private String goodsImg;
     private String goodsQr;
+    private String costUrl;
 }

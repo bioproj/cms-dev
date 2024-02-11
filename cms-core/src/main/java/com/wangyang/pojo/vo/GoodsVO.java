@@ -11,4 +11,5 @@ public class GoodsVO extends ContentVO {
     private Double cost;
     private String goodsImg;
     private String goodsQr;
+    private String costUrl;
 }

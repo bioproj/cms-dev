@@ -40,4 +40,5 @@ public class GoodsParams {
     private String video;
     private Boolean isDivision;
     private Double cost;
+    private String costUrl;
 }
