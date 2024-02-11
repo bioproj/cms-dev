@@ -149,7 +149,10 @@ public class GoodsController {
         htmlService.conventHtml(goodsDetailVO);
         return goodsDetailVO;
     }
-
+    @GetMapping("/find/{articleId}")
+    public Goods findById(@PathVariable("articleId") Integer articleId){
+        return goodsService.findById(articleId);
+    }
 
 
 }
