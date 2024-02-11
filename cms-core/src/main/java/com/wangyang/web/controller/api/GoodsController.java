@@ -87,7 +87,7 @@ public class GoodsController {
         return goodsDetailVO;
     }
     @PostMapping("/update/{articleId}")
-    public GoodsDetailVO updateArticleDetailVO(@Valid @RequestBody ArticleParams articleParams,
+    public GoodsDetailVO updateArticleDetailVO(@Valid @RequestBody GoodsParams goodsParams,
                                                  @PathVariable("articleId") Integer articleId,HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Goods goods = goodsService.findById(articleId);
@@ -95,16 +95,16 @@ public class GoodsController {
 
         Integer  oldCategoryId = goods.getCategoryId();
 
-        BeanUtils.copyProperties(articleParams,goods,CMSUtils.getNullPropertyNames(articleParams));
+        BeanUtils.copyProperties(goodsParams,goods,CMSUtils.getNullPropertyNames(goodsParams));
 
 
 
-        GoodsDetailVO goodsDetailVO = goodsService.updateGoodsDetailVo( goods, articleParams.getTagIds());
+        GoodsDetailVO goodsDetailVO = goodsService.updateGoodsDetailVo( goods, goodsParams.getTagIds());
         //有可能更新文章的视图名称
 //        TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
 
         //更新文章分类, 还需要重新生成老的分类
-        if(!articleParams.getCategoryId().equals(oldCategoryId) && oldCategoryId!=null){
+        if(!goodsParams.getCategoryId().equals(oldCategoryId) && oldCategoryId!=null){
             Category oldCategory = categoryService.findById(oldCategoryId);
 //            goodsDetailVO.setOldCategory(oldCategory);
             htmlService.convertArticleListBy(oldCategory);

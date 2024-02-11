@@ -8,4 +8,7 @@ import lombok.Data;
 public class GoodsVO extends ContentVO {
     private User user;
     private Integer userId;
+    private Double cost;
+    private String goodsImg;
+    private String goodsQr;
 }

@@ -13,7 +13,13 @@ public class GoodsParams {
     private String templateName;
     //    private ArticleStatus status =ArticleStatus.PUBLISHED;
 //    private Boolean haveHtml;
-    private String picThumbPath;
+//    private String picThumbPath;
+//    private String picPath;
+
+    private String goodsImg;
+    private String goodsQr;
+
+
     @NotBlank(message = "文章标题不能为空!!")
     private String title;
     @NotBlank(message = "文章内容不能为空!!")
@@ -26,11 +32,12 @@ public class GoodsParams {
     //    @NotNull(message = "文章用户不能为空!!")
 //    private Integer userId;
 //    private String  path;
-    private String picPath;
+
     private String cssClass; //节点的方向
 
     private String bilibili;
     private String youtube;
     private String video;
     private Boolean isDivision;
+    private Double cost;
 }
