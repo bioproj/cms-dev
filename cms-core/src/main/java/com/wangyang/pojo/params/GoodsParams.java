@@ -14,7 +14,7 @@ public class GoodsParams {
     //    private ArticleStatus status =ArticleStatus.PUBLISHED;
 //    private Boolean haveHtml;
 //    private String picThumbPath;
-//    private String picPath;
+    private String picPath;
 
     private String goodsImg;
     private String goodsQr;
