@@ -9,4 +9,7 @@ public class GoodsDetailVO extends ContentDetailVO {
     private String js;
     private String bilibili;
     private User user;
+    private Double cost;
+    private String goodsImg;
+    private String goodsQr;
 }
