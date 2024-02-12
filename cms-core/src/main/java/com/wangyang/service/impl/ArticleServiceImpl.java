@@ -15,6 +15,7 @@ import com.wangyang.pojo.authorize.UserRole;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.enums.ArticleList;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.enums.RelationType;
@@ -62,12 +63,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,ArticleDetailVO,ArticleVO> implements IArticleService {
 
-    enum ArticleList{
-        INCLUDE_TOP,
-        NO_INCLUDE_TOP,
-        ALL_PUBLISH_MODIFY_ARTICLE,
-        ALL_ARTICLE
-    }
+
 
 
 
@@ -131,7 +127,7 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
             return query.getRestriction();
         };
     }
-    private Specification<Article> articleSpecification(int  categoryId,ArticleList articleList){
+    private Specification<Article> articleSpecification(int  categoryId, ArticleList articleList){
 //        Category category =new Category();
 //        category.setId(categoryId);
 //        category.setDesc(true);
