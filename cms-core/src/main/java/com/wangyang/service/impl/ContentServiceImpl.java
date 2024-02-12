@@ -7,6 +7,7 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.enums.ArticleList;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.enums.TemplateData;
@@ -69,24 +70,24 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         List<Content> contents = contentRepository.findAll();
         return contents;
     }
-    private Specification<Content> articleSpecification(Set<Integer> ids, Boolean isDesc, ArticleServiceImpl.ArticleList articleList){
+    private Specification<Content> articleSpecification(Set<Integer> ids, Boolean isDesc, ArticleList articleList){
         Specification<Content> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new LinkedList<>();
             predicates.add(criteriaBuilder.in(root.get("categoryId")).value(ids));
-            if(articleList.equals(ArticleServiceImpl.ArticleList.INCLUDE_TOP)){
+            if(articleList.equals(ArticleList.INCLUDE_TOP)){
                 predicates.add( criteriaBuilder.isTrue(root.get("top")));
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
 
-            }else if(articleList.equals(ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP)){
+            }else if(articleList.equals(ArticleList.NO_INCLUDE_TOP)){
                 predicates.add( criteriaBuilder.isFalse(root.get("top")));
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
 
-            }else if(articleList.equals(ArticleServiceImpl.ArticleList.ALL_PUBLISH_MODIFY_ARTICLE)){
+            }else if(articleList.equals(ArticleList.ALL_PUBLISH_MODIFY_ARTICLE)){
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
-            }else if(articleList.equals(ArticleServiceImpl.ArticleList.ALL_ARTICLE)){
+            }else if(articleList.equals(ArticleList.ALL_ARTICLE)){
 
             }
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
@@ -110,13 +111,13 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
     @Override
     public Page<Content> pageContentByCategoryIds(Set<Integer> ids, Boolean isDesc, PageRequest pageRequest){
-        Page<Content> contents = contentRepository.findAll(articleSpecification(ids,isDesc, ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP),pageRequest);
+        Page<Content> contents = contentRepository.findAll(articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP),pageRequest);
         return contents;
     }
 
     @Override
     public List<Content> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc) {
-        return contentRepository.findAll(articleSpecification(ids,isDesc, ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP));
+        return contentRepository.findAll(articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP));
     }
 
 
@@ -474,7 +475,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
 
 
-        Specification<Content> specification =  articleSpecification(ids,isDesc, ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP);
+        Specification<Content> specification =  articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP);
         List<Content> contents = contentRepository.findAll(specification);
 //                .stream().map(article -> {
 //            ArticleVO articleVO = new ArticleVO();
@@ -497,7 +498,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         }
         Set<Integer> ids = new HashSet<>();
         ids.add(category.getId());
-        List<Content> contents = contentRepository.findAll(articleSpecification(ids, true, ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP), Sort.by("order"));
+        List<Content> contents = contentRepository.findAll(articleSpecification(ids, true, ArticleList.NO_INCLUDE_TOP), Sort.by("order"));
         List<ContentVO> contentVOS = convertToListVo(contents);
         return contentVOS;
     }

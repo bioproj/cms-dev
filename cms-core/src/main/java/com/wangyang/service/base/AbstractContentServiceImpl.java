@@ -17,6 +17,7 @@ import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.enums.ArticleList;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
@@ -29,6 +30,7 @@ import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.authorize.IUserService;
+import com.wangyang.service.impl.ArticleServiceImpl;
 import com.wangyang.util.FormatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -244,9 +246,58 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         return null;
     }
 
+    private Specification<ARTICLE> articleSpecification(Set<Integer> ids, Boolean isDesc, ArticleList articleList){
+        Specification<ARTICLE> specification = (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new LinkedList<>();
+            predicates.add(criteriaBuilder.in(root.get("categoryId")).value(ids));
+            if(articleList.equals(ArticleList.INCLUDE_TOP)){
+                predicates.add( criteriaBuilder.isTrue(root.get("top")));
+                predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
+
+            }else if(articleList.equals(ArticleList.NO_INCLUDE_TOP)){
+                predicates.add( criteriaBuilder.isFalse(root.get("top")));
+                predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
+
+            }else if(articleList.equals(ArticleList.ALL_PUBLISH_MODIFY_ARTICLE)){
+                predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
+            }else if(articleList.equals(ArticleList.ALL_ARTICLE)){
+
+            }
+            criteriaQuery.where(predicates.toArray(new Predicate[0]));
+            if(isDesc!=null){
+                if(isDesc){
+//                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("updateDate")));
+//                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("order")),criteriaBuilder.desc(root.get("id")));
+                    criteriaQuery.orderBy(criteriaBuilder.desc(root.get("id")));
+                }else {
+                    criteriaQuery.orderBy(criteriaBuilder.desc(root.get("id")));
+//                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("order")),criteriaBuilder.desc(root.get("id")));
+
+//                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("updateDate")));
+                }
+            }
+
+            return criteriaQuery.getRestriction();
+        };
+        return specification;
+    }
     @Override
     public List<ARTICLEVO> listVoTree(Set<Integer> ids, Boolean isDesc) {
-        return null;
+
+        Specification<ARTICLE> specification =  articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP);
+        List<ARTICLE> contents = contentRepository.findAll(specification);
+//                .stream().map(article -> {
+//            ArticleVO articleVO = new ArticleVO();
+//            BeanUtils.copyProperties(article, articleVO);
+//            return articleVO;
+//        }).collect(Collectors.toList());
+        List<ARTICLEVO> contentVOS = convertToListVo(contents);
+        List<ARTICLEVO> contentVOTree = super.listWithTree(contentVOS);
+//        List<ArticleDto> listWithTree = listWithTree(articleDtos);
+        return contentVOTree;
     }
 
     @Override
@@ -346,6 +397,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
             ARTICLEVO domainvo = getVOInstance();
             BeanUtils.copyProperties(domain,domainvo);
             domainvo.setLinkPath(FormatUtil.articleListFormat(domain));
+            if(domain.getOrder()==null){
+                domainvo.setOrder(domain.getId());
+            }
             return domainvo;
 
         }).collect(Collectors.toList());
@@ -474,6 +528,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
             categoryService.addChild(categoryVOS,category.getId());
             ids.addAll(ServiceUtil.fetchProperty(categoryVOS, CategoryVO::getId));
             List<ARTICLEVO> contents=listVoTree(ids,category.getIsDesc());
+
             categoryContentList.setContentVOS(contents);
             categoryArticleLists.add(categoryContentList);
         }
