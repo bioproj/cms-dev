@@ -12,14 +12,12 @@ import com.wangyang.pojo.entity.base.BaseTemplate;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
+import com.wangyang.pojo.entity.shop.Goods;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.params.ComponentsParam;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.ComponentsVO;
-import com.wangyang.pojo.vo.ContentDetailVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.service.IArticleService;
@@ -64,6 +62,7 @@ public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Compo
     @Autowired
     @Qualifier("contentServiceImpl")
     IContentService<Content, ContentDetailVO, ContentVO> contentService;
+    IContentService<Goods, GoodsDetailVO, GoodsVO> goodsService;
 
 
     @Autowired
@@ -256,7 +255,12 @@ public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Compo
                 IComponentsData componentsData = componentsDataMap.get(components.getDataName());
                 map.putAll( componentsData.getData(components));
                 return map;
-            } else if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
+            } else if(components.getDataName().equals(CmsConst.GOODS_DATA)){
+
+                map.put("view",goodsService.listByComponentsId(components.getId()));
+                return  map;
+
+            }else if(components.getDataName().equals(CmsConst.ARTICLE_DATA)){
 
                 map.put("view",contentService.listByComponentsId(components.getId()));
                 return  map;
@@ -284,6 +288,9 @@ public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Compo
 
 //                Map<String,Object> map = new HashMap<>();
                 map.put("view",contentService.listCategoryContentByComponentsId(components.getId()));
+                return  map;
+            }else if(components.getDataName().equals(CmsConst.CATEGORY_GOODS_DATA)){
+                map.put("view",goodsService.listCategoryContentByComponentsId(components.getId()));
                 return  map;
             }else if(components.getDataName().startsWith(CmsConst.CATEGORY_ARTICLE_PAGE_DATA)){
                 if(!components.getDataName().contains("_")){

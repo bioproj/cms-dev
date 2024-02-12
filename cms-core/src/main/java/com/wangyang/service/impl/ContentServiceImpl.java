@@ -315,7 +315,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     public List<CategoryContentList> listCategoryContent( List<Category> categories){
         List<CategoryContentList> categoryArticleLists =  new ArrayList<>();
         for (Category category:categories){
-            CategoryContentList categoryContentList = new CategoryContentList();
+            CategoryContentList<ContentVO> categoryContentList = new CategoryContentList();
             CategoryVO categoryVO = categoryService.convertToVo(category);
             categoryContentList.setCategory(categoryVO);
             ArticleQuery articleQuery = new ArticleQuery();

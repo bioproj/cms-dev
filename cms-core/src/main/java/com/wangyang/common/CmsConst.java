@@ -132,9 +132,11 @@ public class CmsConst {
 
 
     public final static String ARTICLE_DATA = "@Article";//文章的Components标识
+    public final static String GOODS_DATA = "@Goods";//文章的Components标识
     public final static String CATEGORY_DATA = "@Category";//文章的Components标识
     public final static String CATEGORY_CHILD_DATA = "@CategoryChild";//文章的Components标识
     public final static String CATEGORY_ARTICLE_DATA= "@CategoryArticle";//文章的Components标识
+    public final static String CATEGORY_GOODS_DATA= "@CategorGoods";//文章的Components标识
     public final static String CATEGORY_ARTICLE_PAGE_DATA = "@CategoryArticlePage";//文章的Components标识
     public final static String CATEGORY_ARTICLE_SIZE_DATA = "@CategoryArticleSize";//文章的Components标识
     public final static String ARTICLE_DATA_SORT = "@SortArticle:";//文章的Components标识
