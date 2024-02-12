@@ -23,6 +23,7 @@ import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsArticleRepository;
+import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.template.ComponentsRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
@@ -72,6 +73,8 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
     @Autowired
     IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
 
+    @Autowired
+    ComponentsCategoryRepository componentsCategoryRepository;
 
     public void injectBeforeCategory(BaseCategory category){
         contentAop.injectContent(category);
@@ -455,9 +458,33 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         return contents.get(0);
     }
 
+    public List<CategoryContentList> listCategoryContent( List<Category> categories){
+        List<CategoryContentList> categoryArticleLists =  new ArrayList<>();
+        for (Category category:categories){
+            CategoryContentList<ARTICLEVO> categoryContentList = new CategoryContentList();
+            CategoryVO categoryVO = categoryService.convertToVo(category);
+            categoryContentList.setCategory(categoryVO);
+            ArticleQuery articleQuery = new ArticleQuery();
+            articleQuery.setCategoryId(category.getId());
+            articleQuery.setDesc(category.getDesc());
+
+            Set<Integer> ids =new HashSet<>();
+            List<CategoryVO> categoryVOS = new ArrayList<>();
+            ids.add(category.getId());
+            categoryService.addChild(categoryVOS,category.getId());
+            ids.addAll(ServiceUtil.fetchProperty(categoryVOS, CategoryVO::getId));
+            List<ARTICLEVO> contents=listVoTree(ids,category.getIsDesc());
+            categoryContentList.setContentVOS(contents);
+            categoryArticleLists.add(categoryContentList);
+        }
+        return categoryArticleLists;
+    }
     @Override
     public List<CategoryContentList> listCategoryContentByComponentsId(int componentsId) {
-        return null;
+        List<ComponentsCategory> componentsCategories = componentsCategoryRepository.findByComponentId(componentsId);
+        Set<Integer> categoryIds = ServiceUtil.fetchProperty(componentsCategories, ComponentsCategory::getCategoryId);
+        List<Category>  categories = categoryService.listByIdsOrderComponent(categoryIds);
+        return listCategoryContent(categories);
     }
 
     @Override

@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CategoryContentList {
+public class CategoryContentList<T> {
     private CategoryVO category;
-    private List<ContentVO> contentVOS;
+    private List<T> contentVOS;
 }
