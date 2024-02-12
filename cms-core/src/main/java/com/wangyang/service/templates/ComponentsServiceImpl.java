@@ -62,6 +62,7 @@ public class ComponentsServiceImpl extends AbstractBaseTemplateServiceImpl<Compo
     @Autowired
     @Qualifier("contentServiceImpl")
     IContentService<Content, ContentDetailVO, ContentVO> contentService;
+    @Autowired
     IContentService<Goods, GoodsDetailVO, GoodsVO> goodsService;
 
 
