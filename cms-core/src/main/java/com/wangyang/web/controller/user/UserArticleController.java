@@ -126,7 +126,7 @@ public class UserArticleController {
         ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         model.addAttribute("view",articleDetailVO);
-        return CmsConst.TEMPLATE_FILE_PREFIX+"user/editArticleMd";
+        return CmsConst.TEMPLATE_FILE_PREFIX+"md/index";
     }
     @GetMapping("/editContentMd/{id}")
     public String editContentMd(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
@@ -138,7 +138,7 @@ public class UserArticleController {
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         model.addAttribute("view",contentVO);
         model.addAttribute("originalContent",content.getOriginalContent());
-        return CmsConst.TEMPLATE_FILE_PREFIX+"user/editContentMd";
+        return CmsConst.TEMPLATE_FILE_PREFIX+"md/index";
     }
     @GetMapping("/editContent/{id}")
     public String editContent(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
