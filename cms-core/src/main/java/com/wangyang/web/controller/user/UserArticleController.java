@@ -119,27 +119,7 @@ public class UserArticleController {
         model.addAttribute("view",articleDetailVO);
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
     }
-    @GetMapping("/editArticleMd/{id}")
-    public String editArticleMd(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
-        int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Article article = articleService.findByIdAndUserId(id, userId);
-        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
-//        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        model.addAttribute("view",articleDetailVO);
-        return CmsConst.TEMPLATE_FILE_PREFIX+"md/index";
-    }
-    @GetMapping("/editContentMd/{id}")
-    public String editContentMd(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
-        int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Content content = contentService.findById(id);
-        ContentVO contentVO = contentService.convertToTagVo(content);
 
-//        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
-//        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        model.addAttribute("view",contentVO);
-        model.addAttribute("originalContent",content.getOriginalContent());
-        return CmsConst.TEMPLATE_FILE_PREFIX+"md/index";
-    }
     @GetMapping("/editContent/{id}")
     public String editContent(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
