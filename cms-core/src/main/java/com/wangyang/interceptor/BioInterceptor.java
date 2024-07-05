@@ -79,6 +79,10 @@ public class BioInterceptor implements HandlerInterceptor {
 
 
         if(token==null | !tokenProvider.validateToken(token)){
+
+            if(( uri.endsWith("png") ||  uri.endsWith("js") ||  uri.endsWith("css") || uri.endsWith("jpg") || uri.endsWith("gif"))){
+                return true;
+            }
             CMSUtils.deleteCooke(request,response);
             throw new AuthorizationException("["+uri+"]需要授权！");
         }

@@ -78,7 +78,7 @@ public class MarkdownUtils {
             .set(Parser.INDENTED_CODE_BLOCK_PARSER,false)
 
             .set(EmojiExtension.USE_SHORTCUT_TYPE, EmojiShortcutType.EMOJI_CHEAT_SHEET)
-                .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.UNICODE_ONLY);
+            .set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.UNICODE_ONLY);
 
 
 

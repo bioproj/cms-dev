@@ -186,7 +186,7 @@ public class TemplateController {
         filterFileNames.forEach(item->{
             String name = item.replace("@", "").replace(".html", "").replace(" ","_");
             String viewPath = path+File.separator+item.replace(".html", "");
-            templateList.add(new Template(name,name.replace("/","_"),viewPath, TemplateType.ARTICLE,false));
+            templateList.add(new Template(name,name.replace("/","_"),viewPath, TemplateType.valueOf(path),false));
 
         });
 
