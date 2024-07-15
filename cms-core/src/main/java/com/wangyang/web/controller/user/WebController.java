@@ -119,7 +119,11 @@ public class WebController {
     public String showArticle2(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {
         return "html" + File.separator+path+File.separator+viewName;
     }
-
+    @GetMapping("html/{viewName}.html")
+    @Anonymous
+    public String showArticle3(@PathVariable("viewName") String viewName) {
+        return "html" +File.separator+viewName;
+    }
 
     @GetMapping("/html/auth/{path}/{viewName}.html")
     @Anonymous
