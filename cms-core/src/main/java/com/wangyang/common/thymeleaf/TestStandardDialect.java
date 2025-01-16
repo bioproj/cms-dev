@@ -33,9 +33,21 @@ public class TestStandardDialect extends StandardDialect {
         return createSpringStandardProcessorsSet(dialectPrefix);
     }
 
-    public static Set<IProcessor> createSpringStandardProcessorsSet(String dialectPrefix){
-        Set<IProcessor> processors = new LinkedHashSet(40);
+    public  Set<IProcessor> createSpringStandardProcessorsSet(String dialectPrefix){
+        Set<IProcessor> processors = super.createStandardProcessorsSet(dialectPrefix);
+//        Set<IProcessor> processors = new LinkedHashSet(40);
         processors.add(new WebReplaceTagProcessor(TemplateMode.HTML, dialectPrefix) );
+
+//
+//        processors.add(new StandardTextTagProcessor(TemplateMode.HTML, dialectPrefix));
+//        processors.add(new StandardValueTagProcessor(dialectPrefix));
+////       processors.add(new StandardReplaceTagProcessor(TemplateMode.HTML, dialectPrefix));
+////        processors.add(new StandardReplaceTagProcessor(TemplateMode.HTML, dialectPrefix));
+//        processors.add(new StandardIfTagProcessor(TemplateMode.HTML, dialectPrefix));
+//        processors.add(new StandardFragmentTagProcessor(TemplateMode.HTML, dialectPrefix));
+//        processors.add(new StandardInlineHTMLTagProcessor(dialectPrefix));
+//        processors.add(new IncludeElementTagProcessor(dialectPrefix));
+////
         return processors;
 
     }
