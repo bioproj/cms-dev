@@ -76,7 +76,7 @@ public class WebReplaceTagProcessor extends AbstractStandardFragmentInsertionTag
 
         Path path = Paths.get(CmsConst.WORK_DIR + File.separator + pathStr + ".html");
         if(!path.toFile().exists()){
-            if(path.toString().contains("components")){
+            if(path.toString().contains("components") && !pathStr.contains("::")){
                 String viewName = FilenameUtils.getBasename(path.getFileName().toString());
                 String parentPath = Paths.get(pathStr).getParent().toString().substring(1);
                 Components components = componentsService.findByViewName(parentPath, viewName);

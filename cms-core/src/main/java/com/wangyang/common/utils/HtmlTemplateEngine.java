@@ -2,6 +2,7 @@ package com.wangyang.common.utils;
 
 import com.wangyang.common.thymeleaf.CmsFileDialect;
 import com.wangyang.common.thymeleaf.CmsWebDialect;
+import com.wangyang.common.thymeleaf.TestStandardDialect;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -75,7 +76,8 @@ public class HtmlTemplateEngine {
     public static TemplateEngine getWebInstance(String prefix, String suffix,String templatePath){
         if(templateWebEngine==null){
             templateWebEngine = new SpringTemplateEngine();
-            templateWebEngine.addDialect(new CmsWebDialect());
+//            templateWebEngine.addDialect(new CmsWebDialect());
+            templateWebEngine.addDialect(new TestStandardDialect());
 
 //            templateWebEngine.addDialect(new CmsDialect(prefix));
 //            templateWebEngine.setDialect(new CmsWebDialect());
