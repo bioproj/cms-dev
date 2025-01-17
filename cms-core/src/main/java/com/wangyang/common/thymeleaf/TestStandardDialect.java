@@ -22,9 +22,9 @@ public class TestStandardDialect extends StandardDialect {
     }
     public Map<String, Object> getExecutionAttributes() {
 
-        final Map<String,Object> executionAttributes = new HashMap<String, Object>(5, 1.0f);
+//        final Map<String,Object> executionAttributes = new HashMap<String, Object>(5, 1.0f);
 
-
+        Map<String, Object> executionAttributes = super.getExecutionAttributes();
         return executionAttributes;
 
     }

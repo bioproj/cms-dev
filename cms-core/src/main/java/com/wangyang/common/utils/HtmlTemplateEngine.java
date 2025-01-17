@@ -4,12 +4,18 @@ import com.wangyang.common.thymeleaf.CmsFileDialect;
 import com.wangyang.common.thymeleaf.CmsWebDialect;
 import com.wangyang.common.thymeleaf.TestStandardDialect;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author wangyang
@@ -77,7 +83,21 @@ public class HtmlTemplateEngine {
         if(templateWebEngine==null){
             templateWebEngine = new SpringTemplateEngine();
 //            templateWebEngine.addDialect(new CmsWebDialect());
-            templateWebEngine.addDialect(new TestStandardDialect());
+//            templateWebEngine.addDialect(new TestStandardDialect());
+
+            templateWebEngine.setDialect(new TestStandardDialect());
+//            StandardDialect standardDialect = new StandardDialect();
+//            TestStandardDialect testStandardDialect = new TestStandardDialect();
+//            Map<String,IDialect> map =new HashMap<>();
+//            map.put("cms",testStandardDialect );
+//            map.put("th",standardDialect);
+//            templateWebEngine.setDialectsByPrefix(map);
+//            Set<IDialect> set = new HashSet<>();
+//            set.add(testStandardDialect);
+//            templateWebEngine.setAdditionalDialects(set);
+
+//            Set<IDialect> dialects = templateWebEngine.getDialects();
+
 
 //            templateWebEngine.addDialect(new CmsDialect(prefix));
 //            templateWebEngine.setDialect(new CmsWebDialect());
