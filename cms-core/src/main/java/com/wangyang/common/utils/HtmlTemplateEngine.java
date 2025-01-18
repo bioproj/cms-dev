@@ -84,8 +84,8 @@ public class HtmlTemplateEngine {
             templateWebEngine = new SpringTemplateEngine();
 //            templateWebEngine.addDialect(new CmsWebDialect());
 //            templateWebEngine.addDialect(new TestStandardDialect());
-
             templateWebEngine.setDialect(new TestStandardDialect());
+            templateWebEngine.setDialect(new StandardDialect());
 //            StandardDialect standardDialect = new StandardDialect();
 //            TestStandardDialect testStandardDialect = new TestStandardDialect();
 //            Map<String,IDialect> map =new HashMap<>();
