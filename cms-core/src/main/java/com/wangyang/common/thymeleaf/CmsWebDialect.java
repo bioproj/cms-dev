@@ -14,7 +14,7 @@ public class CmsWebDialect extends AbstractProcessorDialect {
     private static final String DIALECT_NAME = "Score Dialect";
     public CmsWebDialect() {
         //设置自定义方言与"方言处理器"优先级相同
-        super(DIALECT_NAME, "cms", StandardDialect.PROCESSOR_PRECEDENCE);
+        super(DIALECT_NAME, "th", StandardDialect.PROCESSOR_PRECEDENCE);
     }
 
     @Override

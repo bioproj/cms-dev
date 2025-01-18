@@ -24,8 +24,9 @@ public class TestStandardDialect extends StandardDialect {
 
 //        final Map<String,Object> executionAttributes = new HashMap<String, Object>(5, 1.0f);
 
-        Map<String, Object> executionAttributes = super.getExecutionAttributes();
-        return executionAttributes;
+//        Map<String, Object> executionAttributes = super.getExecutionAttributes();
+//        return executionAttributes;
+        return Collections.emptyMap();
 
     }
 

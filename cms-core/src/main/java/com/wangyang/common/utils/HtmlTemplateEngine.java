@@ -83,8 +83,9 @@ public class HtmlTemplateEngine {
         if(templateWebEngine==null){
             templateWebEngine = new SpringTemplateEngine();
 //            templateWebEngine.addDialect(new CmsWebDialect());
-//            templateWebEngine.addDialect(new TestStandardDialect());
-            templateWebEngine.setDialect(new TestStandardDialect());
+            templateWebEngine.addDialect(new TestStandardDialect());
+//            templateWebEngine.addDialect(new CmsWebDialect());
+//            templateWebEngine.setDialect(new TestStandardDialect());
 //            templateWebEngine.setDialect(new StandardDialect());
 //            StandardDialect standardDialect = new StandardDialect();
 //            TestStandardDialect testStandardDialect = new TestStandardDialect();
@@ -93,7 +94,7 @@ public class HtmlTemplateEngine {
 //            map.put("th",standardDialect);
 //            templateWebEngine.setDialectsByPrefix(map);
 //            Set<IDialect> set = new HashSet<>();
-//            set.add(testStandardDialect);
+//            set.add(new TestStandardDialect());
 //            templateWebEngine.setAdditionalDialects(set);
 
 //            Set<IDialect> dialects = templateWebEngine.getDialects();
