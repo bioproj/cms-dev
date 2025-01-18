@@ -391,7 +391,7 @@ public class TemplateUtil {
                 }else if(viewName.startsWith(CmsConst.TEMPLATE_FILE_PREFIX)){
                     viewName = viewName.replace(CmsConst.TEMPLATE_FILE_PREFIX,"");
                     viewNamePath = CMSUtils.getTemplates()+viewName;
-                    templateEngine = getFileEngine();
+//                    templateEngine = getFileEngine();
                 }
 //        (!viewName.startsWith("html") && !viewName.startsWith("en") ){
 //
