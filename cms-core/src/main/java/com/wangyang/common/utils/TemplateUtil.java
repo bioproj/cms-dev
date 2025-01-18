@@ -376,6 +376,7 @@ public class TemplateUtil {
             try {
 
                 String viewNamePath =viewName ;
+                ITemplateEngine templateEngine = getWebEngine();
                 if(viewName.startsWith("redirect:")){
                     String redirectPath = viewName.substring("redirect:".length());
                     String servername =request.getServerName();
@@ -390,6 +391,7 @@ public class TemplateUtil {
                 }else if(viewName.startsWith(CmsConst.TEMPLATE_FILE_PREFIX)){
                     viewName = viewName.replace(CmsConst.TEMPLATE_FILE_PREFIX,"");
                     viewNamePath = CMSUtils.getTemplates()+viewName;
+                    templateEngine = getFileEngine();
                 }
 //        (!viewName.startsWith("html") && !viewName.startsWith("en") ){
 //
@@ -397,12 +399,12 @@ public class TemplateUtil {
 
 
 //                viewNamePath = viewNamePath.replace("_", File.separator);
-                if(viewNamePath.equals("error")){
-                    viewNamePath =CMSUtils.getTemplates()+"error";
-                }
+            if(viewNamePath.equals("error")){
+                viewNamePath =CMSUtils.getTemplates()+"error";
+            }
 //                String[] pathArgs = viewNamePath.split("_");
-                Path path = Paths.get(CmsConst.WORK_DIR+ File.separator+viewNamePath+".html");
-                if(!Files.exists(path) && !invokeGenerateHtml(viewName)){
+            Path path = Paths.get(CmsConst.WORK_DIR+ File.separator+viewNamePath+".html");
+            if(!Files.exists(path) && !invokeGenerateHtml(viewName)){
 
                     viewNamePath = errorProcess(viewName, ctx,  viewNamePath);
 
@@ -445,7 +447,7 @@ public class TemplateUtil {
 //                ctx.setVariable("message","模板不存在："+path);
 //            }
                 ctx.setVariable("isWeb",true);
-                getWebEngine().process(viewNamePath,ctx,writer);
+                templateEngine.process(viewNamePath,ctx,writer);
             } catch (Exception e) {
 //            throw new RuntimeException(e);
                 e.printStackTrace();
@@ -481,7 +483,7 @@ public class TemplateUtil {
     /**
      * 文件不存在，查看GenerateHtml存是否存在生成html的方法，生成之后再用视图名称渲染
      * @see GenerateHtml
-     * @param pathArgs
+//     * @param pathArgs
      */
 
     public  boolean invokeGenerateHtml(String viewName) throws InvocationTargetException, IllegalAccessException {
