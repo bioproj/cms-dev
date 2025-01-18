@@ -16,14 +16,14 @@ public class ArticleParams  implements InputConverter<Article> {
 //    private ArticleStatus status =ArticleStatus.PUBLISHED;
 //    private Boolean haveHtml;
     private String picThumbPath;
-    @NotBlank(message = "文章标题不能为空!!")
+//    @NotBlank(message = "文章标题不能为空!!")
     private String title;
     @NotBlank(message = "文章内容不能为空!!")
     private String originalContent;
     private String summary;
     private String viewName;
     private Set<Integer> tagIds;
-    @NotNull(message = "文章类别不能为空!!")
+//    @NotNull(message = "文章类别不能为空!!")
     private Integer categoryId;
 //    @NotNull(message = "文章用户不能为空!!")
 //    private Integer userId;

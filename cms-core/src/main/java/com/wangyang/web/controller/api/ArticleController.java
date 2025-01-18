@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,6 +126,8 @@ public class ArticleController {
      */
     @PostMapping("/save")
     public Article saveArticle(@Valid @RequestBody ArticleParams articleParams,@RequestParam(value = "more", defaultValue = "false") Boolean more, HttpServletRequest request){
+        Assert.notNull(articleParams.getCategoryId(),"文章分类不能为空!");
+        Assert.notNull(articleParams.getTitle(),"文章标题不能为空!");
         int userId = AuthorizationUtil.getUserId(request);
         Article article = new Article();
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
