@@ -37,8 +37,8 @@ public class GitLabExtension implements Parser.ParserExtension
 
     final public static DataKey<String[]> MATH_LANGUAGES = new DataKey<>("MATH_LANGUAGES", DEFAULT_MATH_LANGUAGES);
     final public static DataKey<String[]> MERMAID_LANGUAGES = new DataKey<>("MERMAID_LANGUAGES", DEFAULT_MERMAID_LANGUAGES);
-    final public static DataKey<String> INLINE_MATH_CLASS = new DataKey<>("INLINE_MATH_CLASS", "katex");
-    final public static DataKey<String> BLOCK_MATH_CLASS = new DataKey<>("BLOCK_MATH_CLASS", "katex");
+    final public static DataKey<String> INLINE_MATH_CLASS = new DataKey<>("INLINE_MATH_CLASS", "bioinfo-katex");
+    final public static DataKey<String> BLOCK_MATH_CLASS = new DataKey<>("BLOCK_MATH_CLASS", "bioinfo-katex");
     final public static DataKey<String> BLOCK_MERMAID_CLASS = new DataKey<>("BLOCK_MERMAID_CLASS", "mermaid");
     final public static DataKey<String> VIDEO_IMAGE_CLASS = new DataKey<>("VIDEO_IMAGE_CLASS", "video-container");
     final public static DataKey<String> IMAGE_SRC_TAG = new DataKey<>("IMAGE_SRC_TAG", "data-original");
