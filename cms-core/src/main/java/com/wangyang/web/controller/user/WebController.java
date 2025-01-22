@@ -83,6 +83,11 @@ public class WebController {
     public String index(HttpServletRequest request){
         return "html/index";
     }
+    @GetMapping("/index.html")
+    @Anonymous
+    public String indexHtml(HttpServletRequest request){
+        return "html/index";
+    }
     @GetMapping("/html/{path}/en/{viewName}.html")
     @Anonymous
     public String showENArticle(@PathVariable("path") String path, @PathVariable("viewName") String viewName) {
@@ -268,5 +273,9 @@ public class WebController {
         return "redirect:admin/index.html";
     }
 
+
+    public String template(@PathVariable String viewName) {
+        return CmsConst.TEMPLATE_FILE_PREFIX+"/"+viewName;
+    }
 
 }

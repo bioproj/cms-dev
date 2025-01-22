@@ -1,6 +1,6 @@
 
 #依赖的父镜像
-FROM  thingsboard/openjdk8:1.3.0
+FROM  registry.cn-wulanchabu.aliyuncs.com/minebiomeapp/java:8
 
 WORKDIR /opt
 RUN groupadd -g 1001 shanjun
