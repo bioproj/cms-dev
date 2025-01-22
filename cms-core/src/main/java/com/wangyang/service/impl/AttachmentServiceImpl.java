@@ -246,6 +246,16 @@ public class AttachmentServiceImpl implements IAttachmentService {
         attachment.setAttachmentType(AttachmentType.EXCALIDRAW);
 
 
+        if(Objects.nonNull(attachment.getId())){
+            upload(attachment,file,svg);
+        }
+
+        Attachment save  = attachmentRepository.save(attachment);
+
+        return save;
+    }
+
+    public void upload(Attachment attachment, MultipartFile file, String svg){
         if(attachment.getImageType().equals(ImageType.PNG) ){
             if(Objects.isNull(file)){
                 throw new RuntimeException("png format not file!");
@@ -286,10 +296,6 @@ public class AttachmentServiceImpl implements IAttachmentService {
             attachment.setSize(uploadResult.getSize());
         }
 
-
-        Attachment save  = attachmentRepository.save(attachment);
-
-        return save;
     }
 
 }
