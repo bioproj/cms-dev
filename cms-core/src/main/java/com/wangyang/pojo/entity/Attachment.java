@@ -1,7 +1,9 @@
 package com.wangyang.pojo.entity;
 
 import com.wangyang.common.pojo.BaseEntity;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.vo.ImageType;
 import lombok.Data;
 import javax.persistence.*;
 @Entity
@@ -15,8 +17,10 @@ public class Attachment extends BaseEntity {
     private String path;
     private String fileKey;
     private String suffix;
+    private String attachmentNumber;
     private Long size;
-    private AttachmentType type;
+    @Column(name = "attachment_type")
+    private AttachmentStoreType type;
     private String mediaType;
     private Integer width;
     private Integer height;
@@ -28,4 +32,9 @@ public class Attachment extends BaseEntity {
     private String originContent;
     private String renderType;
     private Integer objId;
+    @Column(name = "attachment_type_2")
+    @Enumerated(EnumType.STRING)
+    private AttachmentType attachmentType;
+    @Enumerated(EnumType.STRING)
+    private ImageType imageType;
 }

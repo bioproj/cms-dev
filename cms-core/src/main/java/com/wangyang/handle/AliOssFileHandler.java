@@ -9,7 +9,7 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.common.utils.FilenameUtils;
 import com.wangyang.common.utils.ImageUtils;
-import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.enums.PropertyEnum;
 import com.wangyang.pojo.support.UploadResult;
 import com.wangyang.service.IOptionService;
@@ -36,8 +36,8 @@ public class AliOssFileHandler implements FileHandler {
     IOptionService optionService;
 
     @Override
-    public boolean supportType(AttachmentType type) {
-        return AttachmentType.ALIOSS.equals(type);
+    public boolean supportType(AttachmentStoreType type) {
+        return AttachmentStoreType.ALIOSS.equals(type);
     }
 
     @Override

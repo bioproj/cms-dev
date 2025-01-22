@@ -4,16 +4,17 @@ import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.entity.Attachment;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.enums.AttachmentType;
 import com.wangyang.pojo.enums.FileWriteType;
 import com.wangyang.pojo.enums.PropertyEnum;
 import com.wangyang.pojo.params.AttachmentParam;
 import com.wangyang.pojo.support.UploadResult;
 import com.wangyang.handle.FileHandlers;
+import com.wangyang.pojo.vo.ImageType;
 import com.wangyang.repository.AttachmentRepository;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.service.IOptionService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,7 @@ import javax.persistence.criteria.Root;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -79,7 +81,7 @@ public class AttachmentServiceImpl implements IAttachmentService {
     public Attachment upload(MultipartFile file,
                              String path,
                              FileWriteType fileWriteType,
-                             AttachmentType attachmentType) {
+                             AttachmentStoreType attachmentType) {
         Attachment attachment = new Attachment();
         attachment.setType(attachmentType);
         return upload(file,path,fileWriteType,attachment);
@@ -227,11 +229,63 @@ public class AttachmentServiceImpl implements IAttachmentService {
     }
 
     @Override
-    public AttachmentType getAttachmentType(){
+    public AttachmentStoreType getAttachmentType(){
         String propertyValue = optionService.getPropertyStringValue(PropertyEnum.ATTACHMENT_TYPE);
         if(propertyValue==null){
-            return AttachmentType.LOCAL;
+            return AttachmentStoreType.LOCAL;
         }
-        return AttachmentType.valueOf(propertyValue);
+        return AttachmentStoreType.valueOf(propertyValue);
     }
+
+
+    @Override
+    public Attachment createOrUpdateDrawingAttachment(Attachment attachment, MultipartFile file, String svg) {
+        if(Objects.isNull(attachment.getAttachmentNumber())){
+            attachment.setAttachmentNumber(CMSUtils.randomViewName());
+        }
+        attachment.setAttachmentType(AttachmentType.EXCALIDRAW);
+
+        if(Objects.isNull(attachment.getImageType())){
+            throw new RuntimeException("image type is not null!");
+        }
+        if(attachment.getImageType().equals(ImageType.PNG) && Objects.nonNull(file)){
+            UploadResult uploadResult= fileHandlers.upload(file,AttachmentStoreType.ALIOSS,"excalidraw/"+attachment.getAttachmentNumber()+".png");
+            attachment.setName(uploadResult.getFilename());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
+            attachment.setPath(uploadResult.getFilePath());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
+            attachment.setFileKey(uploadResult.getKey());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
+            attachment.setThumbPath(uploadResult.getThumbPath());
+            //image/png
+            attachment.setMediaType(uploadResult.getMediaType().toString());
+            //png
+            attachment.setSuffix(uploadResult.getSuffix());
+            attachment.setWidth(uploadResult.getWidth());
+            attachment.setHeight(uploadResult.getHeight());
+            attachment.setSize(uploadResult.getSize());
+        }else        if(attachment.getImageType().equals(ImageType.SVG) && Objects.nonNull(svg)){
+            UploadResult uploadResult = fileHandlers.uploadStrContent(svg,"excalidraw/"+attachment.getAttachmentNumber()+".svg", getAttachmentType());
+            attachment.setName(uploadResult.getFilename());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
+            attachment.setPath(uploadResult.getFilePath());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
+            attachment.setFileKey(uploadResult.getKey());
+            ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
+            attachment.setThumbPath(uploadResult.getThumbPath());
+            //image/png
+            attachment.setMediaType(uploadResult.getMediaType().toString());
+            //png
+            attachment.setSuffix(uploadResult.getSuffix());
+            attachment.setWidth(uploadResult.getWidth());
+            attachment.setHeight(uploadResult.getHeight());
+            attachment.setSize(uploadResult.getSize());
+        }
+
+
+        Attachment save  = attachmentRepository.save(attachment);
+
+        return save;
+    }
+
 }

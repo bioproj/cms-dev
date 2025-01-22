@@ -5,7 +5,7 @@ import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.FileUtils;
 import com.wangyang.common.utils.FilenameUtils;
 import com.wangyang.common.utils.ImageUtils;
-import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.support.UploadResult;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -40,8 +40,8 @@ public class LocalFileHandler implements FileHandler{
 
 
     @Override
-    public boolean supportType(AttachmentType type) {
-        return AttachmentType.LOCAL.equals(type);
+    public boolean supportType(AttachmentStoreType type) {
+        return AttachmentStoreType.LOCAL.equals(type);
     }
 
     public UploadResult addLatexSvg(){

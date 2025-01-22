@@ -1,6 +1,6 @@
 package com.wangyang.handle;
 
-import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.support.UploadResult;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileHandler {
     MediaType IMAGE_TYPE = MediaType.valueOf("image/*");
 
-    boolean supportType(@Nullable AttachmentType type);
+    boolean supportType(@Nullable AttachmentStoreType type);
 
     @NonNull
     UploadResult upload(@NonNull MultipartFile file);

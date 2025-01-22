@@ -1,9 +1,10 @@
 package com.wangyang.service;
 
 import com.wangyang.pojo.entity.Attachment;
-import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.enums.FileWriteType;
 import com.wangyang.pojo.params.AttachmentParam;
+import com.wangyang.pojo.vo.ImageType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
@@ -16,7 +17,7 @@ public interface IAttachmentService {
     Attachment add(Attachment attachment);
     Attachment upload(@NonNull MultipartFile file);
 
-    Attachment upload(MultipartFile file, String path, FileWriteType fileWriteType, AttachmentType attachmentType);
+    Attachment upload(MultipartFile file, String path, FileWriteType fileWriteType, AttachmentStoreType attachmentType);
 
     Attachment upload(MultipartFile file,
                       String path,
@@ -40,5 +41,7 @@ public interface IAttachmentService {
 
     Attachment findById(int id);
 
-    AttachmentType getAttachmentType();
+    AttachmentStoreType getAttachmentType();
+
+    Attachment createOrUpdateDrawingAttachment(Attachment attachment, MultipartFile file, String svg);
 }

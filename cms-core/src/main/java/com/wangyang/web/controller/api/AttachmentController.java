@@ -1,14 +1,18 @@
 package com.wangyang.web.controller.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.wangyang.common.BaseResponse;
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
+import com.wangyang.pojo.dto.AttachmentDto;
+import com.wangyang.pojo.vo.DrawingAttachmentVo;
 import com.wangyang.pojo.entity.Literature;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.pojo.entity.Attachment;
 import com.wangyang.pojo.params.AttachmentParam;
 import com.wangyang.service.ILiteratureService;
-import org.hibernate.id.uuid.StandardRandomStrategy;
+import com.wangyang.util.CmsBeanUtils;
 import org.jbibtex.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -128,7 +131,12 @@ public class AttachmentController {
     public Attachment findById(@PathVariable("id") Integer id){
         return  attachmentService.findById(id);
     }
-
+    @GetMapping(value = "/v2-find/{id}")
+    public BaseResponse<AttachmentDto> findByIdV2(@PathVariable("id") Integer id){
+        Attachment attachment = attachmentService.findById(id);
+        AttachmentDto attachmentDto = BeanUtil.copyProperties(attachment, AttachmentDto.class);
+        return BaseResponse.ok(attachmentDto);
+    }
     /**
      * 上传文字内容到文件 SVG
      * @param attachmentParam
@@ -167,5 +175,37 @@ public class AttachmentController {
     }
 
 
+    @PostMapping("/create-attachment")
+    public BaseResponse<AttachmentDto> createAttachment(@RequestBody DrawingAttachmentVo drawingAttachment){
+//        BeanUtil.cop
+        Attachment attachment = BeanUtil.copyProperties(drawingAttachment, Attachment.class, CmsBeanUtils.getNullPropertyNames(drawingAttachment));
+        attachment.setAttachmentNumber(CMSUtils.randomViewName());
+
+        attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,null,null);
+//        return AttachmentDto;
+        return BaseResponse.ok( AttachmentDto.builder()
+                        .name(attachment.getName())
+                .build());
+    }
+
+
+    @PostMapping(value = "/update-attachment/{attachmentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BaseResponse<AttachmentDto> updateAttachment(@PathVariable("attachmentId") Integer attachmentId,
+//                                                        @RequestPart("file")
+                                                        @ModelAttribute DrawingAttachmentVo drawingAttachmentVo){
+        Attachment attachment = attachmentService.findById(attachmentId);
+        BeanUtil.copyProperties(drawingAttachmentVo, attachment);
+        attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,drawingAttachmentVo.getFile(),drawingAttachmentVo.getSvg());
+//        return AttachmentDto;
+        return BaseResponse.ok( AttachmentDto.builder()
+                .name(attachment.getName())
+                .build());
+    }
+
+//    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+////    @RequestPart("file")
+//    public Attachment upload(@RequestPart("file") MultipartFile file){
+//        return  attachmentService.upload(file);
+//    }
 
 }

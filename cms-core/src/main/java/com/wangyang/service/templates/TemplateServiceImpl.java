@@ -15,7 +15,6 @@ import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.enums.*;
 import com.wangyang.pojo.params.TemplateParam;
 import com.wangyang.common.pojo.BaseVo;
-import com.wangyang.repository.CategoryTemplateRepository;
 import com.wangyang.repository.template.TemplateChildRepository;
 import com.wangyang.service.ICategoryTemplateService;
 import com.wangyang.service.authorize.IArticleAttachmentService;
@@ -379,7 +378,7 @@ public class TemplateServiceImpl  extends AbstractBaseTemplateServiceImpl<Templa
     @Override
     public Template addZipFile(MultipartFile uploadFile) {
         String path = "testUpload/"+uploadFile.getOriginalFilename();
-        Attachment attachment = attachmentService.upload(uploadFile, path, FileWriteType.COVER, AttachmentType.LOCAL);
+        Attachment attachment = attachmentService.upload(uploadFile, path, FileWriteType.COVER, AttachmentStoreType.LOCAL);
         String filePath = attachment.getPath();
         // 上传压缩文件文件
         File file = new File(workDir+File.separator+filePath);

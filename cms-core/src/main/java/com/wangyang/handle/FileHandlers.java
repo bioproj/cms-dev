@@ -2,8 +2,9 @@ package com.wangyang.handle;
 
 import com.wangyang.common.exception.FileOperationException;
 import com.wangyang.pojo.entity.Attachment;
-import com.wangyang.pojo.enums.AttachmentType;
+import com.wangyang.pojo.enums.AttachmentStoreType;
 import com.wangyang.pojo.support.UploadResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Collection;
 import java.util.LinkedList;
 
+@Slf4j
 @Component
 public class FileHandlers {
 
@@ -28,7 +30,7 @@ public class FileHandlers {
         addFileHandlers(applicationContext.getBeansOfType(FileHandler.class).values());
     }
 
-    public UploadResult upload(@NonNull MultipartFile file, @NonNull AttachmentType attachmentType) {
+    public UploadResult upload(@NonNull MultipartFile file, @NonNull AttachmentStoreType attachmentType) {
         Assert.notNull(file, "Multipart file must not be null");
         Assert.notNull(attachmentType, "Attachment type must not be null");
 
@@ -41,7 +43,7 @@ public class FileHandlers {
         throw new FileOperationException("No available file handler to upload the file").setErrorData(attachmentType);
     }
 
-    public UploadResult upload(@NonNull MultipartFile file, @NonNull AttachmentType attachmentType,String path) {
+    public UploadResult upload(@NonNull MultipartFile file, @NonNull AttachmentStoreType attachmentType, String path) {
         Assert.notNull(file, "Multipart file must not be null");
         Assert.notNull(attachmentType, "Attachment type must not be null");
 
@@ -54,7 +56,7 @@ public class FileHandlers {
         throw new FileOperationException("No available file handler to upload the file").setErrorData(attachmentType);
     }
 
-    public UploadResult uploadStrContent(@NonNull String content, String strName,@NonNull AttachmentType attachmentType) {
+    public UploadResult uploadStrContent(@NonNull String content, String strName,@NonNull AttachmentStoreType attachmentType) {
 
         for (FileHandler fileHandler : fileHandlers) {
             if (fileHandler.supportType(attachmentType)) {
@@ -65,7 +67,7 @@ public class FileHandlers {
         throw new FileOperationException("No available file handler to upload the file").setErrorData(attachmentType);
     }
 
-    public UploadResult upload(@NonNull String url,@NonNull String name,@NonNull AttachmentType attachmentType){
+    public UploadResult upload(@NonNull String url,@NonNull String name,@NonNull AttachmentStoreType attachmentType){
         for (FileHandler fileHandler : fileHandlers) {
             if (fileHandler.supportType(attachmentType)) {
                 return fileHandler.upload(url,name);
@@ -80,7 +82,7 @@ public class FileHandlers {
     }
 
 
-    public void delete(@Nullable AttachmentType type, @NonNull String key) {
+    public void delete(@Nullable AttachmentStoreType type, @NonNull String key) {
         for (FileHandler fileHandler : fileHandlers) {
             if (fileHandler.supportType(type)) {
                 // Delete the file
@@ -88,8 +90,8 @@ public class FileHandlers {
                 return;
             }
         }
-
-        throw new FileOperationException("No available file handlers to delete the file").setErrorData(type);
+        log.error("No available file handlers to delete the file");
+//        throw new FileOperationException).setErrorData(type);
     }
 
     /**
