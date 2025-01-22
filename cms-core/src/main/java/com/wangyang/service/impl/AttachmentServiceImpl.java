@@ -245,12 +245,10 @@ public class AttachmentServiceImpl implements IAttachmentService {
         }
         attachment.setAttachmentType(AttachmentType.EXCALIDRAW);
 
-        if(Objects.isNull(attachment.getImageType())){
-            throw new RuntimeException("image type is not null!");
-        }
+
         if(attachment.getImageType().equals(ImageType.PNG) && Objects.nonNull(file)){
             UploadResult uploadResult= fileHandlers.upload(file,AttachmentStoreType.ALIOSS,"excalidraw/"+attachment.getAttachmentNumber()+".png");
-            attachment.setName(uploadResult.getFilename());
+//            attachment.setName(uploadResult.getFilename());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
             attachment.setPath(uploadResult.getFilePath());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png
@@ -266,7 +264,7 @@ public class AttachmentServiceImpl implements IAttachmentService {
             attachment.setSize(uploadResult.getSize());
         }else        if(attachment.getImageType().equals(ImageType.SVG) && Objects.nonNull(svg)){
             UploadResult uploadResult = fileHandlers.uploadStrContent(svg,"excalidraw/"+attachment.getAttachmentNumber()+".svg", getAttachmentType());
-            attachment.setName(uploadResult.getFilename());
+//            attachment.setName(uploadResult.getFilename());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
             attachment.setPath(uploadResult.getFilePath());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f.png

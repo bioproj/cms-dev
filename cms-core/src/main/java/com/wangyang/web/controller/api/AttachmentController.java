@@ -8,6 +8,7 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.AttachmentDto;
 import com.wangyang.pojo.vo.DrawingAttachmentVo;
 import com.wangyang.pojo.entity.Literature;
+import com.wangyang.pojo.vo.ImageType;
 import com.wangyang.service.IAttachmentService;
 import com.wangyang.pojo.entity.Attachment;
 import com.wangyang.pojo.params.AttachmentParam;
@@ -24,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -180,7 +178,7 @@ public class AttachmentController {
 //        BeanUtil.cop
         Attachment attachment = BeanUtil.copyProperties(drawingAttachment, Attachment.class, CmsBeanUtils.getNullPropertyNames(drawingAttachment));
         attachment.setAttachmentNumber(CMSUtils.randomViewName());
-
+        attachment.setImageType(ImageType.PNG);
         attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,null,null);
 //        return AttachmentDto;
         return BaseResponse.ok( AttachmentDto.builder()
@@ -193,6 +191,9 @@ public class AttachmentController {
     public BaseResponse<AttachmentDto> updateAttachment(@PathVariable("attachmentId") Integer attachmentId,
 //                                                        @RequestPart("file")
                                                         @ModelAttribute DrawingAttachmentVo drawingAttachmentVo){
+        if(Objects.isNull(drawingAttachmentVo.getImageType())){
+            throw new RuntimeException("image type is not null!");
+        }
         Attachment attachment = attachmentService.findById(attachmentId);
         BeanUtil.copyProperties(drawingAttachmentVo, attachment);
         attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,drawingAttachmentVo.getFile(),drawingAttachmentVo.getSvg());
