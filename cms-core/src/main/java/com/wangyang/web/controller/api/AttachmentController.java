@@ -178,7 +178,6 @@ public class AttachmentController {
 //        BeanUtil.cop
         Attachment attachment = BeanUtil.copyProperties(drawingAttachment, Attachment.class, CmsBeanUtils.getNullPropertyNames(drawingAttachment));
         attachment.setAttachmentNumber(CMSUtils.randomViewName());
-        attachment.setImageType(ImageType.PNG);
         attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,null,null);
 //        return AttachmentDto;
         return BaseResponse.ok( AttachmentDto.builder()
@@ -191,11 +190,12 @@ public class AttachmentController {
     public BaseResponse<AttachmentDto> updateAttachment(@PathVariable("attachmentId") Integer attachmentId,
 //                                                        @RequestPart("file")
                                                         @ModelAttribute DrawingAttachmentVo drawingAttachmentVo){
-        if(Objects.isNull(drawingAttachmentVo.getImageType())){
+
+        Attachment attachment = attachmentService.findById(attachmentId);
+        if(Objects.isNull(attachment.getImageType())){
             throw new RuntimeException("image type is not null!");
         }
-        Attachment attachment = attachmentService.findById(attachmentId);
-        BeanUtil.copyProperties(drawingAttachmentVo, attachment);
+        BeanUtil.copyProperties(drawingAttachmentVo, attachment,CmsBeanUtils.getNullPropertyNames(drawingAttachmentVo));
         attachment = attachmentService.createOrUpdateDrawingAttachment(attachment,drawingAttachmentVo.getFile(),drawingAttachmentVo.getSvg());
 //        return AttachmentDto;
         return BaseResponse.ok( AttachmentDto.builder()

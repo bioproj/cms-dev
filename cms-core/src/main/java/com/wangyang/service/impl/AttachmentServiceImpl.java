@@ -246,7 +246,10 @@ public class AttachmentServiceImpl implements IAttachmentService {
         attachment.setAttachmentType(AttachmentType.EXCALIDRAW);
 
 
-        if(attachment.getImageType().equals(ImageType.PNG) && Objects.nonNull(file)){
+        if(attachment.getImageType().equals(ImageType.PNG) ){
+            if(Objects.isNull(file)){
+                throw new RuntimeException("png format not file!");
+            }
             UploadResult uploadResult= fileHandlers.upload(file,AttachmentStoreType.ALIOSS,"excalidraw/"+attachment.getAttachmentNumber()+".png");
 //            attachment.setName(uploadResult.getFilename());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
@@ -262,7 +265,10 @@ public class AttachmentServiceImpl implements IAttachmentService {
             attachment.setWidth(uploadResult.getWidth());
             attachment.setHeight(uploadResult.getHeight());
             attachment.setSize(uploadResult.getSize());
-        }else        if(attachment.getImageType().equals(ImageType.SVG) && Objects.nonNull(svg)){
+        }else        if(attachment.getImageType().equals(ImageType.SVG)){
+            if(Objects.isNull(svg)){
+                throw new RuntimeException("svg format not svg!");
+            }
             UploadResult uploadResult = fileHandlers.uploadStrContent(svg,"excalidraw/"+attachment.getAttachmentNumber()+".svg", getAttachmentType());
 //            attachment.setName(uploadResult.getFilename());
             ///upload/2020/2/Screenshot from 2020-02-28 15-43-32-2015c76b-9442-435a-a1b7-ad030548d57f-thumbnail.png
