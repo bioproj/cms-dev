@@ -30,10 +30,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -244,7 +241,7 @@ public class AttachmentServiceImpl implements IAttachmentService {
             attachment.setAttachmentNumber(CMSUtils.randomViewName());
         }
         attachment.setAttachmentType(AttachmentType.EXCALIDRAW);
-
+        attachment.setUpdateDate(new Date());
 
         if(Objects.nonNull(attachment.getId())){
             upload(attachment,file,svg);
