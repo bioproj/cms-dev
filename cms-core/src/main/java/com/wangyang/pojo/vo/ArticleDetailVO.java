@@ -6,14 +6,18 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.Toc;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Tags;
-import lombok.Data;
+import lombok.*;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
 public class ArticleDetailVO extends ContentDetailVO {
     private String originalContent;
     private String formatContent;

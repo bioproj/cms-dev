@@ -1,6 +1,7 @@
 package com.wangyang.web.controller.user;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.FileUtils;
 import com.wangyang.pojo.annotation.Anonymous;
@@ -110,13 +111,26 @@ public class UserArticleController {
     public String pushMail(Model model){
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/pushMail";
     }
+    @GetMapping("/editV1/{id}")
+    public String editArticle2(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+        int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
+        Article article = articleService.findByIdAndUserId(id, userId);
+        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
+//        ArticleDetailVO articleDetailVO = articleService.convert(article);
+        model.addAttribute("view",articleDetailVO);
+        return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
+    }
+
     @GetMapping("/edit/{id}")
     public String editArticle(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
         Article article = articleService.findByIdAndUserId(id, userId);
         ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        model.addAttribute("view",articleDetailVO);
+        ArticleDetailVO articleDetailVOSimple= BeanUtil.copyProperties(articleDetailVO,ArticleDetailVO.class,"originalContent","formatContent");
+        model.addAttribute("view",articleDetailVOSimple);
+        model.addAttribute("originalContent",articleDetailVO.getOriginalContent());
+        model.addAttribute("formatContent",articleDetailVO.getFormatContent());
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
     }
 
