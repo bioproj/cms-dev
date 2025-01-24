@@ -127,10 +127,10 @@ public class UserArticleController {
         Article article = articleService.findByIdAndUserId(id, userId);
         ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        ArticleDetailVO articleDetailVOSimple= BeanUtil.copyProperties(articleDetailVO,ArticleDetailVO.class,"originalContent","formatContent");
-        model.addAttribute("view",articleDetailVOSimple);
-        model.addAttribute("originalContent",articleDetailVO.getOriginalContent());
-        model.addAttribute("formatContent",articleDetailVO.getFormatContent());
+//        ArticleDetailVO articleDetailVOSimple= BeanUtil.copyProperties(articleDetailVO,ArticleDetailVO.class,"originalContent","formatContent");
+        model.addAttribute("view",articleDetailVO);
+//        model.addAttribute("originalContent",articleDetailVO.getOriginalContent());
+//        model.addAttribute("formatContent",articleDetailVO.getFormatContent());
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
     }
 
