@@ -1,5 +1,6 @@
 package com.wangyang.pojo.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.ArticleDto;
@@ -110,4 +111,10 @@ public class ArticleDetailVO extends ContentDetailVO {
 //    public void setTags(List<Tags> tags) {
 //        this.tags = tags;
 //    }
+
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 }
