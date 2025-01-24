@@ -2,6 +2,7 @@ package com.wangyang.web.controller.user;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.FileUtils;
 import com.wangyang.pojo.annotation.Anonymous;
@@ -128,9 +129,9 @@ public class UserArticleController {
         ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         ArticleDetailVO articleDetailVOSimple= BeanUtil.copyProperties(articleDetailVO,ArticleDetailVO.class,"originalContent","formatContent");
-        model.addAttribute("view",articleDetailVOSimple);
-        model.addAttribute("originalContent",articleDetailVO.getOriginalContent());
-        model.addAttribute("formatContent",articleDetailVO.getFormatContent());
+        model.addAttribute("view", JSON.toJSONString(articleDetailVO));
+//        model.addAttribute("originalContent",articleDetailVO.getOriginalContent());
+//        model.addAttribute("formatContent",articleDetailVO.getFormatContent());
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/write";
     }
 
