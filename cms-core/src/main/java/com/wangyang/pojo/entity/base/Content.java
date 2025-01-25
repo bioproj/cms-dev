@@ -57,5 +57,6 @@ public class Content extends BaseEntity {
 
     private Boolean isDivision=false;
     private Integer articleInComponentOrder=0;
+    private Boolean isParseMarkdown;
 }
 

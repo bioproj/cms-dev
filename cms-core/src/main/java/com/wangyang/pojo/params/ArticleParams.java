@@ -35,5 +35,6 @@ public class ArticleParams  implements InputConverter<Article> {
     private String youtube;
     private String video;
     private Boolean isDivision;
+    private Boolean isParseMarkdown;
 
 }

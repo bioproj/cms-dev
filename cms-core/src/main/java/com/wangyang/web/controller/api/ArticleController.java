@@ -183,14 +183,14 @@ public class ArticleController {
         if(article.getJs()==null){
             article.setJs("");
         }
-//        if(article.getTitle().equals(articleParams.getTitle())&&
-//                article.getOriginalContent().equals(articleParams.getOriginalContent())&&
-//                article.getJs().equals(articleParams.getJs())&&
-//                article.getCss().equals(articleParams.getCss())&&
-//                article.getSummary().equals(articleParams.getSummary())&&
-//                article.getCategoryId().equals(articleParams.getCategoryId())){
-        if(article.getOriginalContent().equals(articleParams.getOriginalContent())) {
-            return BaseResponse.ok("内容没有更新!!",article);
+        if( (Objects.nonNull(article.getTitle()) && article.getTitle().equals(articleParams.getTitle()))  &&
+                (Objects.nonNull(article.getOriginalContent()) && article.getOriginalContent().equals(articleParams.getOriginalContent()) )&&
+                (Objects.nonNull(article.getJs()) && article.getJs().equals(articleParams.getJs()) )&&
+                (Objects.nonNull( article.getCss()) && article.getCss().equals(articleParams.getCss()) )&&
+                (Objects.nonNull( article.getSummary()) && article.getSummary().equals(articleParams.getSummary()) )&&
+                (Objects.nonNull(article.getCategoryId()) && article.getCategoryId().equals(articleParams.getCategoryId()) ) ){
+//        if(article.getOriginalContent().equals(articleParams.getOriginalContent())) {
+            return BaseResponse.ok("没有更新字段!!",article);
         }
 
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));

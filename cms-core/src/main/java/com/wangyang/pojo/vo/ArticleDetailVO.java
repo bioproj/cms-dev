@@ -50,6 +50,8 @@ public class ArticleDetailVO extends ContentDetailVO {
     private Boolean isArticleDocLink;
     private List<User> users;
     private  List<Toc> tocList;
+    private Boolean isParseMarkdown;
+;
 //    private String linkPath ;
 
 //    public String getCommentPath() {

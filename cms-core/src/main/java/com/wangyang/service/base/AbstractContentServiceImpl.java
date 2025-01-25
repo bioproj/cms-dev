@@ -134,8 +134,12 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
 
     @Override
     public ARTICLE createOrUpdate(ARTICLE article) {
-
-        MarkdownUtils.renderHtml(article);
+        if(Objects.isNull(article.getIsParseMarkdown())){
+            article.setIsParseMarkdown(true);
+        }
+        if(article.getIsParseMarkdown()){
+            MarkdownUtils.renderHtml(article);
+        }
         return article;
     }
 
