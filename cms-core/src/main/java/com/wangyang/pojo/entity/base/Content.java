@@ -2,6 +2,7 @@ package com.wangyang.pojo.entity.base;
 
 import com.wangyang.common.pojo.BaseEntity;
 import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.pojo.enums.ParseType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -57,6 +58,8 @@ public class Content extends BaseEntity {
 
     private Boolean isDivision=false;
     private Integer articleInComponentOrder=0;
-    private Boolean isParseMarkdown;
+//    private Boolean isParseMarkdown;
+    @Enumerated(value = EnumType.STRING)
+    private ParseType parseType;
 }
 

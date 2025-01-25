@@ -185,7 +185,7 @@ public class ArticleController {
         }
         if( (Objects.nonNull(article.getTitle()) && article.getTitle().equals(articleParams.getTitle()))  &&
                 (Objects.nonNull(article.getOriginalContent()) && article.getOriginalContent().equals(articleParams.getOriginalContent()) )&&
-                (Objects.nonNull(article.getIsParseMarkdown()) && article.getIsParseMarkdown().equals(articleParams.getIsParseMarkdown()) )&&
+                (Objects.nonNull(article.getParseType()) && article.getParseType().equals(articleParams.getParseType()) )&&
                 (Objects.nonNull(article.getJs()) && article.getJs().equals(articleParams.getJs()) )&&
                 (Objects.nonNull( article.getCss()) && article.getCss().equals(articleParams.getCss()) )&&
                 (Objects.nonNull( article.getSummary()) && article.getSummary().equals(articleParams.getSummary()) )&&

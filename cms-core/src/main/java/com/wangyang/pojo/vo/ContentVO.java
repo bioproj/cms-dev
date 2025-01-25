@@ -7,6 +7,7 @@ import com.wangyang.pojo.dto.TagsDto;
 import com.wangyang.pojo.dto.Toc;
 import com.wangyang.pojo.entity.Tags;
 import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.pojo.enums.ParseType;
 import lombok.Data;
 
 import java.util.Date;
@@ -60,7 +61,7 @@ public class ContentVO extends BaseVo<ContentVO> {
     private List<? extends BaseCategoryVo> parentCategories;
     private ContentVO forwardContentVO;
     private  ContentVO nextcontentVO;
-    private Boolean isParseMarkdown;
+    private ParseType parseType;
 //    public String getLinkPath() {
 //        return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";
 //    }

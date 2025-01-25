@@ -19,6 +19,7 @@ import com.wangyang.common.enums.Lang;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleList;
 import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.pojo.enums.ParseType;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
@@ -134,12 +135,12 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
 
     @Override
     public ARTICLE createOrUpdate(ARTICLE article) {
-        if(Objects.isNull(article.getIsParseMarkdown())){
-            article.setIsParseMarkdown(true);
+        if(Objects.isNull(article.getParseType())){
+            article.setParseType(ParseType.MARKDOWN);
         }
-        if(article.getIsParseMarkdown()){
+        if(article.getParseType().equals(ParseType.MARKDOWN)){
             MarkdownUtils.renderHtml(article);
-        }else {
+        }else if(article.getParseType().equals(ParseType.COPY)){
             article.setFormatContent(article.getOriginalContent());
         }
         return article;

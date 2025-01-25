@@ -2,6 +2,7 @@ package com.wangyang.pojo.params;
 
 import com.wangyang.pojo.dto.InputConverter;
 import com.wangyang.pojo.entity.Article;
+import com.wangyang.pojo.enums.ParseType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ public class ArticleParams  implements InputConverter<Article> {
     private String title;
     @NotBlank(message = "文章内容不能为空!!")
     private String originalContent;
+    private String formatContent;
     private String summary;
     private String viewName;
     private Set<Integer> tagIds;
@@ -35,6 +37,7 @@ public class ArticleParams  implements InputConverter<Article> {
     private String youtube;
     private String video;
     private Boolean isDivision;
-    private Boolean isParseMarkdown;
+//    private Boolean isParseMarkdown;
+    private ParseType parseType;
 
 }
