@@ -139,6 +139,8 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         }
         if(article.getIsParseMarkdown()){
             MarkdownUtils.renderHtml(article);
+        }else {
+            article.setFormatContent(article.getOriginalContent());
         }
         return article;
     }
