@@ -999,7 +999,7 @@ public class HtmlServiceImpl implements IHtmlService {
         ITemplateEngine webEngine = TemplateUtil.getWebEngine();
         Context context = new Context();
         context.setVariable("view",article);
-        String html = webEngine.process(previewName, context);
+        String html = webEngine.process(CMSUtils.getTemplates()+"/"+previewName, context);
         article.setFormatContent(html);
     }
 }
