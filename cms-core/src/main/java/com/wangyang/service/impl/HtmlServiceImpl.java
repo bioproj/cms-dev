@@ -978,4 +978,11 @@ public class HtmlServiceImpl implements IHtmlService {
 //        convertArticleListBy(category);
     }
 
+    @Override
+    public void previewParse(Article article) {
+        Template template = templateService.findByEnName(article.getTemplateName());
+//        String html = TemplateUtil.convertHtmlAndSave(articleVO.getPath(),articleVO.getViewName(),map, template);
+        String html = TemplateUtil.convertHtmlAndPreview(article, template);
+        article.setFormatContent(html);
+    }
 }

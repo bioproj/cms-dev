@@ -1,5 +1,6 @@
 package com.wangyang.web.controller.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ArticleException;
@@ -140,15 +141,20 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/save")
-    public Article saveArticle(@Valid @RequestBody ArticleParams articleParams,@RequestParam(value = "more", defaultValue = "false") Boolean more, HttpServletRequest request){
+    public Article saveArticle(@Valid @RequestBody ArticleParams articleParams,@RequestParam(value = "more", defaultValue = "false") Boolean more,@RequestParam(required = false,defaultValue = "false") Boolean previewParse, HttpServletRequest request){
         Assert.notNull(articleParams.getCategoryId(),"文章分类不能为空!");
         Assert.notNull(articleParams.getTitle(),"文章标题不能为空!");
         int userId = AuthorizationUtil.getUserId(request);
-        Article article = new Article();
-        BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
+        Article article = BeanUtil.copyProperties(articleParams, Article.class, getNullPropertyNames(articleParams));
+        Article saveArticle = articleService.saveArticleDraft(userId, article, more);
+
+        Article viewArticle = BeanUtil.copyProperties(saveArticle, Article.class);
+        if(previewParse){
+            htmlService.previewParse(viewArticle);
+        }
 //        article.setUserId(userId);
 //        article.setStatus(ArticleStatus.DRAFT);
-        return  articleService.saveArticleDraft(userId,article,more);
+        return  viewArticle;
     }
 
     @GetMapping("/simpleCreate/{categoryId}")

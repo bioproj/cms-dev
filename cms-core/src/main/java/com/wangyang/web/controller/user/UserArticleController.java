@@ -122,10 +122,17 @@ public class UserArticleController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editArticle(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+    public String editArticle(HttpServletRequest request,Model model,@PathVariable("id") Integer id,@RequestParam(required = false,defaultValue = "false") Boolean previewParse){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Article article = articleService.findByIdAndUserId(id, userId);
+        Article findArticle = articleService.findByIdAndUserId(id, userId);
+        Article article = BeanUtil.copyProperties(findArticle, Article.class);
+        if(previewParse){
+            htmlService.previewParse(article);
+        }
+
         ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
+
+
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
 //        ArticleDetailVO articleDetailVOSimple= BeanUtil.copyProperties(articleDetailVO,ArticleDetailVO.class,"originalContent","formatContent");
         model.addAttribute("view",articleDetailVO);

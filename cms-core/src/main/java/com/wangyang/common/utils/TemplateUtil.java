@@ -168,6 +168,7 @@ public class TemplateUtil {
             map.put("template",template);
         }
         map.put("isSave",true);
+        map.put("isPreview",true);
         Context context = new Context();
         context.setVariables(map);
         return  getHtml(template.getTemplateValue(),context);
