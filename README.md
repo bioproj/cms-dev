@@ -1,4 +1,5 @@
 [![Static Badge](https://img.shields.io/badge/gitee-bioproj%2Fcms--dev-brightgreen?logo=gitee)](https://gitee.com/bioproj/cms-dev)
+[![Static Badge](https://img.shields.io/badge/bioinfo.online-website-brightgreen?logo=https%3A%2F%2Fbioinfo.online%2Ffavicon.ico)](https://bioinfo.online/)
 
 
 ### 一、内容（文章）管理系统介绍
