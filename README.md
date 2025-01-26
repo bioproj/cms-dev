@@ -27,7 +27,7 @@ ssh roor@XXX.XXX "cd XXX && git pull && ./mvnw clean && ./mvnw install && ./init
 
 ### 三、系统开发
 ```
-git clone https://github.com/BioinfoFungi/cms-dev.git
+git https://github.com/bioproj/cms-dev.git
 ```
 ```
 ./mvnw spring-boot:run
