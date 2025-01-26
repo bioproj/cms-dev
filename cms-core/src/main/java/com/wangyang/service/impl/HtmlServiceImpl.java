@@ -988,7 +988,7 @@ public class HtmlServiceImpl implements IHtmlService {
         String previewName = template.getTemplateValue() + ".preview";
         Path templatePath = TemplateUtil.getTemplatePath(previewName);
         if(!templatePath.toFile().exists()){
-            throw new RuntimeException("模板["+template.getTemplateValue()+"]没有配置预览模板!");
+            throw new RuntimeException("模板["+template.getTemplateValue()+"]没有配置预览模板["+templatePath.toString()+"]!");
         }
 //        if(templatePath.toFile().exists()){
 //            template.setTemplateValue(templatePath.toString());
