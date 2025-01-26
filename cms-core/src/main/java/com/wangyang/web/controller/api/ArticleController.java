@@ -1,11 +1,17 @@
 package com.wangyang.web.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.*;
 import com.wangyang.common.enums.Lang;
-import com.wangyang.pojo.vo.ArticleVO;
+import com.wangyang.pojo.dto.CategoryContentListDao;
+import com.wangyang.pojo.entity.Template;
+import com.wangyang.pojo.entity.base.BaseCategory;
+import com.wangyang.pojo.entity.base.Content;
+import com.wangyang.pojo.enums.TemplateData;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
@@ -13,11 +19,12 @@ import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.MindJs;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.enums.ArticleStatus;
-import com.wangyang.pojo.vo.ArticleDetailVO;
 
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.params.ArticleParams;
 import com.wangyang.common.BaseResponse;
+import com.wangyang.service.base.IBaseCategoryService;
+import com.wangyang.service.base.IContentService;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.util.AuthorizationUtil;
 import com.wangyang.util.FormatUtil;
@@ -26,9 +33,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +46,8 @@ import javax.validation.Valid;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -58,7 +69,11 @@ public class ArticleController {
     @Autowired
     ICategoryService categoryService;
 
-
+    @Autowired
+    @Qualifier("baseCategoryServiceImpl")
+    IBaseCategoryService<BaseCategory,BaseCategory, BaseCategoryVo> baseCategoryService;
+    @Qualifier("contentServiceImpl")
+    IContentService<Content,ContentDetailVO, ContentVO> contentService;
 
     @Autowired
     ITemplateService templateService;
@@ -705,6 +720,28 @@ public class ArticleController {
         return save;
     }
 //    Set<Integer> ids,  Set<String> sortStr,String order, Integer page, Integer size
+
+    //    @ResponseBody
+    /**
+     * 使用自定义的公共头部引用语句
+     */
+    @GetMapping("/preview/{articleId}")
+    public BaseResponse<Article> previewArticle(@PathVariable("articleId")Integer articleId){
+        Article article = articleService.findArticleById(articleId);
+        article = articleService.createOrUpdate(article);
+        return BaseResponse.ok(article);
+
+//        ModelAndView modelAndView = new ModelAndView();
+//        model.addAttribute("view",articleDetailVo);
+//        model.addAllAttributes(map);
+////        modelAndView.setViewName(template.getTemplateValue());
+////        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
+////        String convertHtml = FileUtils.convertByString(html);
+//        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
+    }
+
+
+
 
 
 }

@@ -392,6 +392,10 @@ public class TemplateUtil {
                     viewName = viewName.replace(CmsConst.TEMPLATE_FILE_PREFIX,"");
                     viewNamePath = CMSUtils.getTemplates()+viewName;
 //                    templateEngine = getFileEngine();
+                }else if(viewName.startsWith(CmsConst.TEMPLATE_FILE_FILE_ENGIN_PREFIX)){
+                    viewName = viewName.replace(CmsConst.TEMPLATE_FILE_FILE_ENGIN_PREFIX,"");
+                    viewNamePath = CMSUtils.getTemplates()+viewName;
+                    templateEngine = getFileEngine();
                 }
 //        (!viewName.startsWith("html") && !viewName.startsWith("en") ){
 //

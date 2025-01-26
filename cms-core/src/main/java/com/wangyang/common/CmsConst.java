@@ -159,4 +159,5 @@ public class CmsConst {
     public final static String EMAIL_ROLE = "EMAIL_ROLE";
     public final static String PHONE_ROLE = "PHONE_ROLE";
     public final static String TEMPLATE_FILE_PREFIX = "tf:";
+    public final static String TEMPLATE_FILE_FILE_ENGIN_PREFIX = "tf2:";
 }
