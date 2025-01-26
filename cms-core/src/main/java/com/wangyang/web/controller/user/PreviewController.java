@@ -133,7 +133,7 @@ public class PreviewController {
     @GetMapping(value = "/article-edit/{articleId}",produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String previewEditArticle(@PathVariable("articleId")Integer articleId, HttpServletResponse response) {
-        response.setContentType("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         Article article = articleService.findArticleById(articleId);
         htmlService.previewParse(article);
         return  article.getFormatContent();
