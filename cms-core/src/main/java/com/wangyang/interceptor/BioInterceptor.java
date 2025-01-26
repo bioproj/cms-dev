@@ -19,6 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,10 @@ public class BioInterceptor implements HandlerInterceptor {
         Set<String> needRoleStr = ServiceUtil.fetchProperty(needsRoles, Role::getEnName);
 
         String token = getToken(request, "Authorization");
+        if(Objects.isNull(token)){
+            token = request.getParameter("token");
+        }
+
 
         if(needRoleStr.contains("anonymous")){
             User user = new UserDetailDTO();
