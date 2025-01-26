@@ -37,6 +37,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,7 +132,8 @@ public class PreviewController {
 //    @Rest
     @GetMapping(value = "/article-edit/{articleId}",produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String previewEditArticle(@PathVariable("articleId")Integer articleId, Model model) {
+    public String previewEditArticle(@PathVariable("articleId")Integer articleId, HttpServletResponse response) {
+        response.setContentType("UTF-8");
         Article article = articleService.findArticleById(articleId);
         htmlService.previewParse(article);
         return  article.getFormatContent();
