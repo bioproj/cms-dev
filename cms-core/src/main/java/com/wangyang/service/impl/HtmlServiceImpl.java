@@ -1,5 +1,6 @@
 package com.wangyang.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import com.wangyang.common.CmsConst;
@@ -45,12 +46,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -980,9 +983,23 @@ public class HtmlServiceImpl implements IHtmlService {
 
     @Override
     public void previewParse(Article article) {
-        Template template = templateService.findByEnName(article.getTemplateName());
+        Template findTemplate = templateService.findByEnName(article.getTemplateName());
+        Template template = BeanUtil.copyProperties(findTemplate, Template.class);
+        String previewName = template.getTemplateValue() + ".preview";
+        Path templatePath = TemplateUtil.getTemplatePath(previewName);
+        if(!templatePath.toFile().exists()){
+            throw new RuntimeException("模板["+template.getTemplateValue()+"]没有配置预览模板!");
+        }
+//        if(templatePath.toFile().exists()){
+//            template.setTemplateValue(templatePath.toString());
+//        }
 //        String html = TemplateUtil.convertHtmlAndSave(articleVO.getPath(),articleVO.getViewName(),map, template);
-        String html = TemplateUtil.convertHtmlAndPreview(article, template);
+
+//        String html = TemplateUtil.convertHtmlAndPreview(article, template);
+        ITemplateEngine webEngine = TemplateUtil.getWebEngine();
+        Context context = new Context();
+        context.setVariable("view",article);
+        String html = webEngine.process(previewName, context);
         article.setFormatContent(html);
     }
 }

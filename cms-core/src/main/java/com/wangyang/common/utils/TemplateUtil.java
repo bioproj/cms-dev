@@ -587,6 +587,9 @@ public class TemplateUtil {
         TemplateEngine templateEngine = HtmlTemplateEngine.getWebInstance(workDir, ".html",CMSUtils.getTemplates());
         return templateEngine;
     }
+    public static Path getTemplatePath(String viewName){
+        return  Paths.get(workDir,CMSUtils.getTemplates(),viewName+".html");
+    }
     /**
      *
 //     * @param needInclude 是否需要引入header
