@@ -35,6 +35,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -194,7 +195,10 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/save/{id}")
-    public BaseResponse updateArticle(@PathVariable("id") Integer id,@RequestParam(value = "more", defaultValue = "false") Boolean more,@Valid @RequestBody ArticleParams articleParams,HttpServletRequest request){
+    public BaseResponse updateArticle(@PathVariable("id") Integer id,
+                                      @RequestParam(required = false,defaultValue = "false") Boolean previewParse,
+                                      @RequestParam(value = "more", defaultValue = "false") Boolean more,
+                                      @Valid @RequestBody ArticleParams articleParams,HttpServletRequest request){
         int userId = AuthorizationUtil.getUserId(request);
         Article article = articleService.findArticleById(id);
 //        checkUser(userId,article);
@@ -225,7 +229,11 @@ public class ArticleController {
             article.setStatus(ArticleStatus.DRAFT);
         }
         Article updateArticleDraft = articleService.updateArticleDraft(userId,article, more);
-        return BaseResponse.ok("更新成功!!",updateArticleDraft);
+        Article articleView = BeanUtil.copyProperties(updateArticleDraft, Article.class);
+        if(previewParse){
+            htmlService.previewParse(articleView);
+        }
+        return BaseResponse.ok("更新成功!!",articleView);
     }
 
     public static String[] getNullPropertyNames (Object source) {
