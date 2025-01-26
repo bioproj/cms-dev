@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -125,6 +126,23 @@ public class PreviewController {
             return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
         }
 
+    }
+
+//    @Rest
+    @GetMapping(value = "/article-edit/{articleId}",produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String previewEditArticle(@PathVariable("articleId")Integer articleId, Model model) {
+        Article article = articleService.findArticleById(articleId);
+        htmlService.previewParse(article);
+        return  article.getFormatContent();
+//        Template template = templateService.findByEnName(article.getTemplateName());
+//
+//        model.addAttribute("view",article);
+////        model.addAllAttributes(map);
+////        modelAndView.setViewName(template.getTemplateValue());
+////        String html = TemplateUtil.convertHtmlAndPreview(articleDetailVo, template);
+////        String convertHtml = FileUtils.convertByString(html);
+//        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue() +".preview";
     }
 //    @ResponseBody
     /**
