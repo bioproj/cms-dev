@@ -49,7 +49,7 @@ public class MyCustomViewResolver implements ViewResolver, Ordered {
     @Override
     public int getOrder() {
         // TODO Auto-generated method stub
-        return 1;
+        return 0;
     }
     public void setOrder(Integer order){
         this.order = order;
