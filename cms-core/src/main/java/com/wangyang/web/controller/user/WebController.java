@@ -274,6 +274,7 @@ public class WebController {
     }
 
 
+    @Anonymous
     public String template(@PathVariable String viewName) {
         return CmsConst.TEMPLATE_FILE_PREFIX+"/"+viewName;
     }

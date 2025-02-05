@@ -1,6 +1,7 @@
 package com.wangyang.web.controller.user;
 
 import com.wangyang.config.ConstProperties;
+import com.wangyang.pojo.annotation.Anonymous;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +21,9 @@ public class ConfigController {
     public void setHandlerMapping(RequestMappingHandlerMapping mapping,
                                  WebController controller) throws NoSuchMethodException {
         RequestMappingInfo info = RequestMappingInfo
-                .paths("/"+constProperties.templateWebPrefix+"/{viewName}.html").methods(RequestMethod.GET).build();
+                .paths("/"+constProperties.templateWebPrefix+"/{viewName}.html")
+                .methods(RequestMethod.GET)
+                .build();
         Method method = WebController.class.getMethod("template",String.class);
         mapping.registerMapping(info, controller, method);
     }
