@@ -149,7 +149,7 @@ public class PreviewController {
 //        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue() +".preview";
     }
     //    @Rest
-    @GetMapping(value = "/category-edit/{articleId}",produces ="text/html;charset=UTF-8")
+    @GetMapping(value = "/category-edit/{categoryId}",produces ="text/html;charset=UTF-8")
     @ResponseBody
     public String previewEditCategory(@PathVariable("categoryId")Integer articleId, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
