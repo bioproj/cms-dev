@@ -2,6 +2,7 @@ package com.wangyang.pojo.entity;
 
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.enums.NetworkType;
+import com.wangyang.pojo.enums.ParseType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -55,10 +56,11 @@ public class Category extends BaseCategory{
 //    private Integer articleListPage=0;
     private Boolean isDesc=true;
 
-    @Column(name = "parse_")
-    private Boolean parse=true;
+//    @Column(name = "parse_")
+//    private Boolean parse=true;
 
-
+    @Enumerated(value =EnumType.STRING)
+    private ParseType parseType;
 
 
     private Boolean isRecursive=false;

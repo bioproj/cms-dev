@@ -6,13 +6,12 @@ import com.wangyang.common.exception.OptionException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.common.utils.TemplateUtil;
-import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryChild;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.enums.ParseType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.CategoryQuery;
 import com.wangyang.pojo.vo.CategoryDetailVO;
@@ -42,7 +41,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -158,6 +156,19 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
         Category category = createOrUpdate(categoryParam,tagIds,userId);
         return category;
     }
+    @Override
+    public Category createOrUpdate(Category category) {
+        if(Objects.isNull(category.getParseType())){
+            category.setParseType(ParseType.MARKDOWN);
+        }
+        if(category.getParseType().equals(ParseType.MARKDOWN)){
+            String renderHtml = MarkdownUtils.renderHtml(category.getOriginalContent());
+            category.setFormatContent(renderHtml);
+        }else if(category.getParseType().equals(ParseType.COPY)){
+            category.setFormatContent(category.getOriginalContent());
+        }
+        return category;
+    }
 
     public Category createOrUpdate(Category category,Set<Integer> tagIds,Integer userId){
         if(category.getParentId()==null){
@@ -214,13 +225,23 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
             category.setPath(CMSUtils.getCategoryPath());
         }
 
-        if(category.getParse()!=null && category.getParse()){
-            String renderHtml = MarkdownUtils.renderHtml(category.getOriginalContent());
-            category.setFormatContent(renderHtml);
-        }else {
-            category.setFormatContent(category.getOriginalContent());
-        }
-
+//        if(category.getParse()!=null && category.getParse()){
+//            String renderHtml = MarkdownUtils.renderHtml(category.getOriginalContent());
+//            category.setFormatContent(renderHtml);
+//        }else {
+//            category.setFormatContent(category.getOriginalContent());
+//        }
+        category = createOrUpdate(category);
+//        if(Objects.isNull(category.getParseType())){
+//            category.setParseType(ParseType.MARKDOWN);
+//        }
+//        if(category.getParseType().equals(ParseType.MARKDOWN)){
+////            MarkdownUtils.renderHtml(category);
+//            String renderHtml = MarkdownUtils.renderHtml(category.getOriginalContent());
+//            category.setFormatContent(renderHtml);
+//        }else if(category.getParseType().equals(ParseType.COPY)){
+//            category.setFormatContent(category.getOriginalContent());
+//        }
 
         
 

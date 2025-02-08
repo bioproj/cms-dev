@@ -3,6 +3,7 @@ package com.wangyang.pojo.vo;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.enums.NetworkType;
+import com.wangyang.pojo.enums.ParseType;
 import com.wangyang.pojo.enums.TemplateData;
 import lombok.Data;
 
@@ -44,4 +45,6 @@ public class BaseCategoryVo<T extends BaseCategoryVo> extends BaseVo<T> {
     private TemplateData templateData=TemplateData.OTHER;
 
     private NetworkType networkType;
+
+    private ParseType parseType;
 }

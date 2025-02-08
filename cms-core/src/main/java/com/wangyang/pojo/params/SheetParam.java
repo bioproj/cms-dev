@@ -1,6 +1,7 @@
 package com.wangyang.pojo.params;
 
 import com.wangyang.pojo.enums.ArticleStatus;
+import com.wangyang.pojo.enums.ParseType;
 import lombok.Data;
 
 @Data
@@ -22,4 +23,5 @@ public class SheetParam {
     private String cssClass; //节点的方向
     private String picPath;
     private String picThumbPath;
+    private ParseType parseType;
 }

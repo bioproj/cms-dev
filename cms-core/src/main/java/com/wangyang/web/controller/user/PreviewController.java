@@ -329,13 +329,14 @@ public class PreviewController {
     @Anonymous
     public String previewSheet(@PathVariable("id") Integer id,Model model){
         Sheet sheet = sheetService.findById(id);
-        if(sheet.getStatus()!= ArticleStatus.PUBLISHED){
-            if(sheet.getIsSource()){
-                sheet.setFormatContent(sheet.getOriginalContent());
-            }else {
-                sheet = sheetService.createOrUpdate(sheet);
-            }
-        }
+//        if(sheet.getStatus()!= ArticleStatus.PUBLISHED){
+//            if(sheet.getIsSource()){
+//                sheet.setFormatContent(sheet.getOriginalContent());
+//            }else {
+//                sheet = sheetService.createOrUpdate(sheet);
+//            }
+//        }
+        sheet = sheetService.createOrUpdate(sheet);
 //        Template template = templateService.findById(sheetDetailVo.getChannel().getArticleTemplateId());
         Template template = templateService.findByEnName(sheet.getTemplateName());
 //        ModelAndView modelAndView = new ModelAndView();
