@@ -18,6 +18,8 @@ public class SheetVo extends ContentVO {
     private String cssClass;
     private String picPath;
     private String picThumbPath;
+    private String originalContent;
+    private String formatContent;
     @Override
     public String toString() {
         return JSON.toJSONString(this);
