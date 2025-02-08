@@ -993,7 +993,7 @@ public class HtmlServiceImpl implements IHtmlService {
     public void previewParse(Category categoryView) {
         CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(categoryView.getId());
         Template template = templateService.findById(categoryTemplate.getTemplateId());
-        String html = getObjectHtml(template, categoryTemplate);
+        String html = getObjectHtml(template, categoryView);
         categoryView.setFormatContent(html);
 
     }
