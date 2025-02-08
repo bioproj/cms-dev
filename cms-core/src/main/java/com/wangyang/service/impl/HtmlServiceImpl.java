@@ -1021,5 +1021,6 @@ public class HtmlServiceImpl implements IHtmlService {
         Context context = new Context();
         context.setVariable("view",o);
         String html = webEngine.process(CMSUtils.getTemplates()+"/"+previewName, context);
+        return  html;
     }
 }
