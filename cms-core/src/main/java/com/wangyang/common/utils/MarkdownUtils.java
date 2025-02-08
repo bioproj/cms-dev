@@ -180,6 +180,7 @@ public class MarkdownUtils {
 
 
             )).set(GitLabExtension.IMAGE_SRC_TAG,"src")
+//            .set(GitLabExtension.IMAGE_EXTENSIONS)
             .set(HtmlRenderer.SOFT_BREAK, "<br/>")
             .set(Parser.INDENTED_CODE_BLOCK_PARSER,false)
 //            .set(Parser.HARD_LINE_BREAK_LIMIT,true)

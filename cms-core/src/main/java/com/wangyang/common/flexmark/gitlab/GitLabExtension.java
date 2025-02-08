@@ -50,7 +50,7 @@ public class GitLabExtension implements Parser.ParserExtension
     @Deprecated
     final public static DataKey<String> BLOCK_INFO_DELIMITERS = HtmlRenderer.FENCED_CODE_LANGUAGE_DELIMITERS;
     final public static DataKey<String> VIDEO_IMAGE_EXTENSIONS = new DataKey<>("VIDEO_IMAGE_EXTENSIONS", "mp4,m4v,mov,webm,ogv");
-    final public static DataKey<String> IMAGE_EXTENSIONS = new DataKey<>("VIDEO_IMAGE_EXTENSIONS", "png,jpg,jpeg");
+    final public static DataKey<String> IMAGE_EXTENSIONS = new DataKey<>("VIDEO_IMAGE_EXTENSIONS", "png,jpg,jpeg,webp,svg");
 
     private GitLabExtension() {
     }
