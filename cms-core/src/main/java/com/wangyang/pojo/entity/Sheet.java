@@ -1,5 +1,6 @@
 package com.wangyang.pojo.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.pojo.entity.base.Content;
 import lombok.Data;
 
@@ -20,5 +21,8 @@ public class Sheet extends Content {
     private Boolean recommend=false;
     @Column(columnDefinition = "bit(1) default false")
     private Boolean existNav=false;
-
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 }
