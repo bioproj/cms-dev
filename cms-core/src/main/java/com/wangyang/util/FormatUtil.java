@@ -7,10 +7,7 @@ import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.entity.Sheet;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.pojo.vo.ArticleDetailVO;
-import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.pojo.vo.GoodsDetailVO;
+import com.wangyang.pojo.vo.*;
 
 import java.io.File;
 
@@ -147,5 +144,9 @@ public class FormatUtil {
 //            return File.separator+articleDetailVO.getPath().replace("html/","")+File.separator+articleDetailVO.getViewName()+".html";
 //        }
 //        return File.separator+articleDetailVO.getPath().replace(File.separator,"_")+"_"+articleDetailVO.getViewName()+".html";
+    }
+
+    public static String articleFormat(SheetVo sheetVo) {
+        return File.separator+sheetVo.getPath().replace("html/","")+File.separator+sheetVo.getViewName()+".html";
     }
 }

@@ -1,6 +1,7 @@
 package com.wangyang.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
@@ -197,6 +198,14 @@ public class SheetServiceImpl extends AbstractContentServiceImpl<Sheet,SheetDeta
             return sheetVo;
         });
         return sheetVoPage;
+    }
+
+    @Override
+    public SheetVo convertToVo(Sheet domain) {
+        SheetVo sheetVo = BeanUtil.copyProperties(domain, SheetVo.class);
+        sheetVo.setLinkPath( FormatUtil.articleFormat(sheetVo));
+
+        return sheetVo;
     }
 
     @Override
