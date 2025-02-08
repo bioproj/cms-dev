@@ -44,8 +44,8 @@ public class Content extends BaseEntity {
     private Boolean openComment=true;
     private String pdfPath;
     private String path;
-    @Column(columnDefinition = "bit(1) default false")
-    private Boolean isSource=false;
+//    @Column(columnDefinition = "bit(1) default false")
+//    private Boolean isSource=false;
     private Integer categoryId;
     @Column(name = "article_order", columnDefinition = "int default 0")
     private Integer order;

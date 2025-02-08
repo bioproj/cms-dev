@@ -5,12 +5,14 @@ import com.wangyang.common.CmsConst;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.DocumentUtil;
+import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.pojo.dto.ContentTab;
 import com.wangyang.pojo.entity.Menu;
 import com.wangyang.pojo.entity.Sheet;
 import com.wangyang.pojo.entity.Template;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
+import com.wangyang.pojo.enums.ParseType;
 import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.pojo.vo.SheetDetailVO;
 import com.wangyang.pojo.vo.SheetVo;
@@ -33,6 +35,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -62,11 +65,25 @@ public class SheetServiceImpl extends AbstractContentServiceImpl<Sheet,SheetDeta
 //        BeanUtils.copyProperties(sheetParam,sheet);
 //        Channel channel = channelService.findById(sheet.getChannelId());
         //如何Channel中没有存储文章路径
-        if(sheet.getIsSource()!=null && sheet.getIsSource()){
-            sheet.setFormatContent(sheet.getOriginalContent());
-        }else {
-            sheet = super.createOrUpdate(sheet);
+//        if(sheet.getIsSource()!=null && sheet.getIsSource()){
+//            sheet.setFormatContent(sheet.getOriginalContent());
+//        }else {
+//            sheet = super.createOrUpdate(sheet);
+//        }
+
+
+        if(Objects.isNull(sheet.getParseType())){
+            sheet.setParseType(ParseType.MARKDOWN);
         }
+        if(sheet.getParseType().equals(ParseType.MARKDOWN)){
+//            MarkdownUtils.renderHtml(category);
+            String renderHtml = MarkdownUtils.renderHtml(sheet.getOriginalContent());
+            sheet.setFormatContent(renderHtml);
+        }else if(sheet.getParseType().equals(ParseType.COPY)){
+            sheet.setFormatContent(sheet.getOriginalContent());
+        }
+
+
 
         if(sheet.getUseTemplatePath()!=null && sheet.getUseTemplatePath()){
             Template template = templateService.findByEnName(sheet.getTemplateName());

@@ -42,6 +42,8 @@ public interface ICategoryService  extends IBaseCategoryService<Category,Categor
 
 //    Page<CategoryDto> pageBy(String categoryEnName, int page, int size);
 
+    Category createOrUpdate(Category category);
+
     Page<Category> pageBy(String categoryEnName, Pageable pageable);
 
     List<CategoryDto> listBy(String categoryEnName);

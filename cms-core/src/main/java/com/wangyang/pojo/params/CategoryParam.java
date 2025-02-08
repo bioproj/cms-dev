@@ -4,6 +4,7 @@ import com.wangyang.pojo.dto.InputConverter;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
 import com.wangyang.pojo.enums.NetworkType;
+import com.wangyang.pojo.enums.ParseType;
 import com.wangyang.pojo.enums.TemplateData;
 import lombok.Data;
 
@@ -33,7 +34,8 @@ public class CategoryParam implements InputConverter<Category> {
     private String icon;
     private Set<Integer> tagIds;
     private String originalContent;
-    private Boolean parse;
+//    private Boolean parse;
+    private ParseType parseType;
     private Integer userId;
     private String cssClass; //节点的方向
     private Boolean articleUseViewName=false;
