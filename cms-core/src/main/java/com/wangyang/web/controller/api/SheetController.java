@@ -53,23 +53,23 @@ public class SheetController {
 
     @PostMapping("/save")
     public Sheet save(@RequestBody SheetParam sheetParam,
-                      @RequestParam(required = false,defaultValue = "false") Boolean previewParse,
+
                       HttpServletRequest request){
         Sheet sheet = new Sheet();
         BeanUtils.copyProperties(sheetParam,sheet);
         int userId = AuthorizationUtil.getUserId(request);
         sheet.setUserId(userId);
         Sheet saveSheet = sheetService.save(sheet);
-        Sheet sheetView = BeanUtil.copyProperties(saveSheet, Sheet.class);
-        if(previewParse){
-            htmlService.previewParse(sheetView);
-        }
+
 //        htmlService.convertArticleListBy(saveSheet);
         return saveSheet;
     }
 
     @PostMapping("/save/{id}")
-    public Sheet updateArticle(@PathVariable("id") Integer id, @Valid @RequestBody SheetParam sheetParam, HttpServletRequest request){
+    public Sheet updateArticle(@PathVariable("id") Integer id,
+                               @Valid @RequestBody SheetParam sheetParam,
+                               @RequestParam(required = false,defaultValue = "false") Boolean previewParse,
+                               HttpServletRequest request){
         Sheet sheet= sheetService.findById(id);
 //        if(sheet.getOriginalContent().equals(sheetParam.getOriginalContent())sheetParam.getJsContent().equals()){
 //            return sheet;
@@ -84,7 +84,12 @@ public class SheetController {
 //            article.setStatus(ArticleStatus.DRAFT);
 //        }
         sheet.setStatus(ArticleStatus.MODIFY);
-        return  sheetService.save(sheet);
+        Sheet saveSheet = sheetService.save(sheet);
+        Sheet sheetView = BeanUtil.copyProperties(saveSheet, Sheet.class);
+        if(previewParse){
+            htmlService.previewParse(sheetView);
+        }
+        return  sheetView;
     }
     public static String[] getNullPropertyNames (Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
