@@ -1,5 +1,6 @@
 package com.wangyang.pojo.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.enums.NetworkType;
@@ -48,5 +49,8 @@ public class CategoryVO extends BaseCategoryVo {
 
     private NetworkType networkType;
 
-
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 }
