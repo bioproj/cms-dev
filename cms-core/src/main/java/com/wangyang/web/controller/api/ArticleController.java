@@ -142,7 +142,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/save")
-    public Article saveArticle(@Valid @RequestBody ArticleParams articleParams,@RequestParam(value = "more", defaultValue = "false") Boolean more,@RequestParam(required = false,defaultValue = "false") Boolean previewParse, HttpServletRequest request){
+    public Article saveArticle(@Valid @RequestBody ArticleParams articleParams,@RequestParam(value = "more", defaultValue = "false") Boolean more, HttpServletRequest request){
         Assert.notNull(articleParams.getCategoryId(),"文章分类不能为空!");
         Assert.notNull(articleParams.getTitle(),"文章标题不能为空!");
         int userId = AuthorizationUtil.getUserId(request);
@@ -150,9 +150,9 @@ public class ArticleController {
         Article saveArticle = articleService.saveArticleDraft(userId, article, more);
 
         Article viewArticle = BeanUtil.copyProperties(saveArticle, Article.class);
-        if(previewParse){
-            htmlService.previewParse(viewArticle);
-        }
+//        if(previewParse){
+//            htmlService.previewParse(viewArticle);
+//        }
 //        article.setUserId(userId);
 //        article.setStatus(ArticleStatus.DRAFT);
         return  viewArticle;

@@ -985,6 +985,27 @@ public class HtmlServiceImpl implements IHtmlService {
     public void previewParse(Article article) {
         Template findTemplate = templateService.findByEnName(article.getTemplateName());
         Template template = BeanUtil.copyProperties(findTemplate, Template.class);
+        String html = getObjectHtml(template, article);
+        article.setFormatContent(html);
+    }
+
+    @Override
+    public void previewParse(Category categoryView) {
+        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(categoryView.getId());
+        Template template = templateService.findById(categoryTemplate.getTemplateId());
+        String html = getObjectHtml(template, categoryTemplate);
+        categoryView.setFormatContent(html);
+
+    }
+
+    @Override
+    public void previewParse(Sheet sheetView) {
+        Template template = templateService.findByEnName(sheetView.getTemplateName());
+        String html = getObjectHtml(template, sheetView);
+        sheetView.setFormatContent(html);
+    }
+
+    private String getObjectHtml(Template template, Object o){
         String previewName = template.getTemplateValue() + ".preview";
         Path templatePath = TemplateUtil.getTemplatePath(previewName);
         if(!templatePath.toFile().exists()){
@@ -998,8 +1019,7 @@ public class HtmlServiceImpl implements IHtmlService {
 //        String html = TemplateUtil.convertHtmlAndPreview(article, template);
         ITemplateEngine webEngine = TemplateUtil.getWebEngine();
         Context context = new Context();
-        context.setVariable("view",article);
+        context.setVariable("view",o);
         String html = webEngine.process(CMSUtils.getTemplates()+"/"+previewName, context);
-        article.setFormatContent(html);
     }
 }

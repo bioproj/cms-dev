@@ -17,6 +17,8 @@ public interface ICategoryTemplateService  extends ICrudService<CategoryTemplate
 
     CategoryTemplate findByCategoryIdAndTemplateType(int categoryId, Lang lang);
 
+    CategoryTemplate findByCategoryIdAndTemplateType(int categoryId);
+
     List<CategoryTemplate> listByCategoryId(Integer id);
 
     List<CategoryTemplate> listByTemplateId(Integer id);

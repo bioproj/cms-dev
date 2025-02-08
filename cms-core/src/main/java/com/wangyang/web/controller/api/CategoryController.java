@@ -1,5 +1,6 @@
 package com.wangyang.web.controller.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
@@ -158,7 +159,10 @@ public class CategoryController {
         return categoryService.pageBy(categoryEnName,pageable);
     }
     @PostMapping("/save/{categoryId}")
-    public Category save(@Valid @RequestBody CategoryParam categoryParam,@PathVariable("categoryId") Integer categoryId, HttpServletRequest request){
+    public Category save(@Valid @RequestBody CategoryParam categoryParam,
+                         @PathVariable("categoryId") Integer categoryId,
+                         @RequestParam(required = false,defaultValue = "false") Boolean previewParse,
+                         HttpServletRequest request){
         Category category = categoryService.findById(categoryId);
         UserDetailDTO userDetailDTO = AuthorizationUtil.getUserNotNUll(request);
 
@@ -176,7 +180,12 @@ public class CategoryController {
 //            //生成文章第一页的列表
 //            htmlService.convertArticleListBy(category);
 //        }
-        return updateCategory;
+        Category categoryView = BeanUtil.copyProperties(updateCategory, Category.class);
+
+        if(previewParse){
+            htmlService.previewParse(categoryView);
+        }
+        return categoryView;
     }
     @PostMapping("/update/{categoryId}")
     public Category update(@Valid @RequestBody CategoryParam categoryParam, @PathVariable("categoryId") Integer categoryId, HttpServletRequest request){

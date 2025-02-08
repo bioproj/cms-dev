@@ -1,7 +1,9 @@
 package com.wangyang.web.controller.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.enums.Lang;
+import com.wangyang.pojo.entity.Article;
 import com.wangyang.service.IHtmlService;
 import com.wangyang.service.ISheetService;
 import com.wangyang.pojo.entity.Sheet;
@@ -50,12 +52,18 @@ public class SheetController {
     }
 
     @PostMapping("/save")
-    public Sheet save(@RequestBody SheetParam sheetParam, HttpServletRequest request){
+    public Sheet save(@RequestBody SheetParam sheetParam,
+                      @RequestParam(required = false,defaultValue = "false") Boolean previewParse,
+                      HttpServletRequest request){
         Sheet sheet = new Sheet();
         BeanUtils.copyProperties(sheetParam,sheet);
         int userId = AuthorizationUtil.getUserId(request);
         sheet.setUserId(userId);
         Sheet saveSheet = sheetService.save(sheet);
+        Sheet sheetView = BeanUtil.copyProperties(saveSheet, Sheet.class);
+        if(previewParse){
+            htmlService.previewParse(sheetView);
+        }
 //        htmlService.convertArticleListBy(saveSheet);
         return saveSheet;
     }

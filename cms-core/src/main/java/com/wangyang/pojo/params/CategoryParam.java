@@ -14,7 +14,7 @@ import java.util.Set;
 public class CategoryParam implements InputConverter<Category> {
 
     private String description;
-    @NotBlank(message = "Category name can't empty!!")
+//    @NotBlank(message = "Category name can't empty!!")
     private String name;
 //    @NotBlank(message = "parentId  can't empty!!")
     private Integer parentId;

@@ -164,9 +164,15 @@ public class UserArticleController {
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/editComponents";
     }
     @GetMapping("/editCategory/{id}")
-    public String editCategory(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+    public String editCategory(HttpServletRequest request,Model model,
+                               @PathVariable("id") Integer id,
+                                @RequestParam(required = false,defaultValue = "false") Boolean previewParse){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Category category = categoryService.findById(id);
+        Category findCategory = categoryService.findById(id);
+        Category category = BeanUtil.copyProperties(findCategory, Category.class);
+        if(previewParse){
+            htmlService.previewParse(category);
+        }
         CategoryVO categoryVO = categoryService.convertToVo(category);
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
@@ -174,9 +180,14 @@ public class UserArticleController {
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/editCategory";
     }
     @GetMapping("/editSheet/{id}")
-    public String editSheet(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+    public String editSheet(HttpServletRequest request,Model model,
+                            @PathVariable("id") Integer id,
+                            @RequestParam(required = false,defaultValue = "false") Boolean previewParse){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Sheet sheet = sheetService.findById(id);
+        Sheet sheet = BeanUtil.copyProperties(sheetService.findById(id),Sheet.class);
+        if(previewParse){
+            htmlService.previewParse(sheet);
+        }
 //        Article article = articleService.findByIdAndUserId(id, userId);
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);

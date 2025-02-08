@@ -1,5 +1,6 @@
 package com.wangyang.web.controller.user;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.enums.Lang;
@@ -134,7 +135,8 @@ public class PreviewController {
     @ResponseBody
     public String previewEditArticle(@PathVariable("articleId")Integer articleId, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
-        Article article = articleService.findArticleById(articleId);
+        Article article = BeanUtil.copyProperties(articleService.findArticleById(articleId),Article.class);
+
         htmlService.previewParse(article);
         return  article.getFormatContent();
 //        Template template = templateService.findByEnName(article.getTemplateName());
@@ -146,6 +148,25 @@ public class PreviewController {
 ////        String convertHtml = FileUtils.convertByString(html);
 //        return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue() +".preview";
     }
+    //    @Rest
+    @GetMapping(value = "/category-edit/{articleId}",produces ="text/html;charset=UTF-8")
+    @ResponseBody
+    public String previewEditCategory(@PathVariable("categoryId")Integer articleId, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        Category category = BeanUtil.copyProperties(categoryService.findById(articleId),Category.class);
+        htmlService.previewParse(category);
+        return  category.getFormatContent();
+    }
+
+    @GetMapping(value = "/sheet-edit/{sheetId}",produces ="text/html;charset=UTF-8")
+    @ResponseBody
+    public String previewEditSheet(@PathVariable("sheetId")Integer sheetId, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        Sheet sheet = BeanUtil.copyProperties(sheetService.findById(sheetId),Sheet.class);
+        htmlService.previewParse(sheet);
+        return  sheet.getFormatContent();
+    }
+
 //    @ResponseBody
     /**
      * 使用自定义的公共头部引用语句

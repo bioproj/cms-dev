@@ -55,6 +55,10 @@ public class CategoryTemplateServiceImpl extends AbstractCrudService<CategoryTem
         CategoryTemplate categoryTemplate = findByCategoryIdAndTemplateType(categoryId, TemplateType.CATEGORY,lang);
         return categoryTemplate;
     }
+    @Override
+    public CategoryTemplate findByCategoryIdAndTemplateType(int categoryId){
+        return findByCategoryIdAndTemplateType(categoryId,Lang.ZH);
+    }
 
     @Override
     public List<CategoryTemplate> listByCategoryId(Integer id) {
