@@ -188,10 +188,11 @@ public class UserArticleController {
         if(previewParse){
             htmlService.previewParse(sheet);
         }
+        ContentVO contentVO = sheetService.convertToVo(sheet);
 //        Article article = articleService.findByIdAndUserId(id, userId);
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        model.addAttribute("view",sheet);
+        model.addAttribute("view",contentVO);
         return CmsConst.TEMPLATE_FILE_PREFIX+"user/writeSheet";
     }
 

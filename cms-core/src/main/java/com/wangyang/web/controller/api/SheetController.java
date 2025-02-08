@@ -84,7 +84,7 @@ public class SheetController {
 //            article.setStatus(ArticleStatus.DRAFT);
 //        }
         sheet.setStatus(ArticleStatus.MODIFY);
-        Sheet saveSheet = sheetService.save(sheet);
+        Sheet saveSheet = sheetService.addOrUpdate(sheet);
         Sheet sheetView = BeanUtil.copyProperties(saveSheet, Sheet.class);
         if(previewParse){
             htmlService.previewParse(sheetView);
