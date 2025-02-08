@@ -1,3 +1,6 @@
+[![Static Badge](https://img.shields.io/badge/gitee-bioproj%2Fcms--dev-brightgreen?logo=gitee)](https://gitee.com/bioproj/cms-dev)
+[![Static Badge](https://img.shields.io/badge/bioinfo.online-website-brightgreen?logo=https%3A%2F%2Fbioinfo.online%2Ffavicon.ico)](https://bioinfo.online/)
+
 
 ### 一、内容（文章）管理系统介绍
 + 本项目使用SpringBoot作为后端
@@ -24,7 +27,7 @@ ssh roor@XXX.XXX "cd XXX && git pull && ./mvnw clean && ./mvnw install && ./init
 
 ### 三、系统开发
 ```
-git clone https://github.com/BioinfoFungi/cms-dev.git
+git https://github.com/bioproj/cms-dev.git
 ```
 ```
 ./mvnw spring-boot:run
