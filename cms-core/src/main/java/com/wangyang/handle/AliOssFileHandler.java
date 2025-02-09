@@ -95,14 +95,19 @@ public class AliOssFileHandler implements FileHandler {
             // Handle thumbnail
             if (FileHandler.isImageType(uploadResult.getMediaType())) {
                 BufferedImage image = ImageUtils.getImageFromFile(file.getInputStream(), extension);
-                if(!extension.equals("svg")){
-                    uploadResult.setWidth(image.getWidth());
-                    uploadResult.setHeight(image.getHeight());
-                }
+//                if(!extension.equals("svg")){
+//
+//                }
 
                 if (ImageUtils.EXTENSION_ICO.equals(extension)) {
                     uploadResult.setThumbPath(filePath);
+                } else if (extension.equals("svg")) {
+                    uploadResult.setThumbPath(filePath);
+                    uploadResult.setFilePath(filePath);
+
                 } else {
+                    uploadResult.setWidth(image.getWidth());
+                    uploadResult.setHeight(image.getHeight());
                     uploadResult.setThumbPath(StringUtils.isBlank(thumbnailStyleRule) ? filePath : filePath + thumbnailStyleRule);
                 }
             }
