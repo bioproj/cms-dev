@@ -272,6 +272,7 @@ public class ArticleJob {
     public Map<String,Object> listMenu(){
         Map<String,Object> map = new HashMap<>();
         map.put("view", menuService.listVo());
+        map.put("categories",categoryService.listUserCategoryVo());
         return  map;
     }
 
