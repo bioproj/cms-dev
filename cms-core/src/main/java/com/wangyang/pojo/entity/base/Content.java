@@ -15,7 +15,7 @@ public class Content extends BaseEntity {
     private String picPath;
     private String picThumbPath;
     @Column(name = "status", columnDefinition = "int default 1")
-    private ArticleStatus status =ArticleStatus.PUBLISHED;
+    private ArticleStatus status;
 //    private Integer userId;
     private Boolean useTemplatePath;
     private String title;

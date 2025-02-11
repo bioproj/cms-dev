@@ -77,15 +77,18 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
             if(articleList.equals(ArticleList.INCLUDE_TOP)){
                 predicates.add( criteriaBuilder.isTrue(root.get("top")));
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.DRAFT),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
 
             }else if(articleList.equals(ArticleList.NO_INCLUDE_TOP)){
                 predicates.add( criteriaBuilder.isFalse(root.get("top")));
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.DRAFT),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
 
             }else if(articleList.equals(ArticleList.ALL_PUBLISH_MODIFY_ARTICLE)){
                 predicates.add(  criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), ArticleStatus.PUBLISHED),
+                        criteriaBuilder.equal(root.get("status"), ArticleStatus.DRAFT),
                         criteriaBuilder.equal(root.get("status"), ArticleStatus.MODIFY)));
             }else if(articleList.equals(ArticleList.ALL_ARTICLE)){
 

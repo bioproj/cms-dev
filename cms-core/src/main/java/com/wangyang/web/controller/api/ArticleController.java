@@ -114,7 +114,7 @@ public class ArticleController {
         Integer  oldCategoryId = article.getCategoryId();
 
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
-
+        article.setStatus(ArticleStatus.PUBLISHED);
 
 
         ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( userId,article, articleParams.getTagIds());

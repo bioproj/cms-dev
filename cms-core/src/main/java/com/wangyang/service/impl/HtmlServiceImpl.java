@@ -198,7 +198,7 @@ public class HtmlServiceImpl implements IHtmlService {
     @Override
     @Async //异步执行
     public void conventHtml(ContentVO articleVO,Boolean isCategory){
-        if(articleVO.getStatus().equals(ArticleStatus.PUBLISHED)||articleVO.getStatus().equals(ArticleStatus.MODIFY)){
+//        if(articleVO.getStatus().equals(ArticleStatus.PUBLISHED)||articleVO.getStatus().equals(ArticleStatus.MODIFY)){
 //            CategoryVO categoryVO = articleVO.getCategory();
 //
 
@@ -301,9 +301,9 @@ public class HtmlServiceImpl implements IHtmlService {
             log.info("!!### generate "+articleVO.getViewName()+" html success!!");
             // 生成首页文章最新文章
 //            generateNewArticle();
-        }else {
-            throw new ArticleException("文章状态不是PUBLISH或者MODIFY");
-        }
+//        }else {
+//            throw new ArticleException("文章状态不是PUBLISH或者MODIFY");
+//        }
     }
     @Override
     public CategoryContentListDao convertArticleListBy(BaseCategoryVo categoryVO) {

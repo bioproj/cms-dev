@@ -706,9 +706,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         if(article.getCategoryId()==null){
             throw new ArticleException("文章类别不能为空!!");
         }
-        if(article.getStatus()!=ArticleStatus.INTIMATE){
-            article.setStatus(ArticleStatus.PUBLISHED);
-        }
+//        if(article.getStatus()!=ArticleStatus.INTIMATE){
+//            article.setStatus(ArticleStatus.PUBLISHED);
+//        }
 
 
         String viewName = article.getViewName();
