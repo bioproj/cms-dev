@@ -195,6 +195,11 @@ public class HtmlServiceImpl implements IHtmlService {
         conventHtml(articleVO, true);
     }
 
+    /**
+     * 生成文章 HTML
+     * @param articleVO
+     * @param isCategory
+     */
     @Override
     @Async //异步执行
     public void conventHtml(ContentVO articleVO,Boolean isCategory){
@@ -235,6 +240,7 @@ public class HtmlServiceImpl implements IHtmlService {
                     //设置文章的面包屑
                     articleVO.setParentCategories(categoryArticle.getParentCategories());
 
+                    // 生存分类 HTML
                     categoryContentListDao = convertArticleListBy(map,categoryArticle,templates);
                 }else {
                     if(articleVO.getCategory()!=null){
@@ -305,6 +311,13 @@ public class HtmlServiceImpl implements IHtmlService {
 //            throw new ArticleException("文章状态不是PUBLISH或者MODIFY");
 //        }
     }
+
+
+    /**
+     * 生成文章分类下所有模板HTML
+     * @param categoryVO
+     * @return
+     */
     @Override
     public CategoryContentListDao convertArticleListBy(BaseCategoryVo categoryVO) {
         List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
@@ -315,24 +328,40 @@ public class HtmlServiceImpl implements IHtmlService {
 
         return convertArticleListBy(map,categoryArticle,templates);
     }
+
+    /**
+     * 生成文章分类下所有模板HTML
+     * @param category
+     * @return
+     */
     @Override
     public CategoryContentListDao convertArticleListBy(BaseCategory  category) {
         BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
         return convertArticleListBy(categoryVO);
-//        List<Template> templates = templateService.findByCategoryId(category.getId());
-//
-//        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
-//        Map<String,Object> map = new HashMap<>();
-//        categoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
-//
-//        return convertArticleListBy(map,categoryArticle,templates);
     }
 
+    /**
+     * 生成文章分类下所有模板HTML
+     * @param categoryArticle
+     * @param templates
+     * @return
+     */
     @Override
     public CategoryContentListDao convertArticleListBy(CategoryContentListDao categoryArticle ,List<Template> templates) {
         Map<String,Object> map = new HashMap<>();
         return convertArticleListBy(map, categoryArticle, templates);
     }
+
+
+
+
+    /**
+     * 生成文章分类下所有模板HTML
+     * @param map
+     * @param categoryArticle
+     * @param templates
+     * @return
+     */
     public CategoryContentListDao convertArticleListBy(Map<String,Object> map ,CategoryContentListDao categoryArticle ,List<Template> templates) {
 //        //生成分类列表,用于首页文章列表右侧展示
 //        if(!TemplateUtil.componentsExist(category.getTemplateName())){
@@ -424,14 +453,19 @@ public class HtmlServiceImpl implements IHtmlService {
                         log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
                     }
                 } else if (template.getTemplateType().equals(TemplateType.ARTICLE_LIST_TOP)) {
-                    String topHtmlPath = category.getPath()+ File.separator+"top";
-                    if(!TemplateUtil.checkFileExist(topHtmlPath,category.getViewName())){
-                        articleTopListByCategoryId(template,category.getId());
-                    }
+//                        contentService.listArticleVOBy()
+                        List<ContentVO> articles = contentService.listContentTopByCategoryId(category.getId(),category.getIsDesc());
+//                        List<ArticleVO> articleVOS = articleService.convertToListVo(articles);
+                        newCategoryArticle.setContents(articles);
+                        TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+template.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, template);
+//                    }
                 }
                 map.put(template.getEnName(),category.getPath()+File.separator+template.getEnName()+File.separator+categoryArticle.getViewName());
             }
         }
+
+
+
 //        for (Template templateChild : templates){
 //
 //        }
@@ -477,17 +511,52 @@ public class HtmlServiceImpl implements IHtmlService {
              * **/
             if(category.getParentId()!=0){
                 Category parentCategory = categoryService.findById(category.getParentId());
-
-
                 convertArticleListBy(map,contentService.findCategoryContentBy(categoryService.convertToVo(parentCategory), 0),templates);
 
             }
         }
-
-
         return categoryArticle;
     }
 
+    /**
+     * 生成置顶文章列表
+     * @param template
+     * @param id
+     */
+////    @Override
+//    public void articleTopListByCategoryId(Template template,int id) {
+//        Category category = categoryService.findById(id);
+//        List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category);
+////        if(articleDtos.size()==0)return;
+////        Template template = templateService.findByEnName(CmsConst.ARTICLE_TOP_LIST);
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("view",articleDtos);
+//        map.put("category",category);
+//        String path = category.getPath()+ File.separator+"top";
+//        TemplateUtil.convertHtmlAndSave(path,category.getViewName(),map,template);
+//    }
+
+    /**
+     * 生成 top 文章列表
+     * @param id
+     */
+    @Override
+    public void articleTopListByCategoryId(int id) {
+        Category category = categoryService.findById(id);
+        convertArticleListBy(category);
+
+//        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(category.getId(),category.getLang());
+//        Template template = templateService.findById(categoryTemplate.getTemplateId());
+//        List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category);
+////        if(articleDtos.size()==0)return;
+////        Template template = templateService.findByEnName(CmsConst.ARTICLE_TOP_LIST);
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("view",articleDtos);
+//        map.put("category",category);
+//        String path = category.getPath()+ File.separator+"top";
+//        TemplateUtil.convertHtmlAndSave(path,category.getViewName(),map,template);
+//        convertArticleListBy(category);
+    }
 
     @Override
     @Async
@@ -560,6 +629,8 @@ public class HtmlServiceImpl implements IHtmlService {
         TemplateUtil.saveFile("html/components/"+componentId,url,html);
         return html;
     }
+
+
     /**
      * 从思维导图创建文章生成静态页面，之后统一生成文章首页列表
      * @param articleVO
@@ -952,34 +1023,9 @@ public class HtmlServiceImpl implements IHtmlService {
         }
 
     }
-    @Override
-    public void articleTopListByCategoryId(int id) {
-        Category category = categoryService.findById(id);
-        CategoryTemplate categoryTemplate = categoryTemplateService.findByCategoryIdAndTemplateType(category.getId(),category.getLang());
-        Template template = templateService.findById(categoryTemplate.getTemplateId());
-        List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category);
-//        if(articleDtos.size()==0)return;
-//        Template template = templateService.findByEnName(CmsConst.ARTICLE_TOP_LIST);
-        Map<String,Object> map = new HashMap<>();
-        map.put("view",articleDtos);
-        map.put("category",category);
-        String path = category.getPath()+ File.separator+"top";
-        TemplateUtil.convertHtmlAndSave(path,category.getViewName(),map,template);
-//        convertArticleListBy(category);
-    }
-    @Override
-    public void articleTopListByCategoryId(Template template,int id) {
-        Category category = categoryService.findById(id);
-        List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category);
-//        if(articleDtos.size()==0)return;
-//        Template template = templateService.findByEnName(CmsConst.ARTICLE_TOP_LIST);
-        Map<String,Object> map = new HashMap<>();
-        map.put("view",articleDtos);
-        map.put("category",category);
-        String path = category.getPath()+ File.separator+"top";
-        TemplateUtil.convertHtmlAndSave(path,category.getViewName(),map,template);
-//        convertArticleListBy(category);
-    }
+
+
+
 
     @Override
     public void previewParse(Article article) {

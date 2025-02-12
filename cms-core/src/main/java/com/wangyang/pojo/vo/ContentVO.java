@@ -1,5 +1,6 @@
 package com.wangyang.pojo.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.wangyang.common.pojo.BaseVo;
 import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryDto;
@@ -65,4 +66,9 @@ public class ContentVO extends BaseVo<ContentVO> {
 //    public String getLinkPath() {
 //        return File.separator+this.getPath().replace(File.separator,"_")+"_"+this.getViewName()+".html";
 //    }
+
+    @Override
+    public String toString(){
+        return JSON.toJSONString(this);
+    }
 }

@@ -1,7 +1,6 @@
 package com.wangyang.service.impl;
 
 import com.wangyang.common.utils.ServiceUtil;
-import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
@@ -440,7 +439,21 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         return articleListVo;
     }
 
-
+    /**
+     * 置顶内容列表
+     * @param categoeyId
+     * @param desc
+     * @return
+     */
+    @Override
+    public List<ContentVO> listContentTopByCategoryId(Integer categoeyId, Boolean desc) {
+        Set<Integer> ids = new HashSet<>();
+        ids.add(categoeyId);
+        List<Content> articles = contentRepository.findAll(articleSpecification(
+                ids,desc, ArticleList.INCLUDE_TOP));
+        return  convertToListVo(articles);
+//        return convertArticle2ArticleDto(articles);
+    }
 
     @Override
     public List<ContentVO> listVoTree(Integer categoryId) {

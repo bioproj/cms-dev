@@ -87,6 +87,10 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         contentAop.injectContent(article,category);
     }
 
+    @Override
+    public List<ContentVO> listContentTopByCategoryId(Integer categoeyId, Boolean desc) {
+        return Collections.emptyList();
+    }
 
     @Override
     public ComponentsArticle addComponentsArticle(int articleId, int componentsId){

@@ -59,6 +59,8 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
 
     CategoryContentListDao findCategoryContentBy(BaseCategoryVo category,  int page);
 
+    List<ContentVO> listContentTopByCategoryId(Integer categoeyId, Boolean desc);
+
     List<ARTICLEVO> listVoTree(Integer categoryId);
 
     List<ARTICLEVO> listVoTree(Set<Integer> ids, Boolean isDesc);
