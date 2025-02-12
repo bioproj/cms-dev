@@ -490,8 +490,11 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 //        articleQuery.setDesc(category.getDesc());
 
 
+        /**
+         * 分类下文章是树结构，获取所有文章
+         */
 
-        Specification<Content> specification =  articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP);
+        Specification<Content> specification =  articleSpecification(ids,isDesc, ArticleList.ALL_PUBLISH_MODIFY_ARTICLE);
         List<Content> contents = contentRepository.findAll(specification);
 //                .stream().map(article -> {
 //            ArticleVO articleVO = new ArticleVO();
