@@ -1472,12 +1472,13 @@ public class ArticleServiceImpl extends AbstractContentServiceImpl<Article,Artic
 
 
     @Override
-    public List<ArticleDto> listTopByCategoryId(Category category) {
+    public List<Article> listTopByCategoryId(Integer categoeyId, Boolean desc) {
         Set<Integer> ids = new HashSet<>();
-        ids.add(category.getId());
+        ids.add(categoeyId);
         List<Article> articles = articleRepository.findAll(articleSpecification(
-                ids,category.getDesc(), ArticleList.INCLUDE_TOP));
-        return convertArticle2ArticleDto(articles);
+                ids,desc, ArticleList.INCLUDE_TOP));
+        return  articles;
+//        return convertArticle2ArticleDto(articles);
     }
 
     @Override

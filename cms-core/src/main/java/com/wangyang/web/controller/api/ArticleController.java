@@ -114,7 +114,7 @@ public class ArticleController {
         Integer  oldCategoryId = article.getCategoryId();
 
         BeanUtils.copyProperties(articleParams,article,getNullPropertyNames(articleParams));
-
+        article.setStatus(ArticleStatus.PUBLISHED);
 
 
         ArticleDetailVO articleDetailVO = articleService.updateArticleDetailVo( userId,article, articleParams.getTagIds());
@@ -343,7 +343,7 @@ public class ArticleController {
         //删除文章
         TemplateUtil.deleteTemplateHtml(article.getViewName(),article.getPath());
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        if(article.getStatus().equals(ArticleStatus.PUBLISHED)||article.getStatus().equals(ArticleStatus.MODIFY)){
+//        if(article.getStatus().equals(ArticleStatus.PUBLISHED)||article.getStatus().equals(ArticleStatus.MODIFY)){
             Category category = categoryService.findById(article.getCategoryId());
             //重新生成文章列表
             htmlService.convertArticleListBy(category);
@@ -353,7 +353,7 @@ public class ArticleController {
             if(article.getTop()){
                 htmlService.articleTopListByCategoryId(category.getId());
             }
-        }
+//        }
 
         return  article;
     }

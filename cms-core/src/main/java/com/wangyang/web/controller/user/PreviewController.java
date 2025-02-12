@@ -10,6 +10,7 @@ import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.annotation.Anonymous;
 import com.wangyang.pojo.authorize.User;
+import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
@@ -445,6 +446,16 @@ public class PreviewController {
                 }else {
                     log.info(category.getName()+"是顶菜单不生成同伴category 列表！！");
                 }
+            }else if (template.getTemplateType().equals(TemplateType.ARTICLE_LIST_TOP)) {
+                List<ContentVO> articles = contentService.listContentTopByCategoryId(category.getId(),category.getIsDesc());
+                categoryArticle.setContents(articles);
+//                        List<ArticleVO> articleVOS = articleService.convertToListVo(articles);
+//                newCategoryArticle.setContents(articles);
+//                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+template.getEnName(),newCategoryArticle.getViewName(),newCategoryArticle, template);
+//                List<ArticleDto> articleDtos = articleService.listTopByCategoryId(category.getId(),category.getIsDesc());
+
+//                TemplateUtil.convertHtmlAndSave(category.getPath()+File.separator+template.getEnName(),newCategoryArticle.getViewName(),articleDtos, template);
+//                    }
             }
             map.put(template.getEnName(),category.getPath()+File.separator+template.getEnName()+File.separator+categoryArticle.getViewName());
         }

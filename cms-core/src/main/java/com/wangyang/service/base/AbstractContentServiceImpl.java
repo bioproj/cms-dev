@@ -87,6 +87,10 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         contentAop.injectContent(article,category);
     }
 
+    @Override
+    public List<ContentVO> listContentTopByCategoryId(Integer categoeyId, Boolean desc) {
+        return Collections.emptyList();
+    }
 
     @Override
     public ComponentsArticle addComponentsArticle(int articleId, int componentsId){
@@ -706,9 +710,9 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
         if(article.getCategoryId()==null){
             throw new ArticleException("文章类别不能为空!!");
         }
-        if(article.getStatus()!=ArticleStatus.INTIMATE){
-            article.setStatus(ArticleStatus.PUBLISHED);
-        }
+//        if(article.getStatus()!=ArticleStatus.INTIMATE){
+//            article.setStatus(ArticleStatus.PUBLISHED);
+//        }
 
 
         String viewName = article.getViewName();

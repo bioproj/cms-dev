@@ -85,7 +85,7 @@ public interface IArticleService extends IContentService<Article,ArticleDetailVO
      * @param id
      * @return
      */
-    List<ArticleDto> listTopByCategoryId(Category category);
+    List<Article> listTopByCategoryId(Integer categoeyId, Boolean desc);
     /**
      * 同过标题查找
      * @param title

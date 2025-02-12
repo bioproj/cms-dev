@@ -9,6 +9,7 @@ import com.wangyang.pojo.annotation.CommentRole;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.shop.Goods;
+import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.service.*;
 import com.wangyang.service.authorize.ICustomerService;
@@ -213,12 +214,17 @@ public class UserArticleController {
      * @return
      */
     @GetMapping("/write/{categoryId}")
-    public String fastWriteArticle(@RequestParam(required = true) String title,HttpServletRequest request,@PathVariable("categoryId") Integer categoryId,Model model){
+    public String fastWriteArticle(@RequestParam(required = true) String title,
+                                   HttpServletRequest request,
+                                   @PathVariable("categoryId") Integer categoryId,
+                                   @RequestParam(required = false, defaultValue = "DRAFT") ArticleStatus status,
+                                   Model model){
         if(title==null||title.equals("")){
             return "error";
         }
+
         int userId = AuthorizationUtil.getUserId(request);
-        ArticleDetailVO articleDetailVO = fastWriteArticleHtml(categoryId, title, userId);
+        ArticleDetailVO articleDetailVO = fastWriteArticleHtml(categoryId, title, userId,status);
 //        htmlService.generateComponentsByCategory(articleDetailVO.getCategory().getId(),articleDetailVO.getCategory().getParentId());
 //        model.addAttribute("view",articleDetailVO);
         return "redirect:"+ FormatUtil.categoryListFormat(articleDetailVO.getCategory());
@@ -226,11 +232,12 @@ public class UserArticleController {
 
 
 
-    public ArticleDetailVO fastWriteArticleHtml(int categoryId,String title,int userId){
+    public ArticleDetailVO fastWriteArticleHtml(int categoryId,String title,int userId,ArticleStatus status){
         Article article = new Article();
         article.setCategoryId(categoryId);
         article.setTitle(title);
         article.setOriginalContent("# 开始你的创作:"+title);
+        article.setStatus(status);
 //        article.setUserId(userId);
         ArticleDetailVO articleDetailVO = articleService.createArticleDetailVo(userId,article,null);
 
