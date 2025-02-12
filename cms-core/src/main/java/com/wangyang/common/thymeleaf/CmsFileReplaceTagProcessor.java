@@ -65,14 +65,18 @@ public class CmsFileReplaceTagProcessor extends AbstractAttributeTagProcessor {
                 while (matcher.find()){
                     String attr = matcher.group(1);
                     attr = attr.replace(":: #fragment","");
+                    attr = attr.replace(":: fragment","");
                     final IStandardExpression expression = parser.parseExpression(context, attr);
                     Object execute = expression.execute(context);
                     if(execute!=null){
                         String path ;
-                        if(!attributeValue.contains("#fragment")){
-                            path= "~{"+execute.toString()+"} ?:_";
-                        }else {
+                        if(attributeValue.contains("#fragment")){
                             path= "~{"+execute.toString()+" :: #fragment} ?:_";
+                           
+                        } else if (attributeValue.contains("fragment")) {
+                            path= "~{"+execute.toString()+" :: fragment} ?:_";
+                        } else {
+                            path= "~{"+execute.toString()+"} ?:_";
                         }
                         structureHandler.setAttribute("cms:replace",path);
                     }
