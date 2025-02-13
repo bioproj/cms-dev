@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -175,6 +176,9 @@ public class UserArticleController {
             htmlService.previewParse(category);
         }
         CategoryVO categoryVO = categoryService.convertToVo(category);
+        if(Objects.isNull(categoryVO.getOriginalContent())){
+            categoryVO.setOriginalContent("");
+        }
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
         model.addAttribute("view",categoryVO);
