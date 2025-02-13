@@ -383,14 +383,14 @@ public class PreviewController {
                 List<ContentVO> contents = categoryArticle.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
                 List<ContentVO> contents = categoryArticle.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             }
         }
         Map<String,Object> map = new HashMap<>();
@@ -491,14 +491,14 @@ public class PreviewController {
                 List<ContentVO> contents = articleListVo.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                articleListVo.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(forceDirectedGraph);
             } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
                 List<ContentVO> contents = articleListVo.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                articleListVo.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(forceDirectedGraph);
             }
         }
 

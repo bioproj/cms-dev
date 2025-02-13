@@ -1,6 +1,7 @@
 package com.wangyang.pojo.dto;
 
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentVO;
@@ -42,5 +43,5 @@ public class CategoryContentListDao {
     long totalElements ;
     int page;
 
-    private String forceDirectedGraph;
+    private ForceDirectedGraph forceDirectedGraph;
 }

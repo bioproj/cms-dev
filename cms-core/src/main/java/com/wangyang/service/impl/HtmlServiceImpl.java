@@ -379,14 +379,14 @@ public class HtmlServiceImpl implements IHtmlService {
                 List<ContentVO> contents = categoryArticle.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
                 List<ContentVO> contents = categoryArticle.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
                 ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(json);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             }
         }
 
