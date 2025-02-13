@@ -1,5 +1,6 @@
 package com.wangyang.pojo.support;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -32,6 +33,10 @@ public class ForceDirectedGraph {
     }
 
 
+    @Override
+    public String toString(){
+        return JSON.toJSONString(this);
+    }
 
 
 }
