@@ -93,6 +93,11 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
     }
 
     @Override
+    public List<ContentVO> convertToSimpleListVo(List<Content> contents) {
+        return Collections.emptyList();
+    }
+
+    @Override
     public ComponentsArticle addComponentsArticle(int articleId, int componentsId){
         Content content = findById(articleId);
         Components components = componentsRepository.findById(componentsId).get();

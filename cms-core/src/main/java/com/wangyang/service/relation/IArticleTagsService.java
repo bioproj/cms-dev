@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface IArticleTagsService  extends IRelationService<ArticleTags,ArticleTags, BaseVo> {
 
+    ForceDirectedGraph graph(ContentVO content);
+
     ForceDirectedGraph graph(List<ContentVO> contents);
 
     ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent);

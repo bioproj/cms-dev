@@ -121,7 +121,24 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     public List<Content> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc) {
         return contentRepository.findAll(articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP));
     }
+    @Override
+    public List<ContentVO> convertToSimpleListVo(List<Content> contents) {
+        List<ContentVO> contentVOS  = contents.stream().map(content -> {
+            ContentVO contentVO = new ContentVO();
+            BeanUtils.copyProperties(content,contentVO);
+//            contentVO.setUser(userMap.get(content.getUserId()));
 
+            if(content.getOrder()==null){
+                contentVO.setOrder(0);
+            }
+
+            contentVO.setLinkPath(FormatUtil.articleListFormat(content));
+
+            return contentVO;
+        }).collect(Collectors.toList());
+
+        return contentVOS;
+    }
 
     @Override
     public List<ContentVO> convertToListVo(List<Content> contents) {

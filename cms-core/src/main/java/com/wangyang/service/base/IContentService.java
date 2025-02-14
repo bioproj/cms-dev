@@ -49,6 +49,8 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
 
 //    void addParentCategory(List<? extends BaseCategoryVo> categoryVOS, Integer parentId);
 
+    List<ContentVO> convertToSimpleListVo(List<Content> contents);
+
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId);
 
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId, Integer page);

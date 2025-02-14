@@ -49,6 +49,32 @@ public class ArticleTagsServiceImpl extends AbstractRelationServiceImpl<ArticleT
     }
 
     @Override
+    public ForceDirectedGraph graph(ContentVO content) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+//        forceDirectedGraph.addNodes(String.valueOf(content.getId()),content.getTitle(),content.getLinkPath());
+
+//        Set<Integer> ids = ServiceUtil.fetchProperty(contents, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findByArticleId(content.getId());
+        articleTags.forEach(item->{
+            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),60,2);
+        });
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId());
+        });
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getArticleId);
+        List<Content> contents = contentService.listByIds(articleIds);
+        List<ContentVO> contentVOS = contentService.convertToSimpleListVo(contents);
+        contentVOS.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath());
+        });
+
+        return forceDirectedGraph;
+    }
+
+    @Override
     public ForceDirectedGraph graph(List<ContentVO> contents) {
         ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
         contents.forEach(item->{
