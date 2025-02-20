@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -111,6 +112,7 @@ public class SheetController {
         BeanUtils.copyProperties(sheetParam,sheet,getNullPropertyNames(sheetParam));
         int userId = AuthorizationUtil.getUserId(request);
         sheet.setUserId(userId);
+        sheet.setUpdateDate(new Date());
         Sheet updateSheet = sheetService.addOrUpdate(sheet);
         htmlService.convertArticleListBy(updateSheet);
         return updateSheet;
