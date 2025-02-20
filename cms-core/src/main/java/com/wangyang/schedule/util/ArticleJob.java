@@ -7,21 +7,22 @@ import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.dto.CategoryDto;
 import com.wangyang.pojo.entity.*;
+import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.support.ScheduleOption;
 import com.wangyang.pojo.support.TemplateOption;
 import com.wangyang.pojo.support.TemplateOptionMethod;
-import com.wangyang.pojo.vo.ArticleVO;
-import com.wangyang.pojo.vo.CollectionVO;
-import com.wangyang.pojo.vo.LiteratureVo;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.service.*;
+import com.wangyang.service.base.IContentService;
 import com.wangyang.service.relation.IArticleTagsService;
 import com.wangyang.service.templates.IComponentsService;
 import com.wangyang.service.templates.ITemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -69,6 +70,11 @@ public class ArticleJob {
 
     @Autowired
     IArticleTagsService articleTagsService;
+
+
+    @Autowired
+    @Qualifier("contentServiceImpl")
+    IContentService<Content, ContentDetailVO, ContentVO> contentService;
 
 
 
@@ -248,7 +254,7 @@ public class ArticleJob {
 
         List<Literature> literature = literatureService.sortList(20,Sort.Direction.DESC,"updateDate","id");
         List<LiteratureVo> contentVOS = literatureService.convertToListCategoryVo(literature);
-        ForceDirectedGraph forceDirectedGraph  = articleTagsService.graphTagsCategory( contentVOS);
+        ForceDirectedGraph forceDirectedGraph  =contentService.graphTagsCategory( contentVOS);
 
 //        contentVOS.forEach(item->{
 //            forceDirectedGraph.addNodes(item.getId(),item.getTitle(),item.getLinkPath());

@@ -14,6 +14,7 @@ public class CategoryContentListDao {
     private String viewName;
     //    private Page<ArticleVO> page;
     private List<ContentVO> contents;
+//    private List<ContentVO> allContents;
     private List<CategoryContentList> categoryContentLists;
     private BaseCategoryVo category;
     private BaseCategoryVo parentCategory;

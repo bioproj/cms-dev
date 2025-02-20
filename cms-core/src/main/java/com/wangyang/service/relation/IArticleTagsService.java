@@ -12,14 +12,16 @@ import com.wangyang.service.base.IRelationService;
 import java.util.List;
 
 public interface IArticleTagsService  extends IRelationService<ArticleTags,ArticleTags, BaseVo> {
+//
+//    ForceDirectedGraph graph(ContentVO content);
+//
+//    ForceDirectedGraph graph(List<ContentVO> contents);
 
-    ForceDirectedGraph graph(List<ContentVO> contents);
-
-    ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent);
-
-    ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent);
-
-    ForceDirectedGraph graph(List<? extends ContentVO> contents, int num);
+//    ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent);
+//
+//    ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent);
+//
+//    ForceDirectedGraph graph(List<? extends ContentVO> contents, int num);
 
     ArticleTags findByArticleIdAndRelationId(int articleId, int relationId);
 }

@@ -1,5 +1,6 @@
 package com.wangyang.service.impl;
 
+import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.pojo.dto.*;
 import com.wangyang.pojo.entity.*;
@@ -9,8 +10,10 @@ import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.ArticleList;
 import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.CrudType;
+import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.ArticleQuery;
+import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.CategoryVO;
 import com.wangyang.pojo.vo.ContentDetailVO;
@@ -20,6 +23,8 @@ import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
+import com.wangyang.service.ICategoryTagsService;
+import com.wangyang.service.ITagsService;
 import com.wangyang.service.authorize.IUserService;
 import com.wangyang.service.base.AbstractContentServiceImpl;
 import com.wangyang.service.base.IBaseCategoryService;
@@ -121,7 +126,24 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     public List<Content> listContentByCategoryIds(Set<Integer> ids, Boolean isDesc) {
         return contentRepository.findAll(articleSpecification(ids,isDesc, ArticleList.NO_INCLUDE_TOP));
     }
+    @Override
+    public List<ContentVO> convertToSimpleListVo(List<Content> contents) {
+        List<ContentVO> contentVOS  = contents.stream().map(content -> {
+            ContentVO contentVO = new ContentVO();
+            BeanUtils.copyProperties(content,contentVO);
+//            contentVO.setUser(userMap.get(content.getUserId()));
 
+            if(content.getOrder()==null){
+                contentVO.setOrder(0);
+            }
+
+            contentVO.setLinkPath(FormatUtil.articleListFormat(content));
+
+            return contentVO;
+        }).collect(Collectors.toList());
+
+        return contentVOS;
+    }
 
     @Override
     public List<ContentVO> convertToListVo(List<Content> contents) {
@@ -415,6 +437,38 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
             articleListVo.setContents(allVos);
         }else {
 //            Page<Article> articles = pageArticleByCategoryIds(articleSpecification(ids,category.getIsDesc(), ArticleServiceImpl.ArticleList.NO_INCLUDE_TOP),PageRequest.of(page,category.getArticleListSize()));
+            if(category.getNetworkType()!=null ){
+                if((category.getNetworkType().equals(NetworkType.ALL_ARTICLE_ARTICLE) || category.getNetworkType().equals(NetworkType.ALL_TAGS_ARTICLE))  ){
+                    List<Content> dbContents = listContentByCategoryId(category.getId());
+                    List<ContentVO> contents =  convertToListSimpleVo(dbContents);
+//                    articleListVo.setAllContents(contents);
+                    if (category.getNetworkType().equals(NetworkType.ALL_ARTICLE_ARTICLE)) {
+//                        List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
+//                        List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
+//                List<ContentVO> contents = categoryArticle.getContents();
+//                        List<ContentVO> contents = articleListVo.getContents();
+
+                        contents = CMSUtils.flattenContentVOTreeToList(contents);
+                        ForceDirectedGraph forceDirectedGraph = graph(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                        articleListVo.setForceDirectedGraph(forceDirectedGraph);
+                    }else if (category.getNetworkType().equals(NetworkType.ALL_TAGS_ARTICLE)){
+//                        List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
+//                        List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
+//                List<ContentVO> contents = categoryArticle.getContents();
+//                        List<ContentVO> contents = articleListVo.getContents();
+
+                        contents = CMSUtils.flattenContentVOTreeToList(contents);
+                        ForceDirectedGraph forceDirectedGraph = graphByTag(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                        articleListVo.setForceDirectedGraph(forceDirectedGraph);
+                    }
+                }
+            }
+
+
+
+
             Page<Content> contentsPage = pageContentByCategoryIds(ids, category.getIsDesc(), PageRequest.of(page, category.getArticleListSize()));
             Page<ContentVO> contentVOS = convertToPageVo(contentsPage);
             int totalPages = contentVOS.getTotalPages();
@@ -425,6 +479,24 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
             articleListVo.setTotalElements(totalElements);
             List<ContentVO> contents = contentVOS.getContent();
             articleListVo.setContents(contents);
+        }
+
+        //是否生成力向图网络
+        if(category.getNetworkType()!=null ){
+//        if(true){
+            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
+                List<ContentVO> contents = articleListVo.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = graphByTag(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(forceDirectedGraph);
+            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
+                List<ContentVO> contents = articleListVo.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = graph(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                articleListVo.setForceDirectedGraph(forceDirectedGraph);
+            }
         }
 
 
@@ -544,7 +616,237 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
     }
 
+//    @Autowired
+//    ArticleTagsRepository articleTagsRepository;
+    @Autowired
+    ITagsService tagsService;
+    @Autowired
+    ICategoryTagsService categoryTagsService;
 
+
+
+    @Override
+    public ForceDirectedGraph graphByTag(ContentVO content) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+//        forceDirectedGraph.addNodes(String.valueOf(content.getId()),content.getTitle(),content.getLinkPath());
+
+//        Set<Integer> ids = ServiceUtil.fetchProperty(contents, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findByArticleId(content.getId());
+        articleTags.forEach(item->{
+            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),60,2);
+        });
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId());
+        });
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getArticleId);
+        List<Content> contents = listByIds(articleIds);
+        List<ContentVO> contentVOS = convertToSimpleListVo(contents);
+        contentVOS.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath());
+        });
+
+        return forceDirectedGraph;
+    }
+
+    @Override
+    public ForceDirectedGraph graphByTag(List<ContentVO> contents) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+        contents.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath());
+        });
+
+        Set<Integer> ids = ServiceUtil.fetchProperty(contents, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(ids);
+        articleTags.forEach(item->{
+            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),60,2);
+        });
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId());
+        });
+
+        return forceDirectedGraph;
+    }
+
+    @Override
+    public ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+
+
+        int r =8+firstContent.size();
+        for (ContentVO item:firstContent){
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),r);
+            r=r-1;
+        }
+
+        Set<Integer> ids = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(ids);
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId(),8);
+        });
+        List<ArticleTags> edges = articleTagsRepository.findAllByRelationIdIn(rIds);
+
+        edges.forEach(item->{
+            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),60,2);
+        });
+
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(edges, ArticleTags::getArticleId);
+        Set<Integer> articleAddIds = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+
+        List<Content> contentsDb = listByIds(articleIds);
+        List<ContentVO> contentVOS = convertToListTagVo(contentsDb);
+        List<ContentVO> nodes = contentVOS.stream().filter(item -> articleIds.contains(item.getId()) &&  !articleAddIds.contains(item.getId())).collect(Collectors.toList());
+
+
+        nodes.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),8);
+        });
+
+
+
+
+        return forceDirectedGraph;
+    }
+
+    @Override
+    public ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+        Set<BaseCategoryVo> firstCategory = ServiceUtil.fetchProperty(firstContent, ContentVO::getCategory);
+
+
+
+        int r =8+firstContent.size();
+        for (ContentVO item:firstContent){
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),r);
+            if(item.getCategory()!=null){
+                forceDirectedGraph.addEdges(String.valueOf(item.getId()),"c-"+String.valueOf(item.getCategoryId()),300,2);
+
+            }
+//            forceDirectedGraph.addEdges(item.getId(),item.getCategoryId(),60,2);
+
+            r=r-1;
+        }
+
+
+        Set<Integer> ids = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(ids);
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes("t-"+String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId(),8);
+        });
+        List<ArticleTags> edges = articleTagsRepository.findAllByRelationIdIn(rIds);
+
+        edges.forEach(item->{
+            forceDirectedGraph.addEdges("t-"+String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),300,2);
+        });
+
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(edges, ArticleTags::getArticleId);
+        Set<Integer> articleAddIds = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+
+        List<Content> contentsDb = listByIds(articleIds);
+        List<ContentVO> contentVOS = convertToListCategoryVo(contentsDb);
+
+
+
+        List<ContentVO> nodes = contentVOS.stream().filter(item -> articleIds.contains(item.getId()) &&  !articleAddIds.contains(item.getId())).collect(Collectors.toList());
+
+
+        nodes.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),8);
+            if(item.getCategory()!=null){
+                forceDirectedGraph.addEdges(String.valueOf(item.getId()),"c-"+String.valueOf(item.getCategoryId()),300,2);
+
+            }
+//            forceDirectedGraph.addEdges(item.getId(),item.getCategoryId(),60,2);
+        });
+
+
+        List<CategoryTags> categoryTags = categoryTagsService.listByTagIds(rIds);
+        if(categoryTags.size()!=0){
+            Set<Integer> categoryIds = ServiceUtil.fetchProperty(categoryTags, CategoryTags::getCategoryId);
+            List<BaseCategory> categories = baseCategoryService.listByIds(categoryIds);
+            List<BaseCategoryVo> categoryDtoList = baseCategoryService.convertToListVo(categories);
+            firstCategory.addAll(categoryDtoList);
+            categoryTags.forEach(item->{
+                forceDirectedGraph.addEdges("t-"+String.valueOf(item.getTagsId()),"c-"+String.valueOf(item.getCategoryId()),300,2);
+            });
+        }
+
+
+
+
+        Set<BaseCategoryVo> otherCategory = ServiceUtil.fetchProperty(contentVOS, ContentVO::getCategory);
+        firstCategory.addAll(otherCategory);
+
+        firstCategory.forEach(item->{
+            if(item!=null){
+                forceDirectedGraph.addNodes("c-"+String.valueOf(item.getId()),item.getName(),item.getLinkPath(),8);
+            }
+        });
+
+
+
+
+
+        return forceDirectedGraph;
+    }
+
+    @Override
+    public ForceDirectedGraph graphByTag(List<? extends ContentVO> contents, int num) {
+        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+
+        List<? extends ContentVO> firstContent = contents.subList(0, Math.min(contents.size(), num));
+
+        int r =8+num;
+        for (ContentVO item:firstContent){
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),r);
+            r=r-1;
+        }
+
+        Set<Integer> ids = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+        List<ArticleTags> articleTags = articleTagsRepository.findAllByArticleIdIn(ids);
+
+        Set<Integer> rIds = ServiceUtil.fetchProperty(articleTags, ArticleTags::getRelationId);
+
+        List<Tags> tags = tagsService.listByIds(rIds);
+        tags.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getName(),"/articleList?tagsId="+item.getId(),8);
+        });
+        List<ArticleTags> edges = articleTagsRepository.findAllByRelationIdIn(rIds);
+
+        edges.forEach(item->{
+            forceDirectedGraph.addEdges(String.valueOf(item.getRelationId()),String.valueOf(item.getArticleId()),60,2);
+        });
+
+        Set<Integer> articleIds = ServiceUtil.fetchProperty(edges, ArticleTags::getArticleId);
+        Set<Integer> articleAddIds = ServiceUtil.fetchProperty(firstContent, ContentVO::getId);
+
+        List<Content> contentsDb = listByIds(articleIds);
+        List<ContentVO> contentVOS = convertToListTagVo(contentsDb);
+        List<ContentVO> nodes = contentVOS.stream().filter(item -> articleIds.contains(item.getId()) &&  !articleAddIds.contains(item.getId())).collect(Collectors.toList());
+
+
+        nodes.forEach(item->{
+            forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath(),8);
+        });
+
+
+
+
+        return forceDirectedGraph;
+    }
 
 
 

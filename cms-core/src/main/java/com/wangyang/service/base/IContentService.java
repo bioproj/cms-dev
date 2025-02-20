@@ -49,6 +49,8 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
 
 //    void addParentCategory(List<? extends BaseCategoryVo> categoryVOS, Integer parentId);
 
+    List<ContentVO> convertToSimpleListVo(List<Content> contents);
+
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId);
 
     List<CategoryContentList> listCategoryContentByComponentsId(int componentsId, Integer page);
@@ -77,9 +79,31 @@ public interface IContentService<ARTICLE extends Content,CONTENTDETAILVO extends
 
     void checkContentTemplatePath(ARTICLE content);
 
+    ForceDirectedGraph graphByTag(ContentVO content);
+
+    ForceDirectedGraph graphByTag(List<ContentVO> contents);
+
+    //    public static void flattenContentVOTreeToList(List<ContentVO> contentVOS, ForceDirectedGraph forceDirectedGraph) {
+    //        for (ContentVO content: contentVOS){
+    //            forceDirectedGraph.addNodes(content.getId(),content.getTitle(),content.getLinkPath());
+    //
+    //            if(content.getChildren().size()!=0){
+    //                for (ContentVO child:content.getChildren()){
+    //                    forceDirectedGraph.addEdges(content.getId(),child.getId(),60,2);
+    //                }
+    //                flattenContentVOTreeToList(content.getChildren(),forceDirectedGraph);
+    //            }
+    //        }
+    //    }
     ForceDirectedGraph graph(List<ContentVO> contents);
 
     void generateSummary(ARTICLE article);
+
+    ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent);
+
+    ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent);
+
+    ForceDirectedGraph graphByTag(List<? extends ContentVO> contents, int num);
 
 
 //    ARTICLE previewSave(ARTICLE article);

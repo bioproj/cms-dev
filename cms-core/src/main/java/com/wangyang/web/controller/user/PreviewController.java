@@ -382,7 +382,7 @@ public class PreviewController {
             if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
                 List<ContentVO> contents = categoryArticle.getContents();
                 contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+                ForceDirectedGraph forceDirectedGraph = contentService.graphByTag(contents);
 //                String json = JSON.toJSON(forceDirectedGraph).toString();
                 categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
@@ -485,22 +485,22 @@ public class PreviewController {
         CategoryContentListDao articleListVo = contentService.findCategoryContentBy(categoryService.convertToVo(category),0);
 //        if(true){
         //是否生成力向图网络
-        if(category.getNetworkType()!=null ){
-//        if(true){
-            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
-                List<ContentVO> contents = articleListVo.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                articleListVo.setForceDirectedGraph(forceDirectedGraph);
-            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
-                List<ContentVO> contents = articleListVo.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                articleListVo.setForceDirectedGraph(forceDirectedGraph);
-            }
-        }
+//        if(category.getNetworkType()!=null ){
+////        if(true){
+//            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
+//                List<ContentVO> contents = articleListVo.getContents();
+//                contents = CMSUtils.flattenContentVOTreeToList(contents);
+//                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+////                String json = JSON.toJSON(forceDirectedGraph).toString();
+//                articleListVo.setForceDirectedGraph(forceDirectedGraph);
+//            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
+//                List<ContentVO> contents = articleListVo.getContents();
+//                contents = CMSUtils.flattenContentVOTreeToList(contents);
+//                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
+////                String json = JSON.toJSON(forceDirectedGraph).toString();
+//                articleListVo.setForceDirectedGraph(forceDirectedGraph);
+//            }
+//        }
 
         List<Template> templates = templateService.findByChild(template.getId());
         for (Template templateChild : templates){
