@@ -372,39 +372,6 @@ public class HtmlServiceImpl implements IHtmlService {
         categoryArticle.setPage(0);
         BaseCategoryVo category = categoryArticle.getCategory();
 
-        //是否生成力向图网络
-        if(category.getNetworkType()!=null ){
-//        if(true){
-            if(category.getNetworkType().equals(NetworkType.TAGS_ARTICLE)){
-                List<ContentVO> contents = categoryArticle.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
-            } else if (category.getNetworkType().equals(NetworkType.ARTICLE_ARTICLE)) {
-                List<ContentVO> contents = categoryArticle.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
-            }else if (category.getNetworkType().equals(NetworkType.ALL_ARTICLE_ARTICLE)) {
-                List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
-                List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
-//                List<ContentVO> contents = categoryArticle.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
-            }else if (category.getNetworkType().equals(NetworkType.ALL_TAGS_ARTICLE)){
-                List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
-                List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
-//                List<ContentVO> contents = categoryArticle.getContents();
-                contents = CMSUtils.flattenContentVOTreeToList(contents);
-                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
-//                String json = JSON.toJSON(forceDirectedGraph).toString();
-                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
-            }
-        }
 
 
 //        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryService.covertToVo(category),template,0);

@@ -45,7 +45,7 @@ public class ForceDirectedGraphData implements IComponentsData {
         }
         List<Content> contents = contentService.sortList(day, Sort.Direction.DESC,"updateDate","id");
         List<ContentVO> contentVOS = contentService.convertToListCategoryVo(contents);
-        ForceDirectedGraph forceDirectedGraph = articleTagsService.graphTagsCategory(contentVOS);
+        ForceDirectedGraph forceDirectedGraph = contentService.graphTagsCategory(contentVOS);
         String json = JSON.toJSON(forceDirectedGraph).toString();
 
         Map<String,Object> map = new HashMap<>();

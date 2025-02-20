@@ -9,7 +9,6 @@ import com.wangyang.common.utils.ImageUtils;
 import com.wangyang.common.utils.MarkdownUtils;
 import com.wangyang.common.utils.ServiceUtil;
 import com.wangyang.interfaces.IContentAop;
-import com.wangyang.pojo.authorize.User;
 import com.wangyang.pojo.dto.CategoryContentList;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
@@ -31,7 +30,6 @@ import com.wangyang.repository.TagsRepository;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.authorize.IUserService;
-import com.wangyang.service.impl.ArticleServiceImpl;
 import com.wangyang.util.FormatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -680,7 +678,7 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
 //    }
     @Override
     public ForceDirectedGraph graph(List<ContentVO> contents) {
-        ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
+            ForceDirectedGraph forceDirectedGraph = new ForceDirectedGraph();
         contents.forEach(item->{
             forceDirectedGraph.addNodes(String.valueOf(item.getId()),item.getTitle(),item.getLinkPath());
             if(item.getParentId()!=0) {
@@ -872,4 +870,28 @@ public abstract class AbstractContentServiceImpl<ARTICLE extends Content,CONTENT
     }
 
 
+    @Override
+    public ForceDirectedGraph graphByTag(ContentVO content) {
+        return null;
+    }
+
+    @Override
+    public ForceDirectedGraph graphByTag(List<ContentVO> contents) {
+        return null;
+    }
+
+    @Override
+    public ForceDirectedGraph graphTags(List<? extends ContentVO> firstContent) {
+        return null;
+    }
+
+    @Override
+    public ForceDirectedGraph graphTagsCategory(List<? extends ContentVO> firstContent) {
+        return null;
+    }
+
+    @Override
+    public ForceDirectedGraph graphByTag(List<? extends ContentVO> contents, int num) {
+        return null;
+    }
 }
