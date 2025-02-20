@@ -787,8 +787,15 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 
 
 
-        Set<BaseCategoryVo> otherCategory = ServiceUtil.fetchProperty(contentVOS, ContentVO::getCategory);
+        Set<BaseCategoryVo> otherCategory = ServiceUtil.fetchProperty(nodes, ContentVO::getCategory);
         firstCategory.addAll(otherCategory);
+        Set<Integer> existIds = ServiceUtil.fetchProperty(firstCategory, BaseCategoryVo::getId).stream()
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        Set<Integer> extIds = ServiceUtil.fetchProperty(firstCategory, BaseCategoryVo::getParentId).stream()
+                .filter(it->Objects.nonNull(it) && !existIds.contains(it) ).collect(Collectors.toSet());
+        List<BaseCategory> baseCategories = baseCategoryService.listByIds(extIds);
+        firstCategory.addAll(baseCategoryService.convertToListVo(baseCategories));
+
 
         firstCategory.forEach(item->{
             if(item!=null){
