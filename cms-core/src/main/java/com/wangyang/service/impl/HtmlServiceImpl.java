@@ -387,6 +387,22 @@ public class HtmlServiceImpl implements IHtmlService {
                 ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
 //                String json = JSON.toJSON(forceDirectedGraph).toString();
                 categoryArticle.setForceDirectedGraph(forceDirectedGraph);
+            }else if (category.getNetworkType().equals(NetworkType.ALL_ARTICLE_ARTICLE)) {
+                List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
+                List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
+//                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleService.graph(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
+            }else if (category.getNetworkType().equals(NetworkType.ALL_TAGS_ARTICLE)){
+                List<Content> dbContents = contentService.listContentByCategoryId(category.getId());
+                List<ContentVO> contents = contentService.convertToListSimpleVo(dbContents);
+//                List<ContentVO> contents = categoryArticle.getContents();
+                contents = CMSUtils.flattenContentVOTreeToList(contents);
+                ForceDirectedGraph forceDirectedGraph = articleTagsService.graph(contents);
+//                String json = JSON.toJSON(forceDirectedGraph).toString();
+                categoryArticle.setForceDirectedGraph(forceDirectedGraph);
             }
         }
 
