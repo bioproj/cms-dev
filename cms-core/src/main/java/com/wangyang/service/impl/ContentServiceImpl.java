@@ -793,6 +793,10 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
         firstCategory.forEach(item->{
             if(item!=null){
                 forceDirectedGraph.addNodes("c-"+String.valueOf(item.getId()),item.getName(),item.getLinkPath(),8);
+                if(item.getParentId()!=null){
+                    forceDirectedGraph.addEdges("c-"+String.valueOf(item.getId()),"c-"+String.valueOf(item.getParentId()),300,2);
+
+                }
             }
         });
 
