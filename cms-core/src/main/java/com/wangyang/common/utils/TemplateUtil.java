@@ -636,6 +636,7 @@ public class TemplateUtil {
             write.write(html);
             log.info("### Write file["+path+"/"+viewName+".html] success!!");
         } catch (IOException e) {
+            e.printStackTrace();
             throw new FileOperationException("Write html error!!");
         }
         return viewName+".html";
