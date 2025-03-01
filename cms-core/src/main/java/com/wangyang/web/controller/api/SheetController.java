@@ -117,6 +117,21 @@ public class SheetController {
         htmlService.convertArticleListBy(updateSheet);
         return updateSheet;
     }
+    @PostMapping("/update-add/{id}")
+    public Sheet updateAdd(@PathVariable("id") int id,@RequestBody SheetParam sheetParam, HttpServletRequest request){
+        Sheet sheet = findById(id);
+//        BeanUtils.copyProperties(sheetParam,sheet,getNullPropertyNames(sheetParam));
+//        int userId = AuthorizationUtil.getUserId(request);
+//        sheet.setUserId(userId);
+        sheet.setUpdateDate(new Date());
+        String originalContent = sheet.getOriginalContent();
+        sheet.setOriginalContent(originalContent+sheetParam.getOriginalContent());
+        Sheet updateSheet = sheetService.addOrUpdate(sheet);
+        htmlService.convertArticleListBy(updateSheet);
+        return updateSheet;
+    }
+
+
 
     @GetMapping
     public Page<SheetVo> list(@PageableDefault(sort = {"id"},direction = DESC) Pageable pageable,Sheet sheet){
