@@ -513,7 +513,9 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 //            BeanUtils.copyProperties(category, categoryVO);
 //            categoryVO.setLinkPath(FormatUtil.categoryListFormat(category));
 //            return categoryVO;
-            return convertToVo(category);
+            CategoryVO categoryVO = convertToVo(category);
+            categoryVO.setFormatContent(null);
+            return categoryVO;
         }).collect(Collectors.toList());
         return super.listWithTree(collect);
     }
