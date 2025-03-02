@@ -515,6 +515,7 @@ public class CategoryServiceImpl extends AbstractBaseCategoryServiceImpl<Categor
 //            return categoryVO;
             CategoryVO categoryVO = convertToVo(category);
             categoryVO.setFormatContent(null);
+            categoryVO.setOriginalContent(null);
             return categoryVO;
         }).collect(Collectors.toList());
         return super.listWithTree(collect);
