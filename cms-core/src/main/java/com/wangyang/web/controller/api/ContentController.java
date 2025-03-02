@@ -56,7 +56,7 @@ public class ContentController {
                 htmlService.conventHtml(articleService.convert(item),false);
             });
         }
-
+        htmlService.convertArticleListBy(category);
 
         //重新生成分类的列表
 //        htmlService.generateCategoryListHtml();
