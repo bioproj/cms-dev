@@ -1,5 +1,6 @@
 package com.wangyang.pojo.vo;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -17,5 +18,10 @@ public class LiteratureVo extends ContentVO{
     private String url;
 
     private Date publishDate;
+
+    @Override
+    public String toString(){
+        return JSON.toJSONString(this);
+    }
 
 }
