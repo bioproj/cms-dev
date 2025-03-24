@@ -98,11 +98,20 @@ public class PreviewController {
     @GetMapping("/baseCategory/{categoryId}")
     public String previewLiterature(@PathVariable("categoryId")Integer categoryId, Model model){
         BaseCategory baseCategory = baseCategoryService.findById(categoryId);
-        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
-//        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
+//        List<Content> contents = contentService.listContentByCategoryId(baseCategory.getId());
 
-        Template template = templateService.findByMainCategoryId(baseCategory.getId(), baseCategory.getLang());
-        model.addAttribute("contents",contents);
+//        List<Literature> literatures = literatureService.listByCollectionId(collectionId);
+        Template template;
+        if(baseCategory instanceof Collection){
+            Collection collection = (Collection)baseCategory;
+            template =  templateService.findByEnName(collection.getTemplateName());
+        }else {
+            template = templateService.findByMainCategoryId(baseCategory.getId(), baseCategory.getLang());
+        }
+
+        CategoryContentListDao articleListVo = contentService.findCategoryContentBy(baseCategoryService.convertToVo(baseCategory),0);
+
+        model.addAttribute("view",articleListVo);
         return CmsConst.TEMPLATE_FILE_PREFIX+template.getTemplateValue();
     }
 
