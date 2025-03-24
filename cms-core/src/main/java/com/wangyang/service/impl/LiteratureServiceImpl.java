@@ -1,11 +1,13 @@
 package com.wangyang.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
 import com.wangyang.common.enums.CrudType;
 import com.wangyang.pojo.entity.relation.ArticleTags;
 import com.wangyang.pojo.enums.RelationType;
+import com.wangyang.pojo.vo.CollectionVO;
 import com.wangyang.pojo.vo.LiteratureDetailVO;
 import com.wangyang.pojo.vo.LiteratureVo;
 import com.wangyang.repository.LiteratureRepository;
@@ -107,7 +109,8 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
 //                literatureVo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
 //            }
         }
-
+        literatureVo.setCategory(BeanUtil.copyProperties(collection, CollectionVO.class));
+//        literatureVo.setCategory(collection);
         return literatureVo;
     }
 
