@@ -117,6 +117,12 @@ public class PreviewController {
 //            Literature literature = (Literature)content;
 //            contentVO = literatureService.convertToTagVo(literature);
 //        }
+
+        List<BaseCategoryVo> categoryVOS =new ArrayList<>();
+        baseCategoryService.addParentCategory(categoryVOS,contentVO.getCategory().getParentId());
+
+        contentVO.setParentCategories(categoryVOS);
+
         BaseCategory baseCategory = baseCategoryService.findById(content.getCategoryId());
         if(baseCategory instanceof  Category){
             Template template = templateService.findByEnName(((Category)baseCategory).getArticleTemplateName());
