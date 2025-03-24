@@ -110,12 +110,13 @@ public class PreviewController {
     public String previewContent(@PathVariable("articleId")Integer articleId, Model model){
         Content content = contentService.findById(articleId);
 
-
-        ContentVO contentVO = contentService.convertToTagVo(content);
-        if(content instanceof Literature){
-            Literature literature = (Literature)content;
-            contentVO = literatureService.convertToTagVo(literature);
-        }
+        ContentVO contentVO = contentService.convertToVo(content);
+        contentVO = contentService.convertToTagVo(contentVO);
+//        ContentVO contentVO = contentService.convertToTagVo(content);
+//        if(content instanceof Literature){
+//            Literature literature = (Literature)content;
+//            contentVO = literatureService.convertToTagVo(literature);
+//        }
         BaseCategory baseCategory = baseCategoryService.findById(content.getCategoryId());
         if(baseCategory instanceof  Category){
             Template template = templateService.findByEnName(((Category)baseCategory).getArticleTemplateName());
