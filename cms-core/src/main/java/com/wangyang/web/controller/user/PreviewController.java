@@ -109,9 +109,17 @@ public class PreviewController {
     @GetMapping("/content/{articleId}")
     public String previewContent(@PathVariable("articleId")Integer articleId, Model model){
         Content content = contentService.findById(articleId);
+        ContentVO contentVO;
+        if(content instanceof  Literature){
+            Literature literature = (Literature)content;
+            LiteratureVo literatureVo = literatureService.convertToVo(literature);
+            contentVO = literatureService.convertToTagVo(literatureVo);
 
-        ContentVO contentVO = contentService.convertToVo(content);
-        contentVO = contentService.convertToTagVo(contentVO);
+        }else {
+            contentVO = contentService.convertToVo(content);
+            contentVO = contentService.convertToTagVo(contentVO);
+        }
+
 //        ContentVO contentVO = contentService.convertToTagVo(content);
 //        if(content instanceof Literature){
 //            Literature literature = (Literature)content;
