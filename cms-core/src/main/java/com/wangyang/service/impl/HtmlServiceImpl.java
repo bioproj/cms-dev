@@ -4,23 +4,18 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import com.wangyang.common.CmsConst;
-import com.wangyang.common.exception.ArticleException;
 import com.wangyang.common.exception.ObjectException;
 import com.wangyang.common.utils.*;
 import com.wangyang.pojo.dto.ArticleDto;
 import com.wangyang.pojo.dto.ArticlePageCondition;
 import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
-import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.entity.relation.ArticleTags;
-import com.wangyang.pojo.enums.ArticleStatus;
 import com.wangyang.common.enums.Lang;
-import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.enums.TemplateType;
-import com.wangyang.pojo.support.ForceDirectedGraph;
 import com.wangyang.pojo.vo.*;
 import com.wangyang.config.ApplicationBean;
 import com.wangyang.repository.ArticleRepository;
@@ -326,6 +321,21 @@ public class HtmlServiceImpl implements IHtmlService {
         Map<String,Object> map = new HashMap<>();
         baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
 
+        return convertArticleListBy(map,categoryArticle,templates);
+    }
+
+    @Override
+    public CategoryContentListDao convertArticleListBy(CollectionVO categoryVO) {
+        List<Template> templates  = new ArrayList<>();
+        Template categoryTemplate = templateService.findByEnName(categoryVO.getTemplateName());
+        templates.add(categoryTemplate);
+
+
+//        List<Template> templates = templateService.findByCategoryId(categoryVO.getId());
+//        BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
+        CategoryContentListDao categoryArticle = contentService.findCategoryContentBy(categoryVO, 0);
+        Map<String,Object> map = new HashMap<>();
+        baseCategoryService.addTemplatePath(map,categoryArticle.getParentCategories(),templates);
         return convertArticleListBy(map,categoryArticle,templates);
     }
 

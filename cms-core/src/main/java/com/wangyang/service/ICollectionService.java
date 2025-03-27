@@ -12,4 +12,5 @@ import java.util.List;
 public interface ICollectionService extends IBaseCategoryService<Collection,Collection, CollectionVO> {
     List<CollectionVO> listTree();
 
+    void generateListHtml();
 }

@@ -6,10 +6,7 @@ import com.wangyang.pojo.dto.CategoryContentListDao;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.pojo.vo.ArticleDetailVO;
-import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Async;
 
@@ -47,6 +44,8 @@ public interface IHtmlService {
     void generateComponentsByArticle(Integer articleId);
 
     CategoryContentListDao convertArticleListBy(BaseCategoryVo categoryVO);
+
+    CategoryContentListDao convertArticleListBy(CollectionVO categoryVO);
 
     /**
      * 生成该栏目下文章列表, 只展示文章列表

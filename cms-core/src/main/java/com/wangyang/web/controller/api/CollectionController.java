@@ -49,4 +49,10 @@ public class CollectionController {
         return task;
     }
 
+    @GetMapping("/generateListHtml")
+    public BaseResponse generateListHtml(HttpServletRequest request){
+        collectionService.generateListHtml();
+        return BaseResponse.ok("success!!");
+
+    }
 }
