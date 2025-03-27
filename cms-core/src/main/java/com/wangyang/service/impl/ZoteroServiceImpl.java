@@ -381,16 +381,15 @@ public class ZoteroServiceImpl implements IZoteroService {
 
 
                 List<Literature> literature = literatureService.saveAll(literatureList);
-                literature.forEach(it->{
-                    literatureService.generateHtml(it);
-                });
+//                literature.forEach(it->{
+//                    literatureService.generateHtml(it);
+//                });
 //            List<Literature> literature = literatureService.listAll();
 //            Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
 //            Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
 ////            Set<String> findLiterature2 = new HashSet<>(findLiterature);
 //            findLiterature.removeAll(dbLiterature);
 //
-//                Map<String, ItemAttachment> itemAttachmentMap = ServiceUtil.convertToMap(itemAttachmentList, ItemAttachment::getParentItem);
 //
 ////            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
 //                for (Literature literature : literatureList){
