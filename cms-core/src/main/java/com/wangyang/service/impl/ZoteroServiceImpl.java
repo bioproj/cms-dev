@@ -16,10 +16,7 @@ import com.wangyang.pojo.dto.ArticleTagsDto;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
 import com.wangyang.pojo.entity.base.Content;
-import com.wangyang.pojo.enums.TaskStatus;
-import com.wangyang.pojo.enums.TaskType;
-import com.wangyang.pojo.enums.TemplateData;
-import com.wangyang.pojo.enums.TemplateType;
+import com.wangyang.pojo.enums.*;
 import com.wangyang.repository.base.ContentRepository;
 import com.wangyang.service.*;
 import com.wangyang.service.templates.ITemplateService;
@@ -276,6 +273,9 @@ public class ZoteroServiceImpl implements IZoteroService {
             ObjectVersions objectVersions = objectVersionsResponse.body();
             if(objectVersions!=null &&  objectVersions.size()!=0){
                 List<Item> allItem = listByItemType(zoteroService,objectVersions.size(),searchQuery,since);
+//                List<String> collected = allItem.stream().filter(it -> Objects.nonNull(it.getData())  && Objects.nonNull(it.getData().getTitle())      ).map(it -> it.getData().getTitle())
+//                        .filter(it -> it.contains("Microbiota translocation")).collect(Collectors.toList());
+//                System.out.println();
 //            allItem.addAll(listByItemType("thesis",since));
 
 //            List<Item> thesis = listByItemType("thesis");
@@ -353,7 +353,7 @@ public class ZoteroServiceImpl implements IZoteroService {
 
                         literature.setPath("html/literature");
                         literature.setViewName(item.getKey());
-
+                        literature.setStatus(ArticleStatus.PUBLISHED);
 
                         literatureList.add(literature);
 //                            }
