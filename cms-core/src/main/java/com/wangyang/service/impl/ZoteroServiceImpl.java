@@ -1,5 +1,6 @@
 package com.wangyang.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.gimranov.libzotero.HttpHeaders;
 import com.gimranov.libzotero.LibraryType;
 import com.gimranov.libzotero.SearchQuery;
@@ -255,13 +256,14 @@ public class ZoteroServiceImpl implements IZoteroService {
         }
 
         try {
-            String since = option.getValue();
-            if(since== null || since.equals("0")){
-                since = String.valueOf(0);
-                List<Literature> delLiterature = literatureService.listAll();
-                literatureService.deleteAll(delLiterature);
-            }
-
+            String since = String.valueOf(0); // TODO option.getValue();
+//            if(since== null || since.equals("0")){
+//                since = String.valueOf(0);
+//                List<Literature> delLiterature = literatureService.listAll();
+////                literatureService.deleteAll(delLiterature);
+//            }
+            List<Literature> dbLiteratureList = literatureService.listAll();
+            Map<String, Literature> literatureMap = ServiceUtil.convertToMap(dbLiteratureList, Literature::getKey);
 //        Map map = new HashMap<>();
 //        retrofit2.Call<Map<String, String>> collectionsVersion = zoteroService.getCollectionsVersion(LibraryType.USER, Long.valueOf("8927145"), null);
 //        Map<String, String> stringMap = collectionsVersion.execute().body();
@@ -291,9 +293,8 @@ public class ZoteroServiceImpl implements IZoteroService {
                 List<Literature> literatureList = new ArrayList<>();
                 List<ItemAttachment> itemAttachmentList = new ArrayList<>();
 
-                for (int i=0;i<allItem.size();i++){
-                    Item item = allItem.get(i);
-                    if(item.getData()!=null &&   item.getData().getItemType()!=null &&  item.getData().getItemType().equals("attachment")){
+                for (Item item : allItem) {
+                    if (item.getData() != null && item.getData().getItemType() != null && item.getData().getItemType().equals("attachment")) {
 
                         itemAttachmentList.add(ItemAttachment.builder()
                                 .key(item.getData().getKey())
@@ -302,132 +303,144 @@ public class ZoteroServiceImpl implements IZoteroService {
                                 .build());
 
 
-                    }else{
-                        List<String> collectionNames = item.getData().getCollections();
-                        if(collectionNames.size()>0){
+                    } else {
+
+//                        if(!collectionNames.isEmpty()){
 //                    String name = collectionNames.get(0);
-                            for (String name :collectionNames){
-                                Literature literature= new Literature();
-                                literature.setTitle(item.getData().getTitle());
-                                literature.setKey(item.getKey());
-                                literature.setZoteroKey(item.getKey());
-                                literature.setItemType(item.getData().getItemType());
-                                literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
-                                literature.setUserId(userId);
-                                if(item.getData().getUrl().startsWith("http")){
-                                    literature.setUrl(item.getData().getUrl());
-                                }else {
-                                    literature.setUrl(null);
-                                }
-
-                                literature.setOriginalContent(item.getData().getAbstractNote());
-                                String dateStr = item.getData().getDate();
-                                Date date = null;
-                                try {
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                    date = sdf.parse(dateStr);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                literature.setPublishDate(date);
-                                List<Creator> creators = item.getData().getCreators();
-
-                                List<Tag> zoteroTags = item.getData().getTags();
-                                for(Tag tag :zoteroTags){
-                                    findTags.add(tag.getTag());
-                                    articleTagsDtos.add(new ArticleTagsDto(tag.getTag(),literature.getKey()));
-                                }
-
-                                if(collectionMap.containsKey(name)){
-                                    Collection collection = collectionMap.get(name);
-                                    literature.setCategoryId(collection.getId());
-
-                                }else {
-                                    literature.setCategoryId(-1);
-                                }
-                                literature.setPath("html/literature");
-                                literature.setViewName(item.getKey());
-                                literatureList.add(literature);
-                            }
-                        }else {
-                            Literature literature= new Literature();
-                            literature.setTitle(item.getData().getTitle());
-                            literature.setKey(item.getKey());
-                            literature.setZoteroKey(item.getKey());
+//                            for (String name :collectionNames){
+//                                Literature literature= new Literature();
+                        Literature literature = Optional.ofNullable(literatureMap.get(item.getKey())).orElse(new Literature());
+                        literature.setTitle(item.getData().getTitle());
+                        literature.setKey(item.getKey());
+                        literature.setZoteroKey(item.getKey());
+                        literature.setItemType(item.getData().getItemType());
+                        literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+                        literature.setUserId(userId);
+                        if (item.getData().getUrl().startsWith("http")) {
                             literature.setUrl(item.getData().getUrl());
-                            literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
-                            literature.setUserId(userId);
-                            literature.setItemType(item.getData().getItemType());
-                            literature.setOriginalContent(item.getData().getAbstractNote());
-                            literature.setCategoryId(-1);
-                            literature.setPath("html/literature");
-                            literature.setViewName(item.getKey());
-                            literatureList.add(literature);
+                        } else {
+                            literature.setUrl(null);
                         }
 
+                        literature.setOriginalContent(item.getData().getAbstractNote());
+                        String dateStr = item.getData().getDate();
+                        Date date = null;
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            date = sdf.parse(dateStr);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        literature.setPublishDate(date);
+                        List<Creator> creators = item.getData().getCreators();
+
+                        List<Tag> zoteroTags = item.getData().getTags();
+                        for (Tag tag : zoteroTags) {
+                            findTags.add(tag.getTag());
+                            articleTagsDtos.add(new ArticleTagsDto(tag.getTag(), literature.getKey()));
+                        }
+
+                        List<String> collectionNames = item.getData().getCollections();
+                        if (CollectionUtil.isNotEmpty(collectionNames)) {
+                            String name = collectionNames.get(0);
+                            if (collectionMap.containsKey(name)) {
+                                Collection collection = collectionMap.get(name);
+                                literature.setCategoryId(collection.getId());
+                            }
+                        } else {
+                            literature.setCategoryId(-1);
+                        }
+
+                        literature.setPath("html/literature");
+                        literature.setViewName(item.getKey());
 
 
+                        literatureList.add(literature);
+//                            }
                     }
+
+
+//                        else {
+//                            Literature literature= new Literature();
+//                            literature.setTitle(item.getData().getTitle());
+//                            literature.setKey(item.getKey());
+//                            literature.setZoteroKey(item.getKey());
+//                            literature.setUrl(item.getData().getUrl());
+//                            literature.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+//                            literature.setUserId(userId);
+//                            literature.setItemType(item.getData().getItemType());
+//                            literature.setOriginalContent(item.getData().getAbstractNote());
+//                            literature.setCategoryId(-1);
+//                            literature.setPath("html/literature");
+//                            literature.setViewName(item.getKey());
+//                            literatureList.add(literature);
+//                        }
+//                    }
 
                 }
 
+
+                List<Literature> literature = literatureService.saveAll(literatureList);
+                literature.forEach(it->{
+                    literatureService.generateHtml(it);
+                });
 //            List<Literature> literature = literatureService.listAll();
 //            Set<String> dbLiterature = ServiceUtil.fetchProperty(literature, Literature::getTitle);
 //            Set<String> findLiterature = ServiceUtil.fetchProperty(literatureList, Literature::getTitle);
 ////            Set<String> findLiterature2 = new HashSet<>(findLiterature);
 //            findLiterature.removeAll(dbLiterature);
 //
-                Map<String, ItemAttachment> itemAttachmentMap = ServiceUtil.convertToMap(itemAttachmentList, ItemAttachment::getParentItem);
-
-//            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
-                for (Literature literature : literatureList){
-                    Literature literatureServiceByKeys = literatureService.findByKeys(literature.getKey());
-                    if(literatureServiceByKeys!=null){
-//                        literature.setId(literatureServiceByKeys.getId());
-                        continue;
-                    }
-                    Literature   save = literatureService.save(literature);;
-                    if(itemAttachmentMap.containsKey(literature.getKey())){
-                        ItemAttachment itemAttachment = itemAttachmentMap.get(literature.getKey());
-                        String dir = CMSUtils.getWorkDir()+ File.separator+"html/webdav/zotero";
-                        Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
-                        if(zipFilePath.toFile().exists()){
-                            FileUtils.unzip(zipFilePath.toString(),dir);
-                            log.info("unzip file:{}", zipFilePath);
-                        }
-                        itemAttachmentList.remove(itemAttachment);
-                        Tags tags = Tags.builder()
-                                .name(itemAttachment.getTitle())
-                                .key(itemAttachment.getKey())
-                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
-                                .build();
-
-                        Tags addedTags = tagsService.addUniqueByKey(tags);
-                        literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
-
-                    }
-//                    List<Tags> tags = new ArrayList<>();
-                    literatureService.generateHtml(save);
-                }
-                for (ItemAttachment itemAttachment: itemAttachmentList){
-                    String dir = CMSUtils.getWorkDir()+ File.separator+"html/webdav/zotero";
-                    Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
-                    if(zipFilePath.toFile().exists()){
-                        FileUtils.unzip(zipFilePath.toString(),dir);
-                        log.info("unzip file:{}", zipFilePath);
-                    }
-                    Literature literature = literatureService.findByKeys(itemAttachment.getParentItem());
-                    if(literature!=null){
-                        Tags tags = Tags.builder()
-                                .name(itemAttachment.getTitle())
-                                .key(itemAttachment.getKey())
-                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
-                                .build();
-                      Tags addedTags = tagsService.addUniqueByKey(tags);
-                       literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
-                       literatureService.generateHtml(literature);
-                    }
-                }
+//                Map<String, ItemAttachment> itemAttachmentMap = ServiceUtil.convertToMap(itemAttachmentList, ItemAttachment::getParentItem);
+//
+////            List<Literature> needSave = literatureList.stream().filter(item -> findLiterature.contains(item.getTitle())).collect(Collectors.toList());
+//                for (Literature literature : literatureList){
+////                    Literature literatureServiceByKeys = literatureService.findByKeys(literature.getKey());
+////                    if(literatureServiceByKeys!=null){
+//////                        literature.setId(literatureServiceByKeys.getId());
+////                        continue;
+////                    }
+////                    Literature   save = literatureService.save(literature);;
+//                    if(itemAttachmentMap.containsKey(literature.getKey())){
+//                        ItemAttachment itemAttachment = itemAttachmentMap.get(literature.getKey());
+//                        String dir = CMSUtils.getWorkDir()+ File.separator+"html/webdav/zotero";
+//                        Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
+//                        if(zipFilePath.toFile().exists()){
+//                            FileUtils.unzip(zipFilePath.toString(),dir);
+//                            log.info("unzip file:{}", zipFilePath);
+//                        }
+//                        itemAttachmentList.remove(itemAttachment);
+//                        Tags tags = Tags.builder()
+//                                .name(itemAttachment.getTitle())
+//                                .key(itemAttachment.getKey())
+//                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
+//                                .build();
+//
+//                        Tags addedTags = tagsService.addUniqueByKey(tags);
+//                        literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
+//
+//                    }
+////                    List<Tags> tags = new ArrayList<>();
+////                    literatureService.generateHtml(save);
+//                }
+//                for (ItemAttachment itemAttachment: itemAttachmentList){
+//                    String dir = CMSUtils.getWorkDir()+ File.separator+"html/webdav/zotero";
+//                    Path zipFilePath  = Paths.get(dir+File.separator+itemAttachment.getKey()+".zip");
+//                    if(zipFilePath.toFile().exists()){
+//                        FileUtils.unzip(zipFilePath.toString(),dir);
+//                        log.info("unzip file:{}", zipFilePath);
+//                    }
+//                    Literature literature = literatureService.findByKeys(itemAttachment.getParentItem());
+//                    if(literature!=null){
+//                        Tags tags = Tags.builder()
+//                                .name(itemAttachment.getTitle())
+//                                .key(itemAttachment.getKey())
+//                                .url("/html/webdav/zotero/"+itemAttachment.getTitle())
+//                                .build();
+//                      Tags addedTags = tagsService.addUniqueByKey(tags);
+//                       literatureService.addAttachmentTags(literature.getId(),addedTags.getId());
+//                       literatureService.generateHtml(literature);
+//                    }
+//                }
 
 
 //            dbLiterature.removeAll(findLiterature2);
@@ -444,11 +457,11 @@ public class ZoteroServiceImpl implements IZoteroService {
             }
 
 
-            ZoteroKeys zoteroKeys = getDeleted(zoteroService,option.getValue());
-            List<Literature> delLiterature = literatureService.listByKeys(zoteroKeys.getItems());
-            List<Literature> filteredList = delLiterature.stream()
-                    .filter(element -> element != null)
-                    .collect(Collectors.toList());
+//            ZoteroKeys zoteroKeys = getDeleted(zoteroService,option.getValue());
+//            List<Literature> delLiterature = literatureService.listByKeys(zoteroKeys.getItems());
+//            List<Literature> filteredList = delLiterature.stream()
+//                    .filter(element -> element != null)
+//                    .collect(Collectors.toList());
 //            literatureService.deleteAll(filteredList);
             String lastVersion = objectVersionsResponse.headers().get("Last-Modified-Version");
             option.setValue(lastVersion);
