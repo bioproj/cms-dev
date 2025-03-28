@@ -273,6 +273,7 @@ public class ZoteroServiceImpl implements IZoteroService {
             ObjectVersions objectVersions = objectVersionsResponse.body();
             if(objectVersions!=null &&  objectVersions.size()!=0){
                 List<Item> allItem = listByItemType(zoteroService,objectVersions.size(),searchQuery,since);
+                log.info("zotero 找到 {} 条记录",allItem.size());
 //                List<String> collected = allItem.stream().filter(it -> Objects.nonNull(it.getData())  && Objects.nonNull(it.getData().getTitle())      ).map(it -> it.getData().getTitle())
 //                        .filter(it -> it.contains("Microbiota translocation")).collect(Collectors.toList());
 //                System.out.println();
@@ -386,6 +387,7 @@ public class ZoteroServiceImpl implements IZoteroService {
 
 
                 List<Literature> literature = literatureService.saveAll(literatureList);
+                log.info("literature 保存 {} 条记录",literature.size());
 //                literature.forEach(it->{
 //                    literatureService.generateHtml(it);
 //                });
