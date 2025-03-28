@@ -132,6 +132,8 @@ public interface IHtmlService {
 
 //    void articleTopListByCategoryId(Template template, int id);
 
+    void previewParse(Content content);
+
     void previewParse(Article article);
 
     void previewParse(Category categoryView);
