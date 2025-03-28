@@ -4,6 +4,7 @@ import com.wangyang.common.BaseResponse;
 import com.wangyang.common.CmsConst;
 import com.wangyang.pojo.entity.Article;
 import com.wangyang.pojo.entity.Category;
+import com.wangyang.pojo.entity.base.BaseCategory;
 import com.wangyang.pojo.entity.base.Content;
 import com.wangyang.pojo.vo.BaseCategoryVo;
 import com.wangyang.pojo.vo.ContentDetailVO;
@@ -11,6 +12,7 @@ import com.wangyang.pojo.vo.ContentVO;
 import com.wangyang.service.IArticleService;
 import com.wangyang.service.ICategoryService;
 import com.wangyang.service.IHtmlService;
+import com.wangyang.service.base.IBaseCategoryService;
 import com.wangyang.service.templates.ITemplateService;
 import com.wangyang.service.base.IContentService;
 import com.wangyang.util.AuthorizationUtil;
@@ -39,6 +41,9 @@ public class ContentController {
     IHtmlService htmlService;
     @Autowired
     ITemplateService templateService;
+
+    @Autowired
+    IBaseCategoryService<BaseCategory, BaseCategory, BaseCategoryVo> baseCategoryService;
     @GetMapping("/listVoTree/{categoryId}")
     public List<ContentVO> listDtoTree(@PathVariable("categoryId") Integer categoryId){
         List<ContentVO> listVoTree = contentService.listVoTree(categoryId);
@@ -88,7 +93,7 @@ public class ContentController {
 //        TemplateUtil.deleteTemplateHtml(viewName,path);
         //更新旧的文章列表
         if(categoryId!=null&& categoryId!=0){
-            Category oldCategory = categoryService.findById(categoryId);
+            BaseCategory oldCategory = baseCategoryService.findById(categoryId);
 //            articleDetailVO.setOldCategory(oldCategory);
             htmlService.convertArticleListBy(oldCategory);
             // 删除分页的文章列表

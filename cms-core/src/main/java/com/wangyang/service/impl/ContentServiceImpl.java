@@ -612,6 +612,7 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
 //
 //        ContentVO contentVO = convertToVo(saveContent);
 //        contentVO = convertToTagVo(contentVO);
+        save(content);
         return contentDetailVO;
 
 
