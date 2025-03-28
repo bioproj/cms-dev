@@ -1,6 +1,7 @@
 package com.wangyang.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
 import com.wangyang.pojo.entity.Collection;
@@ -188,6 +189,10 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
         List<Collection> collections = collectionService.listAll();
         List<Literature> literature = listAll();
         for (Literature literature1 : literature){
+            if(Objects.isNull(literature1.getTemplateName())){
+                literature1.setTemplateName(CmsConst.DEFAULT_LITERATURE_TEMPLATE);
+                literature1 = save(literature1);
+            }
             if(literature1.getCategoryId()!=null && literature1.getCategoryId()!=-1){
                 LiteratureVo literatureVo1 = convertToVo(literature1);
                 LiteratureVo literatureVo = convertToTagVo(literatureVo1);
