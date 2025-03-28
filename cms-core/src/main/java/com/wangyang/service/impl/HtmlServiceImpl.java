@@ -1018,7 +1018,13 @@ public class HtmlServiceImpl implements IHtmlService {
     }
 
 
-
+    @Override
+    public void previewParse(Content content) {
+        Template findTemplate = templateService.findByEnName(content.getTemplateName());
+        Template template = BeanUtil.copyProperties(findTemplate, Template.class);
+        String html = getObjectHtml(template, content);
+        content.setFormatContent(html);
+    }
 
     @Override
     public void previewParse(Article article) {

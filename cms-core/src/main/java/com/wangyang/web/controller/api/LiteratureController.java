@@ -1,5 +1,6 @@
 package com.wangyang.web.controller.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.BaseResponse;
 import com.wangyang.common.utils.CMSUtils;
 import com.wangyang.pojo.entity.*;
@@ -58,17 +59,25 @@ public class LiteratureController {
         return literatureService.pageBy(pageable);
     }
     @PostMapping("/save/{id}")
-    public Literature save(@RequestBody LiteratureParam literatureParam, @PathVariable("id") Integer id){
+    public Literature save(@RequestBody LiteratureParam literatureParam,
+                           @PathVariable("id") Integer id,
+                           @RequestParam(required = false,defaultValue = "false") Boolean previewParse){
         Literature literature = literatureService.findById(id);
         BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
         Literature saveLiterature = literatureService.update(id, literature);
+
+        Literature literatureView = BeanUtil.copyProperties(saveLiterature, Literature.class);
+
+        if(previewParse){
+            htmlService.previewParse(literatureView);
+        }
 //        Literature saveLiterature = literatureService.save(literature);
         // 需要判断文章模板路径
 //        literatureService.checkContentTemplatePath(saveLiterature);
 
 //        ArticleDetailVO articleDetailVO = contentService.convert(content);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
-        return saveLiterature;
+        return literatureView;
     }
     @PostMapping("/update/{id}")
     public LiteratureVo update(@RequestBody  LiteratureParam literatureParam,@PathVariable("id") Integer id){
