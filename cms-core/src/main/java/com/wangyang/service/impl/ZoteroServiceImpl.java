@@ -309,7 +309,12 @@ public class ZoteroServiceImpl implements IZoteroService {
 //                    String name = collectionNames.get(0);
 //                            for (String name :collectionNames){
 //                                Literature literature= new Literature();
-                        Literature literature = Optional.ofNullable(literatureMap.get(item.getKey())).orElse(new Literature());
+                        Literature literature = Optional.ofNullable(literatureMap.get(item.getKey())).orElseGet(()->{
+                            Literature newLiterature =new Literature();
+                            newLiterature.setOriginalContent(item.getData().getAbstractNote());
+                            return  newLiterature;
+
+                        });
                         literature.setTitle(item.getData().getTitle());
                         literature.setKey(item.getKey());
                         literature.setZoteroKey(item.getKey());
@@ -322,7 +327,7 @@ public class ZoteroServiceImpl implements IZoteroService {
                             literature.setUrl(null);
                         }
 
-                        literature.setOriginalContent(item.getData().getAbstractNote());
+
                         String dateStr = item.getData().getDate();
                         Date date = null;
                         try {
