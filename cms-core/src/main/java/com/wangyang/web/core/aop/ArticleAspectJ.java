@@ -153,7 +153,7 @@ public class ArticleAspectJ {
      */
     @Around("execution(* com.wangyang.web.controller.api.CategoryController.update(..)) or " +
             "execution(* com.wangyang.web.controller.api.CategoryController.deleteById(..)) or " +
-            "execution(* com.wangyang.web.controller.api.ContentController.updateCategory(..)) or " +
+//            "execution(* com.wangyang.web.controller.api.ContentController.updateCategory(..)) or " +
             "execution(* com.wangyang.web.controller.api.CategoryController.haveHtml(..)) or "+
             "execution(* com.wangyang.web.controller.api.CategoryController.generateHtml(..))")
     public Category categoryAop(ProceedingJoinPoint joinPoint) throws Throwable {

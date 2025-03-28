@@ -345,7 +345,7 @@ public class HtmlServiceImpl implements IHtmlService {
      * @return
      */
     @Override
-    public CategoryContentListDao convertArticleListBy(BaseCategory  category) {
+    public CategoryContentListDao  convertArticleListBy(BaseCategory  category) {
         BaseCategoryVo categoryVO = baseCategoryService.convertToVo(category);
         return convertArticleListBy(categoryVO);
     }
