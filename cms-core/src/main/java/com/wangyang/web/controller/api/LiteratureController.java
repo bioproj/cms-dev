@@ -81,6 +81,8 @@ public class LiteratureController {
 
 //        ArticleDetailVO articleDetailVO = contentService.convert(content);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
+
+
         htmlService.conventHtml(saveLiterature);
         htmlService.generateCollectionTree();
 

@@ -109,7 +109,11 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
 //                literatureVo.setTagIds( ServiceUtil.fetchProperty(tags, Tags::getId));
 //            }
         }
-        literatureVo.setCategory(BeanUtil.copyProperties(collection, CollectionVO.class));
+//        LiteratureVo literatureVo1 = convertToVo(literature1);
+//        LiteratureVo literatureVo = convertToTagVo(literatureVo1);
+//        htmlService.conventHtml(literatureVo,false);
+        CollectionVO collectionVO = collectionService.convertToVo(collection);
+        literatureVo.setCategory(collectionVO);
 //        literatureVo.setCategory(collection);
         return literatureVo;
     }
