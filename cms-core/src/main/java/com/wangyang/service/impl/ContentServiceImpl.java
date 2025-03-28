@@ -14,10 +14,7 @@ import com.wangyang.pojo.enums.NetworkType;
 import com.wangyang.pojo.enums.TemplateData;
 import com.wangyang.pojo.params.ArticleQuery;
 import com.wangyang.pojo.support.ForceDirectedGraph;
-import com.wangyang.pojo.vo.BaseCategoryVo;
-import com.wangyang.pojo.vo.CategoryVO;
-import com.wangyang.pojo.vo.ContentDetailVO;
-import com.wangyang.pojo.vo.ContentVO;
+import com.wangyang.pojo.vo.*;
 import com.wangyang.repository.relation.ArticleTagsRepository;
 import com.wangyang.repository.template.ComponentsCategoryRepository;
 import com.wangyang.repository.TagsRepository;
@@ -599,18 +596,22 @@ public class ContentServiceImpl extends AbstractContentServiceImpl<Content,Conte
     public ContentDetailVO updateCategory(Content content, Integer baseCategoryId) {
         BaseCategory baseCategory = baseCategoryService.findById(baseCategoryId);
         ContentDetailVO contentDetailVO = new ContentDetailVO();
-//        contentDetailVO.setContent(content);
-        content.setParentId(0);
-//        if(baseCategory.isPresent()){
-//            content.setPath(baseCategory.getPath());
-//            content.setCategoryId(baseCategory.getId());
-//            contentDetailVO.setCategory(baseCategory);
-//            content.setTemplateName(baseCategory.getArticleTemplateName());
+////        contentDetailVO.setContent(content);
+//        content.setParentId(0);
+        if(Objects.nonNull(baseCategory)){
+            content.setPath(baseCategory.getPath());
+            content.setCategoryId(baseCategory.getId());
+            BaseCategoryVo baseCategoryVo = baseCategoryService.convertToVo(baseCategory);
+            contentDetailVO.setCategory(baseCategoryVo);
+            content.setTemplateName(baseCategory.getArticleTemplateName());
+        }else {
+            content.setCategoryId(0);
+        }
+//        content.setCategoryId(baseCategory);
+//        Content saveContent = contentRepository.save(content);
 //
-//        }else {
-//            content.setCategoryId(0);
-//        }
-        contentRepository.save(content);
+//        ContentVO contentVO = convertToVo(saveContent);
+//        contentVO = convertToTagVo(contentVO);
         return contentDetailVO;
 
 
