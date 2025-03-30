@@ -83,7 +83,7 @@ public class LiteratureController {
     public LiteratureVo update(@RequestBody  LiteratureParam literatureParam,@PathVariable("id") Integer id){
         Literature literature = literatureService.findById(id);
         BeanUtils.copyProperties(literatureParam,literature,CMSUtils.getNullPropertyNames(literatureParam));
-        LiteratureVo saveLiterature = literatureService.update(id, literature,literatureParam.getTagIds());
+        LiteratureVo saveLiterature = literatureService.update( literature,literatureParam.getTagIds());
 //        Literature saveLiterature = literatureService.save(literature);
         // 需要判断文章模板路径
 //        literatureService.checkContentTemplatePath(saveLiterature);
