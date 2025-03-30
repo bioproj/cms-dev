@@ -21,6 +21,8 @@ public class ContentVO extends BaseVo<ContentVO> {
     private BaseCategoryVo category;
 //    private CategoryDto category;
     private String formatContent;
+    private String originalContent;
+
     private Integer id;
     private Date createDate;
     private Date updateDate;
