@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface ILiteratureService  extends IContentService<Literature, LiteratureDetailVO, LiteratureVo> {
-    LiteratureVo update(Integer integer, Literature updateDomain, Set<Integer> tagIds);
+//    LiteratureVo update(Integer integer, Literature updateDomain, Set<Integer> tagIds);
+
+    LiteratureVo update(Literature updateDomain, Set<Integer> tagsIds);
 
     List<Literature> listByKeys(Set<String> literatureStrIds);
 

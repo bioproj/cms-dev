@@ -1,6 +1,5 @@
 package com.wangyang.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.wangyang.common.CmsConst;
 import com.wangyang.common.utils.TemplateUtil;
 import com.wangyang.pojo.entity.*;
@@ -68,11 +67,11 @@ public class LiteratureServiceImpl  extends AbstractContentServiceImpl<Literatur
     }
 
     @Override
-    public LiteratureVo update(Integer integer, Literature updateDomain, Set<Integer> tagsIds) {
+    public LiteratureVo update(Literature updateDomain, Set<Integer> tagsIds) {
 
         updateDomain.setUpdateDate(new Date());
-
-        Literature literature = super.update(integer, updateDomain);
+        Literature literature = super.createOrUpdate( updateDomain);
+        literature = save(literature);
         Collection collection = collectionService.findById(literature.getCategoryId());
         super.injectContent(literature,collection);
         LiteratureVo literatureVo;
