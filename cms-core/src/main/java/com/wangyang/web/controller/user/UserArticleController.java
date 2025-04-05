@@ -144,10 +144,18 @@ public class UserArticleController {
     }
 
     @GetMapping("/editContent/{id}")
-    public String editContent(HttpServletRequest request,Model model,@PathVariable("id") Integer id){
+    public String editContent(HttpServletRequest request,
+                              Model model,
+                              @PathVariable("id") Integer id,
+                              @RequestParam(required = false,defaultValue = "false") Boolean previewParse){
         int userId = AuthorizationUtil.getUserId(request);//在授权时将userId存入request
-        Content content = contentService.findById(id);
+        Content findContent = contentService.findById(id);
+        Content content = BeanUtil.copyProperties(findContent, Content.class);
+        if(previewParse){
+            htmlService.previewParse(content);
+        }
         ContentVO contentVO = contentService.convertToTagVo(content);
+
 
 //        ArticleDetailVO articleDetailVO = articleService.conventToAddTags(article);
 //        ArticleDetailVO articleDetailVO = articleService.convert(article);
