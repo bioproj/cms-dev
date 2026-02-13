@@ -14,8 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.regex.Patte
 public class GitLabBlockQuoteParserInline extends AbstractBlockParser {
 
     static Pattern GIT_LAB_BLOCK_START = Pattern.compile("(--\\s*$)");

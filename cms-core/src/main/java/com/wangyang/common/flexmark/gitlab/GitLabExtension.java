@@ -79,7 +79,7 @@ public class GitLabExtension implements Parser.ParserExtension
         GitLabOptions options = new GitLabOptions(parserBuilder);
         if (options.blockQuoteParser) {
             parserBuilder.customBlockParserFactory(new GitLabBlockQuoteParser.Factory());
-            parserBuilder.customBlockParserFactory(new GitLabBlockQuoteParserInline.Factory());
+//            parserBuilder.customBlockParserFactory(new GitLabBlockQuoteParserInline.Factory());
         }
 
         if (options.delParser || options.insParser) {

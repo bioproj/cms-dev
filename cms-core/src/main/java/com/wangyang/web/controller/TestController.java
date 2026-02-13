@@ -16,6 +16,12 @@ public class TestController {
 
     @RequestMapping("/hello7")
     public String hello7(Model model){
+        System.out.println("enter!:  "+Thread.currentThread().getName());
+        try {
+            Thread.sleep(1000*20);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         model.addAttribute("name","zhangsan");
         return "templates/test";
     }
